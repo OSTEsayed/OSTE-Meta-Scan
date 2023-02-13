@@ -1,0 +1,20 @@
+HTTP/1.1 200 Partial Content
+Access-Control-Allow-Origin: *
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Feature-Policy: payment 'self'
+X-Recruiting: /#/jobs
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Sat, 12 Nov 2022 09:13:34 GMT
+ETag: W/"3aee-1846b1d9e30"
+Content-Type: image/x-icon
+Content-Range: bytes 0-15085/15086
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Date: Wed, 08 Feb 2023 21:50:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+
+[Deleted binary payload (15086 bytes)]
