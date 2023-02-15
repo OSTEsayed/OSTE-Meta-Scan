@@ -1,0 +1,23 @@
+GET https://juice-shop.herokuapp.com/ name=https://juice-shop.herokuapp.com/ type=serv linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=1987 notes=11 sig=0x24525904
+GET https://juice-shop.herokuapp.com/dataerasure/ name=dataerasure type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=2940 notes=3 sig=0xd0b3adc4
+GET https://juice-shop.herokuapp.com/profile/ name=profile type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=1229 notes=3 sig=0xd0b3adc4
+GET https://juice-shop.herokuapp.com/rest/ name=rest type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=2866 notes=4 sig=0xe8d74dee
+GET https://juice-shop.herokuapp.com/rest/2fa/ name=2fa type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=2874 notes=4 sig=0x3ecfc10
+GET https://juice-shop.herokuapp.com/rest/2fa/disable/ name=disable type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=2890 notes=3 sig=0x20f07f54
+GET https://juice-shop.herokuapp.com/rest/2fa/setup/ name=setup type=dir linked=maybe browsers=0 browser_used=FAST dup=1 code=500 len=2886 notes=3 sig=0x20f07f54
+GET https://juice-shop.herokuapp.com/rest/2fa/status/ name=status type=dir linked=maybe browsers=0 browser_used=FAST dup=0 code=401 len=972 notes=5 sig=0xe1fa81e6
+GET https://juice-shop.herokuapp.com/rest/2fa/verify/ name=verify type=dir linked=maybe browsers=0 browser_used=FAST dup=1 code=500 len=2888 notes=3 sig=0x20f07f54
+GET https://juice-shop.herokuapp.com/1 name=1 type=file linked=maybe browsers=0 browser_used=FAST dup=0 returns_404 code=200 len=1987 notes=1 sig=0xd74163ae
+GET https://juice-shop.herokuapp.com/1?z.iconName=function name=z.iconName type=param linked=maybe browsers=0 browser_used=FAST dup=0 returns_404 code=200 len=1987 notes=1 sig=0x20b68c94
+GET https://juice-shop.herokuapp.com/main.js name=main.js type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=398376 notes=1 sig=0x20fe8c94
+GET https://juice-shop.herokuapp.com/polyfills.js name=polyfills.js type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=54374 notes=2 sig=0x79d47764
+GET https://juice-shop.herokuapp.com/redirect name=redirect type=file linked=maybe browsers=0 browser_used=FAST dup=0 code=500 len=2965 notes=3 sig=0xd74b906e
+GET https://juice-shop.herokuapp.com/redirect?to=https://blockchain.info/address/1AbKfgvw9psQ41NbLi8kufDQTezwG8DRZm name=to type=param linked=maybe browsers=0 browser_used=FAST dup=0 code=302 len=88 notes=5 sig=0x26b004af
+GET https://juice-shop.herokuapp.com/runtime.js name=runtime.js type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=3210 notes=1 sig=0x20fe8c94
+GET https://juice-shop.herokuapp.com/styles.css name=styles.css type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=400000 notes=1 sig=0x20fe8c94
+GET https://juice-shop.herokuapp.com/vendor.js name=vendor.js type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=400000 notes=1 sig=0x20fe8c94
+GET https://juice-shop.herokuapp.com/assets name=assets type=pathinfo linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=1987 notes=1 sig=0x3826bd2b
+GET https://juice-shop.herokuapp.com/assets/i18n name=i18n type=pathinfo linked=maybe browsers=0 browser_used=FAST dup=0 code=200 len=1987 notes=2 sig=0x20e5d9bd
+GET https://juice-shop.herokuapp.com/assets/public name=public type=pathinfo linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=1987 notes=2 sig=0x68b604f9
+GET https://juice-shop.herokuapp.com/assets/public/favicon_js.ico name=favicon_js.ico type=file linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=38 notes=0 sig=0xfff7ffff
+GET https://juice-shop.herokuapp.com/file-upload name=file-upload type=unknown linked=maybe browsers=0 browser_used=FAST dup=0 returns_404 code=200 len=1987 notes=0 sig=0xffdfffff
