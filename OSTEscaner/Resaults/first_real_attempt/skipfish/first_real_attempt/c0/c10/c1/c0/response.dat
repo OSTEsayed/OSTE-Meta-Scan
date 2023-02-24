@@ -1,0 +1,20 @@
+HTTP/1.1 200 Partial Content
+Server: Cowboy
+Connection: keep-alive
+Access-Control-Allow-Origin: *
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Feature-Policy: payment 'self'
+X-Recruiting: /#/jobs
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Tue, 14 Feb 2023 13:12:55 GMT
+Etag: W/"3aee-186500e87d8"
+Content-Type: image/x-icon
+Content-Range: bytes 0-15085/15086
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Date: Thu, 23 Feb 2023 01:33:30 GMT
+Transfer-Encoding: chunked
+Via: 1.1 vegur
+

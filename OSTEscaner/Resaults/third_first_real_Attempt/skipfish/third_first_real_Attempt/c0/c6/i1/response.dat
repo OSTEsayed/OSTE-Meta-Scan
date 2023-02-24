@@ -1,0 +1,64 @@
+HTTP/1.1 500 Internal Server Error
+Server: Cowboy
+Connection: keep-alive
+Access-Control-Allow-Origin: *
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Feature-Policy: payment 'self'
+X-Recruiting: /#/jobs
+Content-Type: text/html; charset=utf-8
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Date: Thu, 23 Feb 2023 01:39:43 GMT
+Transfer-Encoding: chunked
+Via: 1.1 vegur
+
+<html>
+  <head>
+    <meta charset='utf-8'> 
+    <title>TypeError: Cannot read properties of undefined (reading &#39;includes&#39;)</title>
+    <style>* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+}
+
+body {
+  padding: 80px 100px;
+  font: 13px "Helvetica Neue", "Lucida Grande", "Arial";
+  background: #ECE9E9 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ECE9E9));
+  background: #ECE9E9 -moz-linear-gradient(top, #fff, #ECE9E9);
+  background-repeat: no-repeat;
+  color: #555;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2 {
+  font-size: 22px;
+  color: #343434;
+}
+h1 em, h2 em {
+  padding: 0 5px;
+  font-weight: normal;
+}
+h1 {
+  font-size: 60px;
+}
+h2 {
+  margin-top: 10px;
+}
+ul li {
+  list-style: none;
+}
+#stacktrace {
+  margin-left: 60px;
+}
+</style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>OWASP Juice Shop (Express ^4.17.1)</h1>
+      <h2><em>500</em> TypeError: Cannot read properties of undefined (reading &#39;includes&#39;)</h2>
+      <ul id="stacktrace"><li> &nbsp; &nbsp;at exports.isRedirectAllowed (/app/build/lib/insecurity.js:111:34)</li><li> &nbsp; &nbsp;at /app/build/routes/redirect.js:14:22</li><li> &nbsp; &nbsp;at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp; &nbsp;at next (/app/node_modules/express/lib/router/route.js:144:13)</li><li> &nbsp; &nbsp;at Route.dispatch (/app/node_modules/express/lib/router/route.js:114:3)</li><li> &nbsp; &nbsp;at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp; &nbsp;at /app/node_modules/express/lib/router/index.js:284:15</li><li> &nbsp; &nbsp;at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)</li><li> &nbsp; &nbsp;at next (/app/node_modules/express/lib/router/index.js:280:10)</li><li> &nbsp; &nbsp;at /app/build/routes/verify.js:135:5</li><li> &nbsp; &nbsp;at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp; &nbsp;at trim_prefix (/app/node_modules/express/lib/router/index.js:328:13)</li><li> &nbsp; &nbsp;at /app/node_modules/express/lib/router/index.js:286:9</li><li> &nbsp; &nbsp;at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)</li><li> &nbsp; &nbsp;at next (/app/node_modules/express/lib/router/index.js:280:10)</li><li> &nbsp; &nbsp;at /app/build/routes/verify.js:71:5</li><li> &nbsp; &nbsp;at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp; &nbsp;at trim_prefix (/app/node_modules/express/lib/router/index.js:328:13)</li><li> &nbsp; &nbsp;at /app/node_modules/express/lib/router/index.js:286:9</li><li> &nbsp; &nbsp;at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)</li><li> &nbsp; &nbsp;at next (/app/node_modules/express/lib/router/index.js:280:10)</li><li> &nbsp; &nbsp;at logger (/app/node_modules/morgan/index.js:144:5)</li></ul>
+    </div>
+  </body>
+</html>

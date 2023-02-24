@@ -1,0 +1,1 @@
+GET https://juice-shop.herokuapp.com/ name=https://juice-shop.herokuapp.com/ type=serv linked=yes browsers=0 browser_used=FAST dup=0 code=0 len=0 notes=1 sig=0x6b599831

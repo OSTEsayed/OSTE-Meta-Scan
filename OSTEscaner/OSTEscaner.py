@@ -1,3 +1,4 @@
+#todo: skipfish ki ykon target makanch maytastish apre ki n7aws 3a resault mnlgach.
 import os 
 import subprocess
 import threading
@@ -7,23 +8,37 @@ from zapv2 import ZAPv2
 from pprint import pprint
 from bs4 import BeautifulSoup 
 #___________________________________________creat_resaults_folder ______________________
-name = "JucyShope3"
-url ="http://localhost:3000/"
-print("[INFO] 		Creating Resaults Directory for each scanner")
-print("[location]	/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name)
-try:
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name)
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name+"/"+"wapiti")
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name+"/"+"nuclei")
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name+"/"+"owaspzap")
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name+"/"+"skipfish")
-    os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+name+"/"+"nikto")
-except OSError as error:
-    print("Error creating The Resault folder foor {}: {}".format(name,error))
-    #to do : if this errour messege occured you need make new name because this file already exist wiche means you will have problem in skip fish probebly more.
-
-#__________________________________________Wapiti_________________________________________________________
-wapiti_vulnerabilities= {
+#name = "JucyShope3"
+#url ="http://localhost:3000/"
+class scan_checker():
+    def __init__(self):#wapiti --version
+    	self.wapiti=True
+    	self.zap=True
+    	self.nuclei=False
+    	self.nikto=False
+    	self.skipfish=False
+    def check(self):
+          output = subprocess.run("wapiti --version", shell=True, capture_output=True,text=True).stdout.strip("\n")
+          if "Wapiti" in output[343::]:
+              self.wapiti=True
+          output1 = subprocess.run("nikto -V", shell=True, capture_output=True,text=True).stdout.strip("\n")
+          if "Nikto main" in output1:
+              self.nikto=True
+          output2 = subprocess.run("nuclei -version", shell=True, capture_output=True,text=True).stderr.strip("\n")
+          if "Current" in output2:
+              self.nuclei=True         
+         
+          output3 = subprocess.run("skipfish", shell=True, capture_output=True,text=True).stdout.strip("\n")
+          if "skipfish web" in output3:
+              self.skipfish=True         
+          return [[self.wapiti,"Wapiti {}".format(output[len(output)-5::])],[self.zap,"OWASP ZAP V2.10.0"],[self.nuclei,"Nuclei {}".format(output2[212::])],[self.nikto,"Nikto {}".format(output1[318:323])],[self.skipfish,"skipfish {}".format(output3[43:48])]]
+   
+    	
+class scan():
+    def __init__(self):
+        self.name="OSTE"
+        self.url="LOCALHOST"
+        self.wapiti_vulnerabilities= {
     "Backup file": 0,
     "Blind SQL Injection": 0,
     "Weak credentials": 0,
@@ -42,41 +57,8 @@ wapiti_vulnerabilities= {
     "Server Side Request Forgery": 0,
     "Cross Site Scripting": 0,
     "XML External Entity": 0  }
-
-def get_wapiti_resaults(name):    # Opening JSON file
-    f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json".format(name,name))
-    data = json.load(f)
-    wapiti_resaults=wapiti_vulnerabilities.copy()
-    for vul in data["vulnerabilities"]:
-        
-    	wapiti_resaults[vul]=len(data["vulnerabilities"][vul])
-
-    f.close()
-    return wapiti_resaults
-
-def start_wapiti(url,name):
-      print("[INFO] 		wapiti scan started:")
-      output = subprocess.run("wapiti -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 --flush-session".format(url,name,name), shell=True, capture_output=True)
-
-      print("[Finished]		wapiti Scan completed. ")
-def start_wapiti_readReport():
-      global wapiti_resaults
-      #start_wapiti(url,name)
-      wapiti_resaults= get_wapiti_resaults(name)
-      after_it_finished()
-def after_it_finished():
-     print("[Result]______________________________WApiti Results:_________________________")
-     print(wapiti_resaults)
-starting_wapiti = threading.Thread(target=start_wapiti_readReport)
-#starting_wapiti.start() 
-#___________________________________________SKIPFISH________________________________________
-
-def start_skipfish(url,name):
-
-        print("[INFO] 		skipfish scan started:")
-        output = subprocess.run("skipfish -L -W- -e -v -u -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(name,name,url), shell=True, capture_output=True)
-        print("[finished]	skipfish scand completed. ")
-Type_of_issue={
+        self.list_of_dir=[]             #skipfish resault dirs 
+        self.Type_of_issue={
 
   "10101": ["SSL certificate issuer information",0],
   "10201": ["New HTTP cookie added",0],
@@ -168,42 +150,7 @@ Type_of_issue={
   "50909": ["Signature match detected (high risk)",0]
 
 }
-list_of_skipfish_issue=Type_of_issue.copy()
-list_of_dir=[] 
-def Check_all_folders(Dir):
-	global list_of_dir
-	dir =["{}/{}".format(Dir,name) for name in os.listdir("{}".format(Dir)) if os.path.isdir("{}/{}".format(Dir,name)) and name[0]=="c"]
-	list_of_dir.extend(dir)
-	for i in range(len(dir)):
-		Check_all_folders(dir[i])
-def add_issue(path):
-	global list_of_skipfish_issue
-	with open("{}/issue_index.js".format(path), "r") as f:
-		while True:
-			line = f.readline()
-			if not line:
-			    break
-			x=line.find("type")
-			if x!=-1:
-				list_of_skipfish_issue[line[x+7:x+12]][1]=list_of_skipfish_issue[line[x+7:x+12]][1]+1
-def get_skipfish_resaults(name):
-      Check_all_folders("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}".format(name,name))	
-
-      for i in range(len(list_of_dir)):
-           add_issue(list_of_dir[i])	
-      print("____________________________skipfish resaulet :___________________________")
-      for i in list_of_skipfish_issue:
-         if list_of_skipfish_issue[i][1] >0:
-            print(list_of_skipfish_issue[i][0]," : : ",list_of_skipfish_issue[i][1])
-def start_skipfish_get_resaults():
-      list_of_skipfish_issue=Type_of_issue.copy()
-      #start_skipfish(url,name)
-      
-      get_skipfish_resaults(name)
-starting_skipfish = threading.Thread(target=start_skipfish_get_resaults)
-#starting_skipfish.start() 
-#________________________________________________________Owasp_zap cli ____________
-zap_vulnerabilities ={
+        self.zap_vulnerabilities ={
 'Directory Browsing':0, 
 'Path Traversal':0,
 'Remote File Inclusion':0, 
@@ -246,121 +193,296 @@ zap_vulnerabilities ={
 'Cloud Metadata Potentially Exposed':0,
 'SOAP XML Injection':0,
 'Server Side Template Injection':0}
-#problem eno g3d yannalize mm fel passive attack haw site officel mnin tahna ajoutihem wchouf m3aha :
+        with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/nikto_vulnerability_tunning/nikto_tuning.json", 'r') as nikto_file:
+                 self.nikto_vulnerability= json.load(nikto_file)     
+        self.list_of_skipfish_issue=self.Type_of_issue.copy()
+#Nuclei Vulnerability configureation(1500 Template in nuclei_cve/cves.json)        
+        data = []
+        self.dater={}
+        with open("nuclei_cve/cves.json") as f:
+                for line in f:
+           # print(line)
+                    data.append(json.loads(line)) 
+                for i in data :
+                    self.dater[i['Info']['Name']]=0
+        
+    def configuiring_new_scan(self,name,url):
+        self.name=name
+        self.url=url
+       
+    def starting_all_scanner(self,name,url):
+       # global name ,url
+        self.name=name
+        self.url=url
+        #self.creat_directory(self.name,self.url)
+        #self.wapiti_Thread()
+#        starting_wapiti.start() 
+#        starting_skipfish.start() 
+#        starting_zap.start()
+#        checking_zap.start()
+#        starting_nuclei.start() 
+
+    def creat_directory(self):
+        print("[INFO] 		Creating Resaults Directory for each scanner")
+        
+        print("[location]	/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name)
+        try:
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name)
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"wapiti")
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"nuclei")
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"owaspzap")
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"skipfish")
+            os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"nikto")
+        except OSError as error:
+            print("Error creating The Resault folder foor {}: {}".format(self.name,error))
+    #to do : if this errour messege occured you need make new name because this file already exist wiche means you will have problem in skip fish probebly more.
+#__________________________________________Wapiti_________________________________________________________
+#""" 
+ #  def wapiti_Thread(self):
+  #      starting_wapiti = threading.Thread(target=self.start_wapiti)
+   #     starting_wapiti.start() """
+    def get_wapiti_resaults(self):   
+        f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json".format(self.name,self.name))
+        data = json.load(f)
+        wapiti_resaults=self.wapiti_vulnerabilities.copy()
+        for vul in data["vulnerabilities"]:
+    	    wapiti_resaults[vul]=len(data["vulnerabilities"][vul])
+        f.close()
+        return wapiti_resaults
+    
+    def start_wapiti(self):
+        print("[INFO] 		wapiti scan started:")
+        output = subprocess.run("wapiti -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 --flush-session".format(self.url,self.name,self.name), shell=True, capture_output=True)
+        print("[Finished]		wapiti Scan completed. ")    
+#	"""
+#    def start_wapiti_readReport():
+#        start_wapiti(self.url,self.name)
+#        wapiti_resaults= get_wapiti_resaults(name)
+#        print("[Result]______________________________WApiti Results:_________________________")
+#        print(wapiti_resaults)
+#		"""
+#___________________________________________SKIPFISH________________________________________
+    def start_skipfish(self):
+            print("[INFO] 		skipfish scan started:")
+            output = subprocess.run("skipfish -L -W- -e -v -u -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.name,self.name,self.url), shell=True, capture_output=True)
+            print("[finished]	skipfish scand completed. ")
+
+    def Check_all_folders(self,Dir):
+            dir =["{}/{}".format(Dir,name) for name in os.listdir("{}".format(Dir)) if os.path.isdir("{}/{}".format(Dir,name)) and name[0]=="c"]
+            self.list_of_dir.extend(dir)
+            for i in range(len(dir)):
+                   Check_all_folders(dir[i])
+    def add_issue(self,path):
+            self.list_of_skipfish_issue=self.Type_of_issue.copy()
+            with open("{}/issue_index.js".format(path), "r") as f:
+                  while True:
+                        line = f.readline()
+                        if not line:
+                            break
+                        x=line.find("type")
+                        if x!=-1:
+                             self.list_of_skipfish_issue[line[x+7:x+12]][1]=self.list_of_skipfish_issue[line[x+7:x+12]][1]+1
+    def get_skipfish_resaults(self):
+          self.Check_all_folders("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}".format(self.name,self.name))	
+
+          for i in range(len(self.list_of_dir)):
+               self.add_issue(list_of_dir[i])	
+          print("____________________________skipfish resaulet :___________________________")
+          for i in self.list_of_skipfish_issue:
+             if self.list_of_skipfish_issue[i][1] >0:
+                print(self.list_of_skipfish_issue[i][0]," : : ",self.list_of_skipfish_issue[i][1])
+    def start_skipfish_get_resaults(self):
+          self.list_of_skipfish_issue=self.Type_of_issue.copy()
+          start_skipfish(url,name)
+      
+          self.get_skipfish_resaults()
+    #starting_skipfish = threading.Thread(target=self.start_skipfish_get_resaults)
+    #starting_skipfish.start() 
+#________________________________________________________Owasp_zap cli ____________
+    def start_zap(self):
+             print("[INFO] 		zap server starting:")
+             output = subprocess.run("zap.sh -daemon -config api.key=mypass123 -port 8090 -host 0.0.0.0", shell=True, capture_output=True)
+
+    def check_for_zap(self):
+            output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
+            string=str(output1.stdout)    
+            while string[3]=="E":	
+               time.sleep(10)
+               output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
+               string=str(output1.stdout)    
+            else :
+                     apiKey = 'mypass123'
+                     zap = ZAPv2(apikey=apiKey, proxies={'http': 'http://127.0.0.1:8090', 'https': 'http://127.0.0.1:8090'})
+             #Disabling the passive scanner since we don't need them for now
+#             zap.pscan.set_enabled(False)
+                     zap.pscan.disable_all_scanners()
+#             # TODO: Disabling feew active scanner i don't need to check for their vilnerability
+                     zap.ascan.disable_scanners(ids=[6])#Path Traversal
+                     zap.ascan.disable_scanners(ids=[10045])#Source Code Disclosure - /WEB-INF folder
+                     zap.ascan.disable_scanners(ids=[20015])#Heartbleed OpenSSL Vulnerability
+                     zap.ascan.disable_scanners(ids=[20019])#External Redirect
+                     zap.ascan.disable_scanners(ids=[90024])#Generic Padding Oracl
+                     zap.ascan.disable_scanners(ids=[90034])#Cloud Metadata Potentially Exposed
+                     zap.ascan.disable_scanners(ids=[30001])#Buffer Overflow
+                     zap.ascan.disable_scanners(ids=[30002])# Format String Error
+             
+                     zap.ascan.disable_scanners(ids=[40008])#Parameter Tampering
+                     zap.ascan.disable_scanners(ids=[40028])#ELMAH Information Leak
+                     zap.ascan.disable_scanners(ids=[40029])# Trace.axd Information Leak
+                     zap.ascan.disable_scanners(ids=[40032]) #.htaccess Information Leak
+                     zap.ascan.disable_scanners(ids=[40034]) #.env Information Leak
+                     zap.ascan.disable_scanners(ids=[40035]) #Hidden File Finder
+                     zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
+             
+             
+             
+                     scanID = zap.spider.scan(self.url)
+#                     """while int(zap.spider.status(scanID)) < 100:
+#                         # Poll the status until it completes
+#                         print('Spider progress %: {}'.format(zap.spider.status(scanID)))
+#                         time.sleep(1)
+#                     """
+                     while int(zap.spider.status(scanID)) < 100:
+                         time.sleep(2)
+                     # Prints the URLs the spider has crawled
+                     #print('\n'.join(map(str, zap.spider.results(scanID))))
+                     # If required post process the spider results
+                     # TODO: Explore the ajax way 
+                     
+                     #scanID = zap.ajaxSpider.scan(url)
+                     #timeout = time.time() + 60*2   # 2 minutes from now
+                     # Loop until the ajax spider has finished or the timeout has exceeded
+                     #while zap.ajaxSpider.status == 'running':
+                     #    if time.time() > timeout:
+                     #        break
+                     #    time.sleep(2)
+                     #ajaxResults = zap.ajaxSpider.results(start=0, count=10)
+                     #passive attack check(officel site to integrate...)                   
+                     #active scan 
+                     #""""""
+                     # TODO : explore the app (Spider, etc) before using the Active Scan API, Refer the explore section
+                     scanID = zap.ascan.scan(self.url)
+                     while int(zap.ascan.status(scanID)) < 100:
+                         # Loop until the scanner has finished
+                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
+                         time.sleep(15)
+                     print('[finished] 		Zap scan completed')  
+                     with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(self.name,self.name), 'w') as convert_file:
+                          convert_file.write(json.dumps(zap.core.alerts(baseurl=self.url)))
+             
+    def owaspzap_get_resaults(self):
+                 zap_vulnerabilities_new=self.zap_vulnerabilities.copy()
+                 with open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json'.format(self.name,self.name), 'r') as read_file:
+                      myresault=json.load(read_file)              
+                      print("length:",len(myresault))
+                      for i in myresault:
+                           zap_vulnerabilities_new[i['alert']]=zap_vulnerabilities_new[i['alert']]+1
+                 print("[Result]__________________________Zap Results:_____________________________")
+                 print(zap_vulnerabilities_new)
+                 return zap_vulnerabilities_new
+    def start_get_zap(self):
+             #check_for_zap()
+             zap_vulnerabilities_new=owaspzap_get_resaults()
+     
+#starting_zap = threading.Thread(target=start_zap)
+#checking_zap= threading.Thread(target=start_get_zap)
+#starting_zap.start()
+#checking_zap.start()
+#_______________________________________________________________nikto ___________________________________________________________________________
+
+
+  
+    def start_nikto(self):
+         print("[INFO] 		Nikto scan Started:")
+         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json -F json -Tuning 9".format(self.url,self.name,self.name), shell=True, capture_output=True)
+         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json -F json -Tuning 4".format(self.url,self.name,self.name), shell=True, capture_output=True)
+#         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f.json -F json -Tuning f".format(url,name,name), shell=True, capture_output=True)
+         print("[finished] 		Nikto scan  completed")
+    
+    def get_nikto_vulnerability(self,path):
+        
+        with open("{}.json".format(path), 'r') as nikto_report_file:
+             nikto_report_vulnerability= json.load(nikto_report_file)
+             
+             for i in range(len(nikto_report_vulnerability['vulnerabilities'])):
+            #      print(nikto_report_vulnerability['vulnerabilities'][i]['id'])
+                  if nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XML injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number']+1
+
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['script_injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['sql information']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['sql information']['number']=self.nikto_vulnerability['nikto_vulnerability']['sql information']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['html injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['html injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['html injection']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']+1
+                  elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['ids']:
+                            self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']+1
+    def get_nikto_report(self):
+         get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9".format(self.name,self.name))         
+         get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4".format(self.name,self.name))
+#     get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f".format(name,name))
+         print("[Results]________________________________________Nikto Reporte:______________________________________________")
+         print("sql injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number'])
+         print("XML injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number'])
+         print("script_injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number'])
+         print("sql information possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql information']['number'])
+         print("html injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['html injection']['number'])
+         print("XSLT_Extensible Stylesheet Language Transformations injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
+         print("remote source injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number'])
+         print("XSS injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']) 
+         return self.nikto_vulnerability
+
+#starting_nikto = threading.Thread(target=start_nikto_get_report)
+#starting_nikto.start() 
+
+#______________________________________________________________nuclei _____________________________________________________________________________
+    def start_nuclei(self):
+         print("[INFO] 		Nuclei Scan started:")
+         output = subprocess.run("nuclei -u {} -tags cve -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json -json -duc -ni ".format(self.url,self.name,self.name), shell=True, capture_output=True)
+         print("[finished] 		Nuclei scan finished")
+    def list_the_Vuln_nuclei(self):
+        data = []
+        with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json".format(self.name,self.name)) as f:
+            for line in f:
+                data.append(json.loads(line)) 
+        for i in data :
+            self.dater[i['info']['name']]=self.dater[i['info']['name']]+1
+
+     
+    def my_filtering_function(self,pair):
+        key, value = pair
+        if value <= 0:
+            return False  # filter pair out of the dictionary
+        else:
+            return True  # keep pair in the filtered dictionary
+    def nuclei_report():
+               #start_nuclei()
+               list_the_Vuln_nuclei() 
+               filtered_grades = dict(filter(my_filtering_function, dater.items()))
+               print("[Resault]__________________________________Nuclei Resault:_________________________")
+               print(filtered_grades)    
+               return filtered_grades
+
+
+
+"""
+
+
+
+
 # https://www.zaproxy.org/docs/alerts/
 #this commented part is  using Zap-cli "but it seems that it's no longer supported so we gonna us the new api devolped officiely by owaspZap"
 #https://www.zaproxy.org/docs/api/ this is the api provided by the owasapzap officiel site <3 check it for more advance option "maybe in the future you would activate the passive scanners also"
-def start_zap():
-     print("[INFO] 		zap server starting:")
-     output = subprocess.run("zap.sh -daemon -config api.key=mypass123 -port 8090 -host 0.0.0.0", shell=True, capture_output=True)
      
-def check_for_zap():
-    output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
-    string=str(output1.stdout)    
-    while string[3]=="E":	
-       time.sleep(10)
-       output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
-       string=str(output1.stdout)    
-    else :
-             apiKey = 'mypass123'
-             zap = ZAPv2(apikey=apiKey, proxies={'http': 'http://127.0.0.1:8090', 'https': 'http://127.0.0.1:8090'})
-             #Disabling the passive scanner since we don't need them for now
-#             zap.pscan.set_enabled(False)
-             zap.pscan.disable_all_scanners()
-             # TODO: Disabling feew active scanner i don't need to check for their vilnerability
-             zap.ascan.disable_scanners(ids=[6])#Path Traversal
-             zap.ascan.disable_scanners(ids=[10045])#Source Code Disclosure - /WEB-INF folder
-             zap.ascan.disable_scanners(ids=[20015])#Heartbleed OpenSSL Vulnerability
-             zap.ascan.disable_scanners(ids=[20019])#External Redirect
-             zap.ascan.disable_scanners(ids=[90024])#Generic Padding Oracl
-             zap.ascan.disable_scanners(ids=[90034])#Cloud Metadata Potentially Exposed
-             zap.ascan.disable_scanners(ids=[30001])#Buffer Overflow
-             zap.ascan.disable_scanners(ids=[30002])# Format String Error
-             
-             zap.ascan.disable_scanners(ids=[40008])#Parameter Tampering
-             zap.ascan.disable_scanners(ids=[40028])#ELMAH Information Leak
-             zap.ascan.disable_scanners(ids=[40029])# Trace.axd Information Leak
-             zap.ascan.disable_scanners(ids=[40032]) #.htaccess Information Leak
-             zap.ascan.disable_scanners(ids=[40034]) #.env Information Leak
-             zap.ascan.disable_scanners(ids=[40035]) #Hidden File Finder
-             zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
-             
-             
-             
-             scanID = zap.spider.scan(url)
-             """while int(zap.spider.status(scanID)) < 100:
-                 # Poll the status until it completes
-                 print('Spider progress %: {}'.format(zap.spider.status(scanID)))
-                 time.sleep(1)
-             """
-             while int(zap.spider.status(scanID)) < 100:
-                 time.sleep(2)
-             # Prints the URLs the spider has crawled
-             #print('\n'.join(map(str, zap.spider.results(scanID))))
-             # If required post process the spider results
-             # TODO: Explore the ajax way 
-             
-             #scanID = zap.ajaxSpider.scan(url)
-             #timeout = time.time() + 60*2   # 2 minutes from now
-             # Loop until the ajax spider has finished or the timeout has exceeded
-             #while zap.ajaxSpider.status == 'running':
-             #    if time.time() > timeout:
-             #        break
-             #    time.sleep(2)
-             #ajaxResults = zap.ajaxSpider.results(start=0, count=10)
-             #passive attack
-             """
-             import time
-             from pprint import pprint
-
-
-             # TODO : explore the app (Spider, etc) before using the Passive Scan API, Refer the explore section for details
-             while int(zap.pscan.records_to_scan) > 0:
-                 # Loop until the passive scan has finished
-                 print('Records to passive scan : ' + zap.pscan.records_to_scan)
-                 time.sleep(2)
-
-             print('Passive Scan completed')
-
-             # Print Passive scan results/alerts
-             print('Hosts: {}'.format(', '.join(zap.core.hosts)))
-             print('Alerts: ')
-             pprint(zap.core.alerts())
-             """
-             #active scan 
-             #"""
-             # TODO : explore the app (Spider, etc) before using the Active Scan API, Refer the explore section
-             scanID = zap.ascan.scan(url)
-             while int(zap.ascan.status(scanID)) < 100:
-                 # Loop until the scanner has finished
-                 print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
-                 time.sleep(15)
-             print('[finished] 		Zap scan completed')  
-             with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(name,name), 'w') as convert_file:
-                  convert_file.write(json.dumps(zap.core.alerts(baseurl=url)))
-             
-def owaspzap_get_resaults(name):
-         zap_vulnerabilities_new=zap_vulnerabilities.copy()
-         with open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json'.format(name,name), 'r') as read_file:
-              myresault=json.load(read_file)              
-              print("length:",len(myresault))
-              for i in myresault:
-                   zap_vulnerabilities_new[i['alert']]=zap_vulnerabilities_new[i['alert']]+1
-         print("[Result]__________________________Zap Results:_____________________________")
-         print(zap_vulnerabilities_new)
-         return zap_vulnerabilities_new
-def start_get_zap():
-     #check_for_zap()
-     global zap_vulnerabilities_new
-     zap_vulnerabilities_new=owaspzap_get_resaults(name)
-     
-starting_zap = threading.Thread(target=start_zap)
-#starting_zap.start()
-checking_zap= threading.Thread(target=start_get_zap)
-checking_zap.start()
 
 #__________________________________________________________zap-cli___________________________________________
-"""
+""""""
 def check_for_zap2(): 
     output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
     string=str(output1.stdout)    
@@ -400,62 +522,8 @@ def  get_zap_resaults(name):
      return list_zap_vulnerabilities
 
 get_zap_resaults(name)
-"""
-#_______________________________________________________________nikto _______________
+""""""
 
-import json
-with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/nikto_vulnerability_tunning/nikto_tuning.json", 'r') as nikto_file:
-         nikto_vulnerability= json.load(nikto_file)     
-
-  
-def start_nikto(name,url):
-     print("[INFO] 		Nikto scan Started:")
-     output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json -F json -Tuning 9".format(url,name,name), shell=True, capture_output=True)
-     output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json -F json -Tuning 4".format(url,name,name), shell=True, capture_output=True)
-#     output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f.json -F json -Tuning f".format(url,name,name), shell=True, capture_output=True)
-     print("[finished] 		Nikto scan  completed")
-    
-def get_nikto_vulnerability(name):
-    global nikto_vulnerability
-    with open("{}.json".format(name), 'r') as nikto_report_file:
-         nikto_report_vulnerability= json.load(nikto_report_file)
-         
-         for i in range(len(nikto_report_vulnerability['vulnerabilities'])):
-        #      print(nikto_report_vulnerability['vulnerabilities'][i]['id'])
-              if nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['sql_injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']=nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['XML injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['XML injection']['number']=nikto_vulnerability['nikto_vulnerability']['XML injection']['number']+1
-
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['script_injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['script_injection']['number']=nikto_vulnerability['nikto_vulnerability']['script_injection']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['sql information']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['sql information']['number']=nikto_vulnerability['nikto_vulnerability']['sql information']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['html injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['html injection']['number']=nikto_vulnerability['nikto_vulnerability']['html injection']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']=nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['remote source injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']=nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']+1
-              elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in nikto_vulnerability['nikto_vulnerability']['XSS injection']['ids']:
-                        nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']=nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']+1
-def start_nikto_get_report():
-     start_nikto(name,url)
-     get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9".format(name,name))         
-     get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4".format(name,name))
-#     get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f".format(name,name))
-     print("[Results]________________________________________Nikto Reporte:______________________________________________")
-     print("sql injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['sql_injection']['number'])
-     print("XML injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['XML injection']['number'])
-     print("script_injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['script_injection']['number'])
-     print("sql information possiiblity:",nikto_vulnerability['nikto_vulnerability']['sql information']['number'])
-     print("html injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['html injection']['number'])
-     print("XSLT_Extensible Stylesheet Language Transformations injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
-     print("remote source injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['remote source injection']['number'])
-     print("XSS injection possiiblity:",nikto_vulnerability['nikto_vulnerability']['XSS injection']['number'])
-
-starting_nikto = threading.Thread(target=start_nikto_get_report)
-#starting_nikto.start() 
 
 #______________________________________________________________nuclei _____________________
 
@@ -474,33 +542,6 @@ def start_categorise_nuclei_vuln_cves():
     return dater
 dater=start_categorise_nuclei_vuln_cves()
 
-def start_nuclei(name,url):
-     print("[INFO] 		Nuclei Scan started:")
-     output = subprocess.run("nuclei -u {} -tags cve -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json -json -duc -ni ".format(url,name,name), shell=True, capture_output=True)
-     print("[finished] 		Nuclei scan finished")
-def list_the_Vuln_nuclei(name):
-    data = []
-    with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json".format(name,name)) as f:
-        for line in f:
-            data.append(json.loads(line)) 
-    for i in data :
-        dater[i['info']['name']]=dater[i['info']['name']]+1
 
-     
-def my_filtering_function(pair):
-    key, value = pair
-    if value <= 0:
-        return False  # filter pair out of the dictionary
-    else:
-        return True  # keep pair in the filtered dictionary
-def start_nuclei_and_get():
-           #start_nuclei(name,url)
-           list_the_Vuln_nuclei(name) 
-           global filtered_grades 
-           filtered_grades = dict(filter(my_filtering_function, dater.items()))
-           print("[Resault]__________________________________Nuclei Resault:_________________________")
-           print(filtered_grades)
 
-starting_nuclei = threading.Thread(target=start_nuclei_and_get)
-#starting_nuclei.start() 
-
+   """
