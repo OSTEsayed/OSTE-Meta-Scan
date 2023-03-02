@@ -55,26 +55,38 @@ class start_Window(customtkinter.CTkToplevel):
             app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP server started", tags=None)
             starting_zap_server = threading.Thread(target=new_scan.start_zap)
             starting_zap_server.start()
-            app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP Scanning started", tags=None)            
+#            app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP Scanning started", tags=None)            
             starting_zap= threading.Thread(target=new_scan.check_for_zap)
-            starting_zap.start()
+            #starting_zap.start()
             app.log_textbox.insert(tkinter.END, "\n [INFO] 		NIKTO Scanning started", tags=None)            
             starting_nikto = threading.Thread(target=new_scan.start_nikto)
             starting_nikto.start() 
-            app.log_textbox.insert(tkinter.END, "\n [INFO] 		Nuclei Scanning started", tags=None)            
+#            app.log_textbox.insert(tkinter.END, "\n [INFO] 		Nuclei Scanning started", tags=None)            
             starting_nuclei = threading.Thread(target=new_scan.start_nuclei)
-            starting_nuclei.start() 
-
-            CHECKER = threading.Thread(target=self.check_for_finished,args=(starting_zap,starting_nikto,starting_nuclei,starting_wapiti,starting_skipfish))
+            #starting_nuclei.start() 
+            CHECKER = threading.Thread(target=self.check_for_finished,args=(starting_zap,starting_nikto,starting_nuclei,starting_wapiti,starting_skipfish,self.target_name.get()))
             CHECKER.start() 
 
 #            new_scan.starting_all_scanner(self.target_name.get(),self.target_url.get())
-    def check_for_finished(self,a,b,c,d,e):
-                zap_statu,nikto_statu,nuclei_statu,wapiti_statu,skipfish_statu="scanning","scanning","scanning","scanning","scanning"
-                number_scaner=5
+    def check_for_finished(self,a,b,c,d,e,name):
+                zap_statu,nikto_statu,nuclei_statu,wapiti_statu,skipfish_statu="notscanning","scanning","notscanning","scanning","scanning"
+                zaper,nucleir="notyet","notyet"
+                number_scaner=3 
                 time.sleep(5)
                 self.destroy()
                 while number_scaner>0:
+                  time.sleep(5)
+                  if zaper=="lunch":
+                      app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP Scanning started", tags=None)           
+                      a.start()
+                      zap_statu="scanning"
+                      zaper="yet"
+                  if nucleir=="lunch":
+                      app.log_textbox.insert(tkinter.END, "\n [INFO] 		Nuclei Scanning started", tags=None)            
+                      c.start()
+                      nuclei_statu="scanning"
+                      nucleir="yet"
+                      time.sleep(1)                      
                   if zap_statu=="scanning":
                           if a.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished] 		OWASP ZAP Scanning Finished", tags=None)            
@@ -100,8 +112,26 @@ class start_Window(customtkinter.CTkToplevel):
                               app.log_textbox.insert(tkinter.END, "\n [finished] 		SKIPFISH Scanning Finished", tags=None)            
                               skipfish_statu="finished"
                               number_scaner-=1  
-                  time.sleep(5)
-    
+                  if number_scaner==0 and zaper=="notyet":
+                     number_scaner=2
+                     zaper="lunch"
+                     nucleir="lunch"
+                  
+
+                app.Load_resaults(name)
+
+
+
+
+
+
+
+
+
+
+
+
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -123,7 +153,7 @@ class App(customtkinter.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="Start New Scan",state="disabled")
         self.startnewscan_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event,text="Load old Results")
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=lambda:self.Load_resaults("skip_wapiti_nikto_zap_nuclei"),text="Load old Results")
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
         self.chec_for_scanner_sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.chec_for_scanner,text="check Scanners")
         self.chec_for_scanner_sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
@@ -163,12 +193,219 @@ class App(customtkinter.CTk):
         self.results_tabview.add("nikto")
         self.results_tabview.add("OWASP zap")
         self.results_tabview.add("Nuclei")
+        #our resault tab view:
         self.label_1 = customtkinter.CTkLabel(self.results_tabview.tab("Our Resault"),text="Resault Table:", justify=customtkinter.CENTER)
         self.label_1.pack(pady=0, padx=0)
         
         
-        self.my_frame = MyFrame(master=self.results_tabview.tab("Our Resault"))
+        self.my_frame = MyFrame_My_Result(master=self.results_tabview.tab("Our Resault"))
         self.my_frame.pack(fill="both",padx=0,pady=0,expand=True)        
+        
+        #wapiti Resault Tab View:
+        self.label_3 = customtkinter.CTkLabel(self.results_tabview.tab("wapiti"),text="Resault Table:", justify=customtkinter.CENTER)
+        self.label_3.pack(pady=0, padx=0)
+        self.my_frameWapiti = MyFrame_My_wapiti(master=self.results_tabview.tab("wapiti"))
+        self.my_frameWapiti.pack(fill="both",padx=0,pady=0,expand=True)        
+        
+    def print_wapiti_Result(self,name):
+            new_scaner=OSTEscaner.scan()
+            new_scaner.configuiring_new_scan(name)
+            number,detaille =new_scaner.get_wapiti_resaults()
+            nuumeb=1
+            if number['Blind SQL Injection'] > 0:
+                   self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+number['Blind SQL Injection'])
+                   if "Wapiti" not in self.my_frame.vul_label[1][2].cget("text"):
+                        if self.my_frame.vul_label[1][2].cget("text") =="None": self.my_frame.vul_label[1][2].configure(text="")
+                        self.my_frame.vul_label[1][2].configure(text=self.my_frame.vul_label[1][2].cget("text")+" Wapiti \n")
+            if number['SQL Injection'] > 0:
+                   self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+number['SQL Injection'])
+                   if "Wapiti" not in self.my_frame.vul_label[0][2].cget("text"):
+                        if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
+                        self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" Wapiti \n")
+            if number['Cross Site Scripting'] > 0:
+                   self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+number['Cross Site Scripting'])
+                   if "Wapiti" not in self.my_frame.vul_label[2][2].cget("text"):
+                        if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
+                        self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" Wapiti \n")
+            if number['XML External Entity'] > 0:
+                   self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+number['XML External Entity'])
+                   if "Wapiti" not in self.my_frame.vul_label[6][2].cget("text"):
+                        if self.my_frame.vul_label[6][2].cget("text") =="None": self.my_frame.vul_label[6][2].configure(text="")
+                        self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+" Wapiti \n")                        
+            if number['Command execution'] > 0:
+                   self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+number['Command execution'])
+                   if "Wapiti" not in self.my_frame.vul_label[7][2].cget("text"):
+                        if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
+                        self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+" Wapiti \n")
+            if number['CRLF Injection'] > 0:
+                   self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+number['CRLF Injection'])
+                   if "Wapiti" not in self.my_frame.vul_label[11][2].cget("text"):
+                        if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
+                        self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+" Wapiti \n")
+            
+            
+            
+            #Print the resault in the wapiti tAB view:4
+            xer="---------------------------------------------------------------------------------------------"
+            for i in detaille: 
+               if len(detaille[i])>0:
+                  for j in detaille[i]:
+                        self.vul=customtkinter.CTkLabel(self.my_frameWapiti,text=xer)
+                        self.vul.grid(row=nuumeb, column=0,columnspan=4)
+                        nuumeb=nuumeb+1
+                        self.vul=customtkinter.CTkLabel(self.my_frameWapiti,text=i,width=150)
+                        self.vul.grid(row=nuumeb, column=0)
+                        self.http=customtkinter.CTkLabel(self.my_frameWapiti,text=j["http_request"],width=150)
+                        self.http.grid(row=nuumeb, column=1)
+                        self.info=customtkinter.CTkLabel(self.my_frameWapiti,text=j["info"],width=150)
+                        self.info.grid(row=nuumeb, column=2)
+                        nuumeb=nuumeb+1
+
+    def print_skipfich_Result(self,name):
+            new_scaner=OSTEscaner.scan()
+            new_scaner.configuiring_new_scan(name)
+            all_resaults =new_scaner.get_skipfish_resaults()   
+            for i in all_resaults:
+                 if all_resaults[i][1] >0:
+                      if "SQL query or similar syntax in parameters" in all_resaults[i][0] :
+                             self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[0][2].cget("text"):
+                                 if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
+                                 self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+"SkipFish \n")           
+                      elif "XSS vector" in all_resaults[i][0] :
+                             self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[2][2].cget("text"):
+                                 if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
+                                 self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+"SkipFish \n")           
+                      elif "Shell injection" in all_resaults[i][0] :
+                             self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[3][2].cget("text"):
+                                 if self.my_frame.vul_label[3][2].cget("text") =="None": self.my_frame.vul_label[3][2].configure(text="")
+                                 self.my_frame.vul_label[3][2].configure(text=self.my_frame.vul_label[3][2].cget("text")+"SkipFish \n")                   
+                      elif "XML injection" in all_resaults[i][0] :
+                             self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[5][2].cget("text"):
+                                 if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
+                                 self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+"SkipFish \n")           
+                      elif "HTTP response header splitting" in all_resaults[i][0] :
+                             self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[11][2].cget("text"):
+                                 if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
+                                 self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+"SkipFish \n")           
+                      elif "OGNL-like parameter behavior" in all_resaults[i][0] :
+                             self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[12][2].cget("text"):
+                                 if self.my_frame.vul_label[12][2].cget("text") =="None": self.my_frame.vul_label[12][2].configure(text="")
+                                 self.my_frame.vul_label[12][2].configure(text=self.my_frame.vul_label[12][2].cget("text")+"SkipFish \n")           
+                      elif "HTTP header injection" in all_resaults[i][0] :
+                             self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+all_resaults[i][1])
+                             if "SkipFish" not in self.my_frame.vul_label[13][2].cget("text"):
+                                 if self.my_frame.vul_label[13][2].cget("text") =="None": self.my_frame.vul_label[13][2].configure(text="")
+                                 self.my_frame.vul_label[13][2].configure(text=self.my_frame.vul_label[13][2].cget("text")+"SkipFish \n")           
+                  
+                  
+                  #TODOOO ::::: PRINT RESAULT In SKIP FIsh Tab View like wapiti (bring the requast tags from resaults (modifie ostescanner code ,major work needed aghhh))
+                  
+    def print_Nikto_Result(self,name):
+            new_scaner=OSTEscaner.scan()
+            new_scaner.configuiring_new_scan(name)
+            Nikto_resaults =new_scaner.get_nikto_report()    
+            if Nikto_resaults['nikto_vulnerability']['sql_injection']['number'] >0:
+                     self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[0][2].cget("text"):
+                         if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
+                         self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+"Nikto \n")                       
+            
+            if Nikto_resaults['nikto_vulnerability']['XSS injection']['number'] >0:
+                     self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[2][2].cget("text"):
+                         if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
+                         self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+"Nikto \n")                       
+                       
+            if Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'] >0:
+                     self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[4][2].cget("text"):
+                         if self.my_frame.vul_label[4][2].cget("text") =="None": self.my_frame.vul_label[4][2].configure(text="")
+                         self.my_frame.vul_label[4][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+"Nikto \n")                       
+
+            if Nikto_resaults['nikto_vulnerability']['XML injection']['number'] >0:
+                     self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XML injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[5][2].cget("text"):
+                         if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
+                         self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+"Nikto \n")                       
+
+            if Nikto_resaults['nikto_vulnerability']['remote source injection']['number'] >0:
+                     self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[7][2].cget("text"):
+                         if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
+                         self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+"Nikto \n")                       
+
+            if Nikto_resaults['nikto_vulnerability']['html injection']['number'] >0:
+                     self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['html injection']['number'])
+                     if "Nikto" not in self.my_frame.vul_label[9][2].cget("text"):
+                         if self.my_frame.vul_label[9][2].cget("text") =="None": self.my_frame.vul_label[9][2].configure(text="")
+                         self.my_frame.vul_label[9][2].configure(text=self.my_frame.vul_label[9][2].cget("text")+"Nikto \n")                       
+
+
+               #TODO Affichier raport Fel Nikto Tab  view ,(Rouh Lel  La Rapport tjib mno lurl wl method  wl msg )
+          
+    def print_zap_Result(self,name):                   #todo eglebha condition if >0 bh twli hamra (aaaghhhh) Wzid partye ta tzid esm scaner fki ydetecter
+            new_scaner=OSTEscaner.scan()
+            new_scaner.configuiring_new_scan(name)
+            zap_resaults =new_scaner.owaspzap_get_resaults()               
+#            print(zap_resaults)
+            if zap_resaults["SQL Injection"]+zap_resaults["SQL Injection - MySQL"]+zap_resaults["SQL Injection - Hypersonic SQL"]+zap_resaults["SQL Injection - Oracle"]+zap_resaults["SQL Injection - PostgreSQL"]+zap_resaults["SQL Injection - SQLite"]+zap_resaults["SQL Injection - MsSQL"]  > 0 :
+                 self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+zap_resaults["SQL Injection"]+zap_resaults["SQL Injection - MySQL"]+zap_resaults["SQL Injection - Hypersonic SQL"]+zap_resaults["SQL Injection - Oracle"]+zap_resaults["SQL Injection - PostgreSQL"]+zap_resaults["SQL Injection - SQLite"]+zap_resaults["SQL Injection - MsSQL"])
+            if zap_resaults["Cross Site Scripting (Reflected)"]+zap_resaults["Cross Site Scripting (Persistent)"]+zap_resaults["Cross Site Scripting (Persistent) - Prime"]+zap_resaults["Cross Site Scripting (Persistent) - Spider"]+zap_resaults["Cross Site Scripting (DOM Based)"] > 0 :     
+                 self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+zap_resaults["Cross Site Scripting (Reflected)"]+zap_resaults["Cross Site Scripting (Persistent)"]+zap_resaults["Cross Site Scripting (Persistent) - Prime"]+zap_resaults["Cross Site Scripting (Persistent) - Spider"]+zap_resaults["Cross Site Scripting (DOM Based)"])
+            if zap_resaults["XSLT Injection"] > 0:
+                  self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+zap_resaults["XSLT Injection"])
+            if zap_resaults["SOAP XML Injection"] >0 :
+                  self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+zap_resaults["SOAP XML Injection"])
+            if zap_resaults["XML External Entity Attack"] >0 :      
+                  self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+zap_resaults["XML External Entity Attack"])
+            if zap_resaults["Server Side Code Injection"]+zap_resaults["Server Side Code Injection - PHP Code Injection"]+zap_resaults["Server Side Code Injection - ASP Code Injection"]+zap_resaults["Remote Code Execution - CVE-2012-1823"] > 0 :
+                  self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+zap_resaults["Server Side Code Injection"]+zap_resaults["Server Side Code Injection - PHP Code Injection"]+zap_resaults["Server Side Code Injection - ASP Code Injection"]+zap_resaults["Remote Code Execution - CVE-2012-1823"])
+            if zap_resaults["Remote OS Command Injection"] > 0 :
+                  self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+zap_resaults["Remote OS Command Injection"])
+            if zap_resaults["Server Side Template Injection"] > 0 :
+                  self.my_frame.vul_label[10][1].configure(text_color="red",text=int(self.my_frame.vul_label[10][1].cget("text"))+zap_resaults["Server Side Template Injection"] )           
+            if zap_resaults["CRLF Injection"] > 0:
+                  self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+zap_resaults["CRLF Injection"])
+            
+            #TODO Affichier raport Fel Zap Tab  view ,(Rouh Lel  La Rapport tjib mno des info khlaf )
+            
+           
+    def print_nuclei_Result(self,name):                   #todo eglebha condition if >0 bh twli hamra (aaaghhhh) Wzid partye ta tzid esm scaner fki ydetecter
+            new_scaner=OSTEscaner.scan()
+            new_scaner.configuiring_new_scan(name)
+            nuclei_resaults =new_scaner.nuclei_report()               
+            for i in nuclei_resaults:
+                if "sql" in i.lower():
+                   self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+1)            
+                elif "blind sql" in i.lower():
+                   self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+1)
+                elif "cross site scripting" in i.lower() or "xss" in i.lower():
+                   self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+1)
+                elif "shell" in i.lower():                
+                   self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+1)
+                elif "xml external entity" in i.lower():                
+                   self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+1)
+                elif "xml entity" in i.lower():                
+                   self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+1)
+                elif "code" in i.lower():                
+                   self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+1)
+                elif "command" in i.lower():                
+                   self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+1)
+                elif "html" in i.lower():                
+                   self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+1)
+                elif "crlf" in i.lower():                
+                   self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+1)
+                elif "ognl" in i.lower():                
+                   self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+1)
+                elif "host header" in i.lower():                
+                   self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+1)
+
     def chec_for_scanner(self):
             new_checker= OSTEscaner.scan_checker()
             Resault=new_checker.check()
@@ -195,28 +432,100 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
+#        customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
 
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
-    def sidebar_button_event(self):
+    def Load_resaults(self,name):
+        for i in self.my_frame.vul_label:
+            i[1].configure(text=int(0))
+        self.print_wapiti_Result(name)
+        self.print_skipfich_Result(name) 
+        self.print_Nikto_Result(name)
+        self.print_zap_Result(name)
         print("sidebar_button click")
 
-class MyFrame(customtkinter.CTkScrollableFrame):
+class MyFrame_My_wapiti(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=150)
 
-        # add widgets onto the frame...
-        self.label = customtkinter.CTkLabel(self,text="Vulnerability",width=250)
-        self.label.grid(row=0, column=0)
+        self.label.grid(row=0, column=0,padx=3,pady=3)
+        self.label1 = customtkinter.CTkLabel(self,text="http_request",width=150)
+        self.label1.grid(row=0, column=1,padx=3,pady=3)
+        self.label2 = customtkinter.CTkLabel(self,text="info",width=150)
+        self.label2.grid(row=0, column=2,padx=3,pady=3)
+#        self.label3 = customtkinter.CTkLabel(self,text="Action",width=80)
+#        self.label3.grid(row=0, column=3,padx=3,pady=3,sticky="nsew")    
+        
+        
+
+
+class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        # add widgets onto the frame...borderwidth
+        self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=250)
+
+        self.label.grid(row=0, column=0,padx=3,pady=3)
         self.label1 = customtkinter.CTkLabel(self,text="Exist",width=50)
-        self.label1.grid(row=0, column=1)
+        self.label1.grid(row=0, column=1,padx=3,pady=3)
         self.label2 = customtkinter.CTkLabel(self,text="Scanners",width=150)
-        self.label2.grid(row=0, column=2)
-        self.label3 = customtkinter.CTkLabel(self,text="Action",width=150)
-        self.label3.grid(row=0, column=3,sticky="N")    
+        self.label2.grid(row=0, column=2,padx=3,pady=3)
+        self.label3 = customtkinter.CTkLabel(self,text="Action",width=80)
+        self.label3.grid(row=0, column=3,padx=3,pady=3,sticky="nsew")    
+        self.vul_label=[]
+        xer="_______________________________________________________________________________________________"
+        for i in range(14):
+            temp=[]
+            self.labeltemp=customtkinter.CTkLabel(self,text=xer,fg_color="transparent")
+            self.labeltemp.grid(row=i+1, column=0,columnspan=4,pady=(40,0))
 
+            self.labeltemp=customtkinter.CTkLabel(self,text=" injection:",width=250,fg_color="transparent")
+            self.labeltemp.grid(row=i+1, column=0)
+            self.labeltemp1=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp1.grid(row=i+1, column=1)
+            self.labeltemp2=customtkinter.CTkLabel(self,text="None",width=120,fg_color="transparent")
+            self.labeltemp2.grid(row=i+1, column=2)
+            self.but=customtkinter.CTkButton(self,text="check" ,state="disabled",width=80 , height=35)
+            self.but.grid(row=i+1, column=3,padx=3,pady=(5,30),sticky="nsew")
+            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but])
+
+        self.vul_label[0][0].configure(text="SQL injection:")
+        self.vul_label[0][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        
+        self.vul_label[1][0].configure(text="Blind SQL injection:")
+        self.vul_label[1][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[2][0].configure(text="Cross Site Scripting injection:")
+        self.vul_label[2][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[3][0].configure(text="Shell injection:")
+        self.vul_label[3][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[4][0].configure(text="XSLT injection:")
+        self.vul_label[4][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[5][0].configure(text="XML injection:")
+        self.vul_label[5][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[6][0].configure(text="XML external entities (XXE) :")
+        self.vul_label[6][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[7][0].configure(text="code injection:")
+        self.vul_label[7][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[8][0].configure(text="OS command injection:")
+        self.vul_label[8][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[9][0].configure(text="html injection:")
+        self.vul_label[9][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[10][0].configure(text="Template injection:")
+        self.vul_label[10][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[11][0].configure(text="CRLF injection:")
+        self.vul_label[11][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[12][0].configure(text="OGNL injection:")
+        self.vul_label[12][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+        self.vul_label[13][0].configure(text="Host Header injection:")
+        self.vul_label[13][3].configure(command=lambda:self.getresault(self.vul_label[0][0]))
+
+    def getresault(self,injectiontype):
+         print(injectiontype)
+                 
 if __name__ == "__main__":
     app = App()
     app.mainloop()

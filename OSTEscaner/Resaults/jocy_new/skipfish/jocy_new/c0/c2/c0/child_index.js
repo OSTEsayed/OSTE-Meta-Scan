@@ -1,6 +1,0 @@
-var child = [
-  { 'dupe': false, 'type': 4, 'name': 'disable', 'dir': 'c0', 'linked': 1, 'url': 'http://localhost:3000/rest/2fa/disable/', 'fetched': true, 'code': 500, 'len': 3968, 'decl_mime': 'text/html', 'sniff_mime': '[none]', 'cset': 'utf-8', 'missing': false, 'csens': false, 'child_cnt': 0, 'issue_cnt': [ 2, 0, 0, 0, 0 ], 'sig': 0xfff9861c },
-  { 'dupe': true, 'type': 4, 'name': 'setup', 'dir': 'c1', 'linked': 1, 'url': 'http://localhost:3000/rest/2fa/setup/', 'fetched': true, 'code': 500, 'len': 3964, 'decl_mime': 'text/html', 'sniff_mime': '[none]', 'cset': 'utf-8', 'missing': false, 'csens': false, 'child_cnt': 0, 'issue_cnt': [ 0, 0, 0, 0, 0 ], 'sig': 0xfff9861c },
-  { 'dupe': false, 'type': 4, 'name': 'status', 'dir': 'c2', 'linked': 1, 'url': 'http://localhost:3000/rest/2fa/status/', 'fetched': true, 'code': 401, 'len': 972, 'decl_mime': 'text/html', 'sniff_mime': 'text/html', 'cset': 'utf-8', 'missing': false, 'csens': false, 'child_cnt': 0, 'issue_cnt': [ 3, 0, 0, 0, 0 ], 'sig': 0xfff8196f },
-  { 'dupe': true, 'type': 4, 'name': 'verify', 'dir': 'c3', 'linked': 1, 'url': 'http://localhost:3000/rest/2fa/verify/', 'fetched': true, 'code': 500, 'len': 3966, 'decl_mime': 'text/html', 'sniff_mime': '[none]', 'cset': 'utf-8', 'missing': false, 'csens': false, 'child_cnt': 0, 'issue_cnt': [ 0, 0, 0, 0, 0 ], 'sig': 0xfff9861c }
-];

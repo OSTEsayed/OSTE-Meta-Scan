@@ -206,7 +206,7 @@ class scan():
                 for i in data :
                     self.dater[i['Info']['Name']]=0
         
-    def configuiring_new_scan(self,name,url):
+    def configuiring_new_scan(self,name,url=None):
         self.name=name
         self.url=url
        
@@ -245,10 +245,13 @@ class scan():
         f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json".format(self.name,self.name))
         data = json.load(f)
         wapiti_resaults=self.wapiti_vulnerabilities.copy()
+        printedtypes={}
+        
         for vul in data["vulnerabilities"]:
-    	    wapiti_resaults[vul]=len(data["vulnerabilities"][vul])
+            printedtypes[vul]=data["vulnerabilities"][vul]
+            wapiti_resaults[vul]=len(data["vulnerabilities"][vul])
         f.close()
-        return wapiti_resaults
+        return wapiti_resaults,printedtypes
     
     def start_wapiti(self):
         print("[INFO] 		wapiti scan started:")
@@ -271,7 +274,7 @@ class scan():
             dir =["{}/{}".format(Dir,name) for name in os.listdir("{}".format(Dir)) if os.path.isdir("{}/{}".format(Dir,name)) and name[0]=="c"]
             self.list_of_dir.extend(dir)
             for i in range(len(dir)):
-                   Check_all_folders(dir[i])
+                   self.Check_all_folders(dir[i])
     def add_issue(self,path):
             self.list_of_skipfish_issue=self.Type_of_issue.copy()
             with open("{}/issue_index.js".format(path), "r") as f:
@@ -286,11 +289,12 @@ class scan():
           self.Check_all_folders("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}".format(self.name,self.name))	
 
           for i in range(len(self.list_of_dir)):
-               self.add_issue(list_of_dir[i])	
+               self.add_issue(self.list_of_dir[i])	
           print("____________________________skipfish resaulet :___________________________")
-          for i in self.list_of_skipfish_issue:
-             if self.list_of_skipfish_issue[i][1] >0:
-                print(self.list_of_skipfish_issue[i][0]," : : ",self.list_of_skipfish_issue[i][1])
+         # for i in self.list_of_skipfish_issue:
+          #   if self.list_of_skipfish_issue[i][1] >0:
+           #     print(self.list_of_skipfish_issue[i][0]," : : ",self.list_of_skipfish_issue[i][1])
+          return self.list_of_skipfish_issue
     def start_skipfish_get_resaults(self):
           self.list_of_skipfish_issue=self.Type_of_issue.copy()
           start_skipfish(url,name)
@@ -378,7 +382,7 @@ class scan():
                       for i in myresault:
                            zap_vulnerabilities_new[i['alert']]=zap_vulnerabilities_new[i['alert']]+1
                  print("[Result]__________________________Zap Results:_____________________________")
-                 print(zap_vulnerabilities_new)
+                 #print(zap_vulnerabilities_new)
                  return zap_vulnerabilities_new
     def start_get_zap(self):
              #check_for_zap()
@@ -424,18 +428,18 @@ class scan():
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']+1
     def get_nikto_report(self):
-         get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9".format(self.name,self.name))         
-         get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4".format(self.name,self.name))
+         self.get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9".format(self.name,self.name))         
+         self.get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4".format(self.name,self.name))
 #     get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f".format(name,name))
-         print("[Results]________________________________________Nikto Reporte:______________________________________________")
-         print("sql injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number'])
-         print("XML injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number'])
-         print("script_injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number'])
-         print("sql information possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql information']['number'])
-         print("html injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['html injection']['number'])
-         print("XSLT_Extensible Stylesheet Language Transformations injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
-         print("remote source injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number'])
-         print("XSS injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']) 
+         #print("[Results]________________________________________Nikto Reporte:______________________________________________")
+         #print("sql injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number'])
+         #print("XML injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number'])
+         #print("script_injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number'])
+         #print("sql information possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['sql information']['number'])
+         #print("html injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['html injection']['number'])
+         #print("XSLT_Extensible Stylesheet Language Transformations injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
+         #print("remote source injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number'])
+         #print("XSS injection possiiblity:",self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']) 
          return self.nikto_vulnerability
 
 #starting_nikto = threading.Thread(target=start_nikto_get_report)
@@ -448,12 +452,13 @@ class scan():
          print("[finished] 		Nuclei scan finished")
     def list_the_Vuln_nuclei(self):
         data = []
+        newdater=self.dater.copy()
         with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json".format(self.name,self.name)) as f:
             for line in f:
                 data.append(json.loads(line)) 
         for i in data :
-            self.dater[i['info']['name']]=self.dater[i['info']['name']]+1
-
+            newdater[i['info']['name']]=newdater[i['info']['name']]+1
+        return newdater
      
     def my_filtering_function(self,pair):
         key, value = pair
@@ -463,8 +468,8 @@ class scan():
             return True  # keep pair in the filtered dictionary
     def nuclei_report():
                #start_nuclei()
-               list_the_Vuln_nuclei() 
-               filtered_grades = dict(filter(my_filtering_function, dater.items()))
+               newdater=list_the_Vuln_nuclei() 
+               filtered_grades = dict(filter(my_filtering_function, newdater.items()))
                print("[Resault]__________________________________Nuclei Resault:_________________________")
                print(filtered_grades)    
                return filtered_grades
