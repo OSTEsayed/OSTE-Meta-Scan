@@ -60,139 +60,141 @@ class scan():
         self.list_of_dir=[]             #skipfish resault dirs 
         self.Type_of_issue={
 
-  "10101": ["SSL certificate issuer information",0],
-  "10201": ["New HTTP cookie added",0],
-  "10202": ["New 'Server' header value seen",0],
-  "10203": ["New 'Via' header value seen",0],
-  "10204": ["New 'X-*' header value seen",0],
-  "10205": ["New 404 signature seen",0],
+  "10101": ["SSL certificate issuer information",0,[]],
+  "10201": ["New HTTP cookie added",0,[]],
+  "10202": ["New 'Server' header value seen",0,[]],
+  "10203": ["New 'Via' header value seen",0,[]],
+  "10204": ["New 'X-*' header value seen",0,[]],
+  "10205": ["New 404 signature seen",0,[]],
 
-  "10401": ["Resource not directly accessible",0],
-  "10402": ["HTTP authentication required",0],
-  "10403": ["Server error triggered",0],
-  "10404": ["Directory listing enabled",0],
-  "10405": ["Hidden files / directories",0],
+  "10401": ["Resource not directly accessible",0,[]],
+  "10402": ["HTTP authentication required",0,[]],
+  "10403": ["Server error triggered",0,[]],
+  "10404": ["Directory listing enabled",0,[]],
+  "10405": ["Hidden files / directories",0,[]],
 
-  "10501": ["All external links",0],
-  "10502": ["External URL redirector",0],
-  "10503": ["All e-mail addresses",0],
-  "10504": ["Links to unknown protocols",0],
-  "10505": ["Unknown form field (can't autocomplete)",0],
-  "10601": ["HTML form (not classified otherwise)",0],
-  "10602": ["Password entry form - consider brute-force",0],
-  "10603": ["File upload form",0],
-  "10701": ["User-supplied link rendered on a page",0],
-  "10801": ["Incorrect or missing MIME type (low risk)",0],
-  "10802": ["Generic MIME used (low risk)",0],
-  "10803": ["Incorrect or missing charset (low risk)",0],
-  "10804": ["Conflicting MIME / charset info (low risk)",0],
-  "10901": ["Numerical filename - consider enumerating",0],
-  "10902": ["OGNL-like parameter behavior",0],
-  "10909": ["Signature match (informational)",0],
+  "10501": ["All external links",0,[]],
+  "10502": ["External URL redirector",0,[]],
+  "10503": ["All e-mail addresses",0,[]],
+  "10504": ["Links to unknown protocols",0,[]],
+  "10505": ["Unknown form field (can't autocomplete)",0,[]],
+  "10601": ["HTML form (not classified otherwise)",0,[]],
+  "10602": ["Password entry form - consider brute-force",0,[]],
+  "10603": ["File upload form",0,[]],
+  "10701": ["User-supplied link rendered on a page",0,[]],
+  "10801": ["Incorrect or missing MIME type (low risk)",0,[]],
+  "10802": ["Generic MIME used (low risk)",0,[]],
+  "10803": ["Incorrect or missing charset (low risk)",0,[]],
+  "10804": ["Conflicting MIME / charset info (low risk)",0,[]],
+  "10901": ["Numerical filename - consider enumerating",0,[]],
+  "10902": ["OGNL-like parameter behavior",0,[]],
+  "10909": ["Signature match (informational)",0,[]],
 
-  "20101": ["Resource fetch failed",0],
-  "20102": ["Limits exceeded, fetch suppressed",0],
-  "20201": ["Directory behavior checks failed (no brute force)",0],
-  "20202": ["Parent behavior checks failed (no brute force)",0],
-  "20203": ["IPS filtering enabled",0],
-  "20204": ["IPS filtering disabled again",0],
-  "20205": ["Response varies randomly, skipping checks",0],
-  "20301": ["Node should be a directory, detection error?",0],
+  "20101": ["Resource fetch failed",0,[]],
+  "20102": ["Limits exceeded, fetch suppressed",0,[]],
+  "20201": ["Directory behavior checks failed (no brute force)",0,[]],
+  "20202": ["Parent behavior checks failed (no brute force)",0,[]],
+  "20203": ["IPS filtering enabled",0,[]],
+  "20204": ["IPS filtering disabled again",0,[]],
+  "20205": ["Response varies randomly, skipping checks",0,[]],
+  "20301": ["Node should be a directory, detection error?",0,[]],
 
-  "30101": ["HTTP credentials seen in URLs",0],
-  "30201": ["SSL certificate expired or not yet valid",0],
-  "30202": ["Self-signed SSL certificate",0],
-  "30203": ["SSL certificate host name mismatch",0],
-  "30204": ["No SSL certificate data found",0],
-  "30205": ["Weak SSL cipher negotiated",0],
-  "30206": ["Host name length mismatch (name string has null byte)",0],
-  "30301": ["Directory listing restrictions bypassed",0],
-  "30401": ["Redirection to attacker-supplied URLs",0],
-  "30402": ["Attacker-supplied URLs in embedded content (lower risk)",0],
-  "30501": ["External content embedded on a page (lower risk)",0],
-  "30502": ["Mixed content embedded on a page (lower risk)",0],
-  "30503": ["HTTPS form submitting to a HTTP URL",0],
-  "30601": ["HTML form with no apparent XSRF protection",0],
-  "30602": ["JSON response with no apparent XSSI protection",0],
-  "30603": ["Auth form leaks credentials via HTTP GET",0],
-  "30701": ["Incorrect caching directives (lower risk)",0],
-  "30801": ["User-controlled response prefix (BOM / plugin attacks)",0],
-  "30901": ["HTTP header injection vector",0],
-  "30909": ["Signature match detected",0],
+  "30101": ["HTTP credentials seen in URLs",0,[]],
+  "30201": ["SSL certificate expired or not yet valid",0,[]],
+  "30202": ["Self-signed SSL certificate",0,[]],
+  "30203": ["SSL certificate host name mismatch",0,[]],
+  "30204": ["No SSL certificate data found",0,[]],
+  "30205": ["Weak SSL cipher negotiated",0,[]],
+  "30206": ["Host name length mismatch (name string has null byte)",0,[]],
+  "30301": ["Directory listing restrictions bypassed",0,[]],
+  "30401": ["Redirection to attacker-supplied URLs",0,[]],
+  "30402": ["Attacker-supplied URLs in embedded content (lower risk)",0,[]],
+  "30501": ["External content embedded on a page (lower risk)",0,[]],
+  "30502": ["Mixed content embedded on a page (lower risk)",0,[]],
+  "30503": ["HTTPS form submitting to a HTTP URL",0,[]],
+  "30601": ["HTML form with no apparent XSRF protection",0,[]],
+  "30602": ["JSON response with no apparent XSSI protection",0,[]],
+  "30603": ["Auth form leaks credentials via HTTP GET",0,[]],
+  "30701": ["Incorrect caching directives (lower risk)",0,[]],
+  "30801": ["User-controlled response prefix (BOM / plugin attacks)",0,[]],
+  "30901": ["HTTP header injection vector",0,[]],
+  "30909": ["Signature match detected",0,[]],
 
-  "40101": ["XSS vector in document body",0],
-  "40102": ["XSS vector via arbitrary URLs",0],
-  "40103": ["HTTP response header splitting",0],
-  "40104": ["Attacker-supplied URLs in embedded content (higher risk)",0],
-  "40105": ["XSS vector via injected HTML tag attribute",0],
-  "40201": ["External content embedded on a page (higher risk)",0],
-  "40202": ["Mixed content embedded on a page (higher risk)",0],
-  "40301": ["Incorrect or missing MIME type (higher risk)",0],
-  "40302": ["Generic MIME type (higher risk)",0],
-  "40304": ["Incorrect or missing charset (higher risk)",0],
-  "40305": ["Conflicting MIME / charset info (higher risk)",0],
-  "40401": ["Interesting file",0],
-  "40402": ["Interesting server message",0],
-  "40501": ["Directory traversal / file inclusion possible",0],
-  "40601": ["Incorrect caching directives (higher risk)",0],
-  "40701": ["Password form submits from or to non-HTTPS page",0],
-  "40909": ["Signature match detected (higher risk)",0],
+  "40101": ["XSS vector in document body",0,[]],
+  "40102": ["XSS vector via arbitrary URLs",0,[]],
+  "40103": ["HTTP response header splitting",0,[]],
+  "40104": ["Attacker-supplied URLs in embedded content (higher risk)",0,[]],
+  "40105": ["XSS vector via injected HTML tag attribute",0,[]],
+  "40201": ["External content embedded on a page (higher risk)",0,[]],
+  "40202": ["Mixed content embedded on a page (higher risk)",0,[]],
+  "40301": ["Incorrect or missing MIME type (higher risk)",0,[]],
+  "40302": ["Generic MIME type (higher risk)",0,[]],
+  "40304": ["Incorrect or missing charset (higher risk)",0,[]],
+  "40305": ["Conflicting MIME / charset info (higher risk)",0,[]],
+  "40401": ["Interesting file",0,[]],
+  "40402": ["Interesting server message",0,[]],
+  "40501": ["Directory traversal / file inclusion possible",0,[]],
+  "40601": ["Incorrect caching directives (higher risk)",0,[]],
+  "40701": ["Password form submits from or to non-HTTPS page",0,[]],
+  "40909": ["Signature match detected (higher risk)",0,[]],
 
-  "50101": ["Server-side XML injection vector",0],
-  "50102": ["Shell injection vector",0],
-  "50103": ["Query injection vector",0],
-  "50104": ["Format string vector",0],
-  "50105": ["Integer overflow vector",0],
-  "50106": ["File inclusion",0],
-  "50107": ["Remote file inclusion",0],
-  "50201": ["SQL query or similar syntax in parameters",0],
-  "50301": ["PUT request accepted",0],
-  "50909": ["Signature match detected (high risk)",0]
+  "50101": ["Server-side XML injection vector",0,[]],
+  "50102": ["Shell injection vector",0,[]],
+  "50103": ["Query injection vector",0,[]],
+  "50104": ["Format string vector",0,[]],
+  "50105": ["Integer overflow vector",0,[]],
+  "50106": ["File inclusion",0,[]],
+  "50107": ["Remote file inclusion",0,[]],
+  "50201": ["SQL query or similar syntax in parameters",0,[]],
+  "50301": ["PUT request accepted",0,[]],
+  "50909": ["Signature match detected (high risk)",0,[]]
 
 }
         self.zap_vulnerabilities ={
-'Directory Browsing':0, 
-'Path Traversal':0,
-'Remote File Inclusion':0, 
-'Source Code Disclosure - /WEB-INF folder':0,
-'GET for POST':0,
-'User Agent Fuzzer':0,
-'Heartbleed OpenSSL Vulnerability':0,
-'Source Code Disclosure - CVE-2012-1823':0,
-'Remote Code Execution - CVE-2012-1823':0,
-'External Redirect':0,
-'Buffer Overflow':0,
-'Format String Error':0,
-'CRLF Injection':0,
-'Parameter Tampering':0,
-'Server Side Include':0,
-'Cross Site Scripting (Reflected)':0,
-'Cross Site Scripting (Persistent)':0,
-'Cross Site Scripting (Persistent) - Prime':0,
-'Cross Site Scripting (Persistent) - Spider':0,
-'SQL Injection':0,
-'SQL Injection - MySQL':0,
-'SQL Injection - Hypersonic SQL':0,
-'SQL Injection - Oracle':0,
-'SQL Injection - PostgreSQL':0,
-'SQL Injection - SQLite':0,
-'Cross Site Scripting (DOM Based)':0,
-'SQL Injection - MsSQL':0,
-'ELMAH Information Leak':0,
-'Trace.axd Information Leak':0,
-'.htaccess Information Leak':0,
-'.env Information Leak':0,
-'Hidden File Found':0,
-'XSLT Injection':0,
-'Server Side Code Injection':0,
-'Server Side Code Injection - PHP Code Injection':0,
-'Server Side Code Injection - ASP Code Injection':0,
-'Remote OS Command Injection':0,
-'XML External Entity Attack':0, 
-'Generic Padding Oracle':0,
-'Cloud Metadata Potentially Exposed':0,
-'SOAP XML Injection':0,
-'Server Side Template Injection':0}
+                                #alert(vulnerability:)  method \n url (Method\nURL)  inputVector(inputVector)  description(description) 
+
+'Directory Browsing':[0,[],[],[],[]], 
+'Path Traversal':[0,[],[],[],[]],
+'Remote File Inclusion':[0,[],[],[],[]], 
+'Source Code Disclosure - /WEB-INF folder':[0,[],[],[],[]],
+'GET for POST':[0,[],[],[],[]],
+'User Agent Fuzzer':[0,[],[],[],[]],
+'Heartbleed OpenSSL Vulnerability':[0,[],[],[],[]],
+'Source Code Disclosure - CVE-2012-1823':[0,[],[],[],[]],
+'Remote Code Execution - CVE-2012-1823':[0,[],[],[],[]],
+'External Redirect':[0,[],[],[],[]],
+'Buffer Overflow':[0,[],[],[],[]],
+'Format String Error':[0,[],[],[],[]],
+'CRLF Injection':[0,[],[],[],[]],
+'Parameter Tampering':[0,[],[],[],[]],
+'Server Side Include':[0,[],[],[],[]],
+'Cross Site Scripting (Reflected)':[0,[],[],[],[]],
+'Cross Site Scripting (Persistent)':[0,[],[],[],[]],
+'Cross Site Scripting (Persistent) - Prime':[0,[],[],[],[]],
+'Cross Site Scripting (Persistent) - Spider':[0,[],[],[],[]],
+'SQL Injection':[0,[],[],[],[]],
+'SQL Injection - MySQL':[0,[],[],[],[]],
+'SQL Injection - Hypersonic SQL':[0,[],[],[],[]],
+'SQL Injection - Oracle':[0,[],[],[],[]],
+'SQL Injection - PostgreSQL':[0,[],[],[],[]],
+'SQL Injection - SQLite':[0,[],[],[],[]],
+'Cross Site Scripting (DOM Based)':[0,[],[],[],[]],
+'SQL Injection - MsSQL':[0,[],[],[],[]],
+'ELMAH Information Leak':[0,[],[],[],[]],
+'Trace.axd Information Leak':[0,[],[],[],[]],
+'.htaccess Information Leak':[0,[],[],[],[]],
+'.env Information Leak':[0,[],[],[],[]],
+'Hidden File Found':[0,[],[],[],[]],
+'XSLT Injection':[0,[],[],[],[]],
+'Server Side Code Injection':[0,[],[],[],[]],
+'Server Side Code Injection - PHP Code Injection':[0,[],[],[],[]],
+'Server Side Code Injection - ASP Code Injection':[0,[],[],[],[]],
+'Remote OS Command Injection':[0,[],[],[],[]],
+'XML External Entity Attack':[0,[],[],[],[]], 
+'Generic Padding Oracle':[0,[],[],[],[]],
+'Cloud Metadata Potentially Exposed':[0,[],[],[],[]],
+'SOAP XML Injection':[0,[],[],[],[]],
+'Server Side Template Injection':[0,[],[],[],[]]}
         with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/nikto_vulnerability_tunning/nikto_tuning.json", 'r') as nikto_file:
                  self.nikto_vulnerability= json.load(nikto_file)     
         self.list_of_skipfish_issue=self.Type_of_issue.copy()
@@ -203,8 +205,9 @@ class scan():
                 for line in f:
            # print(line)
                     data.append(json.loads(line)) 
-                for i in data :
-                    self.dater[i['Info']['Name']]=0
+                    
+                for i in data : 		#Name(number)         matched-at       (curl-command)   Description
+                    self.dater[i['Info']['Name']]=[0,[],[],i['Info']['Description']]
         
     def configuiring_new_scan(self,name,url=None):
         self.name=name
@@ -265,9 +268,11 @@ class scan():
 #        print(wapiti_resaults)
 #		"""
 #___________________________________________SKIPFISH________________________________________
+#-d max_depth (16), -c max_child (512) -x max_descandent (8192)
+#-k duration h:m:s 
     def start_skipfish(self):
-            print("[INFO] 		skipfish scan started:")
-            output = subprocess.run("skipfish -L -W- -e -v -u -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.name,self.name,self.url), shell=True, capture_output=True)
+            print("[INFO] 		skipfish scan started:") #add 
+            output = subprocess.run("skipfish -L -W- -e -v -u -d 3 -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.name,self.name,self.url), shell=True, capture_output=True)
             print("[finished]	skipfish scand completed. ")
 
     def Check_all_folders(self,Dir):
@@ -285,6 +290,12 @@ class scan():
                         x=line.find("type")
                         if x!=-1:
                              self.list_of_skipfish_issue[line[x+7:x+12]][1]=self.list_of_skipfish_issue[line[x+7:x+12]][1]+1
+                             with open("{}/request.dat".format(path),"r") as r:
+                                r1=r.readline()
+                                r2=r.readline()
+
+                                self.list_of_skipfish_issue[line[x+7:x+12]][2].append([r1,r2])
+                             
     def get_skipfish_resaults(self):
           self.Check_all_folders("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}".format(self.name,self.name))	
 
@@ -337,8 +348,10 @@ class scan():
                      zap.ascan.disable_scanners(ids=[40034]) #.env Information Leak
                      zap.ascan.disable_scanners(ids=[40035]) #Hidden File Finder
                      zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
-             
-             
+             #raja3 adi
+                     zap.spider.set_option_max_depth(2) 
+#                    zap.spider.set_option_max_duration(2)
+
              
                      scanID = zap.spider.scan(self.url)
 #                     """while int(zap.spider.status(scanID)) < 100:
@@ -380,8 +393,13 @@ class scan():
                       myresault=json.load(read_file)              
                       print("length:",len(myresault))
                       for i in myresault:
-                           zap_vulnerabilities_new[i['alert']]=zap_vulnerabilities_new[i['alert']]+1
-                 print("[Result]__________________________Zap Results:_____________________________")
+                        #alert(vulnerability:)  method \n url (Method\nURL)  inputVector(inputVector)  description(description) 
+                           zap_vulnerabilities_new[i['alert']][0]=zap_vulnerabilities_new[i['alert']][0]+1
+                           zap_vulnerabilities_new[i['alert']][1].append([i['method'],i['url']])
+                           zap_vulnerabilities_new[i['alert']][2].append(i['inputVector'])
+                           zap_vulnerabilities_new[i['alert']][3].append(i['description'])
+
+               #  print("[Result]__________________________Zap Results:_____________________________")
                  #print(zap_vulnerabilities_new)
                  return zap_vulnerabilities_new
     def start_get_zap(self):
@@ -410,23 +428,34 @@ class scan():
              
              for i in range(len(nikto_report_vulnerability['vulnerabilities'])):
             #      print(nikto_report_vulnerability['vulnerabilities'][i]['id'])
+            #id(vulnerability:)  method (METHOD) msg(description)  url (URL)  OSVDB(OSBDV Ref:)  
                   if nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['sql_injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['sql_injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XML injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XML injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['XML injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
 
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['script_injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['script_injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['script_injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['sql information']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['sql information']['number']=self.nikto_vulnerability['nikto_vulnerability']['sql information']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['sql information']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['html injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['html injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['html injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['html injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['remote source injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['remote source injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
                   elif nikto_report_vulnerability['vulnerabilities'][i]['id']  in self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['ids']:
                             self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']=self.nikto_vulnerability['nikto_vulnerability']['XSS injection']['number']+1
+                            self.nikto_vulnerability['nikto_vulnerability']['XSS injection']["method_msg"].append([nikto_report_vulnerability['vulnerabilities'][i]['method'],nikto_report_vulnerability['vulnerabilities'][i]['msg'],nikto_report_vulnerability['vulnerabilities'][i]['url'],nikto_report_vulnerability['vulnerabilities'][i]['OSVDB']])
+
+
     def get_nikto_report(self):
          self.get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9".format(self.name,self.name))         
          self.get_nikto_vulnerability("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4".format(self.name,self.name))
@@ -457,21 +486,24 @@ class scan():
             for line in f:
                 data.append(json.loads(line)) 
         for i in data :
-            newdater[i['info']['name']]=newdater[i['info']['name']]+1
+            newdater[i['info']['name']][0]=newdater[i['info']['name']][0]+1
+            newdater[i['info']['name']][1].append(i['matched-at'])
+            newdater[i['info']['name']][2].append(i['curl-command'])
+            
         return newdater
      
     def my_filtering_function(self,pair):
         key, value = pair
-        if value <= 0:
+        if value[0] <= 0:
             return False  # filter pair out of the dictionary
         else:
             return True  # keep pair in the filtered dictionary
-    def nuclei_report():
+    def nuclei_report(self):
                #start_nuclei()
-               newdater=list_the_Vuln_nuclei() 
-               filtered_grades = dict(filter(my_filtering_function, newdater.items()))
-               print("[Resault]__________________________________Nuclei Resault:_________________________")
-               print(filtered_grades)    
+               newdater=self.list_the_Vuln_nuclei() 
+               filtered_grades = dict(filter(self.my_filtering_function, newdater.items()))
+          #    print("[Resault]__________________________________Nuclei Resault:_________________________")
+          #     print(filtered_grades)    
                return filtered_grades
 
 
