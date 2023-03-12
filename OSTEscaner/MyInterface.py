@@ -6,6 +6,8 @@ import customtkinter
 import time
 import OSTEscaner
 import os,shutil
+import subprocess
+import signal
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
@@ -22,6 +24,109 @@ class MyResultFrame(customtkinter.CTkScrollableFrame):
                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self,text=self.mylist[i], variable=self.radio_var, value=i)
                 self.radio_button_1.grid(row=int(i/3), column=int(i%3), pady=10, padx=20, sticky="n")
         print(self.radio_var)     
+        
+        
+class Target_Window(customtkinter.CTkToplevel):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        xer="_____________________________________________________"
+        self.path="/home/ostesayed/Desktop/Scanners/OSTE-Scanner/Targets/"
+        self.geometry("600x350")
+        self.frame_main = customtkinter.CTkFrame(self)
+        self.frame_main.pack(pady=10,padx=10,fill ="both",expand=True)
+        self.label_main=customtkinter.CTkLabel(self.frame_main,text="Npm Target List:").pack(pady=10,padx=10)
+        self.mylist=os.listdir(self.path)
+        self.radio_var = tkinter.IntVar(value=0)
+        self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text="None", variable=self.radio_var, value=0)
+        self.radio_button_1.pack(pady=5,padx=5)
+        for i in range(len(self.mylist)):
+                self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text=self.mylist[i], variable=self.radio_var, value=i+1)
+                self.radio_button_1.pack(pady=5,padx=5)
+        print(self.radio_var)     
+        self.npmTarget = customtkinter.CTkButton(self, command=self.npmstart ,text="Start Npm Target")
+        self.XampTarget = customtkinter.CTkButton(self, command=self.xampstart ,text="Start Xamp")
+        self.npmTarget.pack(padx=(40,5),side="left")
+        self.XampTarget.pack(padx=(5,40),side="right")
+   
+    def npmstart(self):
+        self.frame_main.pack_forget()
+        self.npmTarget.pack_forget()
+        self.XampTarget.pack_forget()
+        self.log_textbox = customtkinter.CTkTextbox(self, width=200)
+        self.log_textbox.pack(padx=10, pady=10,fill ="both",expand=True)
+        self.log_textbox.tag_add("red", 0.0, 0.5)
+        self.log_textbox.tag_config("red",foreground="red",underline=1)
+        self.log_textbox.tag_config("yellow",foreground="yellow")
+        self.log_textbox.tag_config("green",foreground="lightgreen")
+        
+        self.log_textbox.tag_add("yellow", 0.0, 0.5)
+        self.log_textbox.tag_add("green", 0.0, 0.5)
+        self.log_textbox.insert(1.0, "\t Starting Target.... :\n", tags="red")
+
+        self.process = subprocess.Popen("npm start", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True,cwd=f"{self.path}/{self.mylist[self.radio_var.get()-1]}/")       #path li fe cwd mazalt majerbtouch 3les problem:
+        pid = int(self.process.pid)
+        starting= threading.Thread(target=self.start)
+        starting.start() 
+        
+        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=lambda: os.kill(pid, signal.SIGTERM)) 
+        self.stop_button.pack()
+        print(f"ok with {self.mylist[self.radio_var.get()-1]}")
+        
+    def start(self):
+   
+        line = self.process.stdout.readline()
+        if not line:
+            time.sleep(10)
+            print("no line")
+        self.log_textbox.insert(tkinter.END, line.decode())
+        self.log_textbox.see(tkinter.END)
+        time.sleep(3)
+        self.start()       
+
+              
+        
+    def xampstart(self):
+        self.frame_main.pack_forget()
+        self.npmTarget.pack_forget()
+        self.XampTarget.pack_forget()
+        self.log_textbox = customtkinter.CTkTextbox(self, width=200)
+        self.log_textbox.pack(padx=10, pady=10,fill ="both",expand=True)
+
+        cmd = "sudo /opt/lampp/lampp start"
+#        cmd="sudo ls -l"
+        password = tkinter.simpledialog.askstring("Password", "Enter your password:(Required)", show='*')
+        process = os.popen('echo {} | {} -S {}'.format(password, "sudo", cmd))
+
+# Insert the output into the text widget
+        self.log_textbox.insert(tkinter.END, "Command output:\n")
+
+        for line in process:
+           self.log_textbox.insert(tkinter.END, line)
+           
+        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=self.xampstop) 
+        self.stop_button.pack()
+
+        print("ok")
+    def xampstop(self):
+        cmd = "sudo /opt/lampp/lampp stop"
+#        cmd="sudo ls -l"
+        password = tkinter.simpledialog.askstring("Password", "Enter your password:(Required)", show='*')
+        process = os.popen('echo {} | {} -S {}'.format(password, "sudo", cmd))
+
+# Insert the output into the text widget
+        self.log_textbox.insert(tkinter.END, "Command output:\n")
+
+        for line in process:
+           self.log_textbox.insert(tkinter.END, line)
+           
+       
+
+
+
+
+
+
+
          
 class loadResult_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -210,6 +315,9 @@ class App(customtkinter.CTk):
         self.file_menu.add_command(label='Exit',command=self.destroy)
         self.menubar.add_cascade(label="File", menu=self.file_menu,underline=0)
         
+        self.target_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+        self.target_menu.add_command(label='lunch target',command=self.open_target_Window)
+        self.menubar.add_cascade(label="Target", menu=self.target_menu,underline=0)
 
         
         self.view_menu=tkinter.Menu(self.menubar,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
@@ -219,9 +327,11 @@ class App(customtkinter.CTk):
         self.modes_menu.add_command(label='light Mode',command=lambda:self.change_appearance_mode_event("Light"))
         self.modes_menu.add_command(label='dark Mode',command=lambda:self.change_appearance_mode_event("Dark"))
         
+
+
         self.view_menu.add_cascade(label='Change Appearance',menu=self.modes_menu)
         self.menubar.add_cascade(label="View", menu=self.view_menu,underline=0)
-        
+       
         
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -273,7 +383,7 @@ class App(customtkinter.CTk):
         
         self.start_Window = None
         self.loadResult_window =None
-        
+        self.Target_Window=None
         # create tabview
         self.results_tabview = customtkinter.CTkTabview(self, width=800,height=300)
         self.results_tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -1164,6 +1274,13 @@ class App(customtkinter.CTk):
                    self.skipfish.configure(text=Resault[4][1])
         
 #            print(Resault)
+
+    def open_target_Window(self):
+       if self.Target_Window is None or not self.Target_Window.winfo_exists():
+            self.Target_Window=Target_Window(self)
+       else:
+            self.Target_Window.focus()
+
     def open_load_Window(self):
         if self.loadResult_window is None or not self.loadResult_window.winfo_exists():
                  self.loadResult_window =loadResult_Window(self)
@@ -1219,6 +1336,9 @@ class App(customtkinter.CTk):
         self.print_nuclei_Result(name)
     def Open_skipfish_site(self,name):
         webbrowser.open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}/index.html'.format(name,name), new=2)
+        
+        
+        
 class MyFrame_My_wapiti(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
