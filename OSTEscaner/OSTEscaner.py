@@ -38,6 +38,7 @@ class scan():
     def __init__(self):
         self.name="OSTE"
         self.url="LOCALHOST"
+        self.crawl=1
         self.wapiti_vulnerabilities= {
     "Backup file": 0,
     "Blind SQL Injection": 0,
@@ -209,10 +210,11 @@ class scan():
                 for i in data : 		#Name(number)         matched-at       (curl-command)   Description
                     self.dater[i['Info']['Name']]=[0,[],[],i['Info']['Description']]
         
-    def configuiring_new_scan(self,name,url=None):
+    def configuiring_new_scan(self,name,url=None,crawl=1):
+        self.crawl=crawl
         self.name=name
         self.url=url
-       
+        print(f"name:{self.name},url:{self.url},crawl:{self.crawl}")
     def starting_all_scanner(self,name,url):
        # global name ,url
         self.name=name
@@ -258,7 +260,7 @@ class scan():
     
     def start_wapiti(self):
         print("[INFO] 		wapiti scan started:")
-        output = subprocess.run("wapiti -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 --flush-session".format(self.url,self.name,self.name), shell=True, capture_output=True)
+        output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {}".format(self.url,self.name,self.name,self.crawl+2), shell=True, capture_output=True)
         print("[Finished]		wapiti Scan completed. ")    
 #	"""
 #    def start_wapiti_readReport():
@@ -272,7 +274,7 @@ class scan():
 #-k duration h:m:s 
     def start_skipfish(self):
             print("[INFO] 		skipfish scan started:") #add 
-            output = subprocess.run("skipfish -L -W- -e -v -u -d 3 -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.name,self.name,self.url), shell=True, capture_output=True)
+            output = subprocess.run("skipfish -L -W- -e -v -u -d {} -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.crawl+1,self.name,self.name,self.url), shell=True, capture_output=True)
             print("[finished]	skipfish scand completed. ")
 
     def Check_all_folders(self,Dir):
@@ -349,7 +351,7 @@ class scan():
                      zap.ascan.disable_scanners(ids=[40035]) #Hidden File Finder
                      zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
              #raja3 adi
-                     zap.spider.set_option_max_depth(2) 
+                     zap.spider.set_option_max_depth(self.crawl+1) 
 #                    zap.spider.set_option_max_duration(2)
 
              
@@ -396,7 +398,7 @@ class scan():
                         #alert(vulnerability:)  method \n url (Method\nURL)  inputVector(inputVector)  description(description) 
                            zap_vulnerabilities_new[i['alert']][0]=zap_vulnerabilities_new[i['alert']][0]+1
                            zap_vulnerabilities_new[i['alert']][1].append([i['method'],i['url']])
-                           zap_vulnerabilities_new[i['alert']][2].append(i['inputVector'])
+                           zap_vulnerabilities_new[i['alert']][2].append(i['param']+":"+i['attack'])#inputVector
                            zap_vulnerabilities_new[i['alert']][3].append(i['description'])
 
                #  print("[Result]__________________________Zap Results:_____________________________")

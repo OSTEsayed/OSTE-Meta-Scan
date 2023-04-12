@@ -8,6 +8,7 @@ import OSTEscaner
 import os,shutil
 import subprocess
 import signal
+from PIL import Image
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
@@ -22,13 +23,15 @@ class MyResultFrame(customtkinter.CTkScrollableFrame):
         self.radio_var = tkinter.IntVar(value=0)
         for i in range(len(self.mylist)):
                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self,text=self.mylist[i], variable=self.radio_var, value=i)
-                self.radio_button_1.grid(row=int(i/3), column=int(i%3), pady=10, padx=20, sticky="n")
+                self.radio_button_1.grid(row=int(i/2), column=int(i%2), pady=10, padx=20, sticky="nw")
         print(self.radio_var)     
         
         
 class Target_Window(customtkinter.CTkToplevel):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
+        self.title("OSTEscanner  -Target-")
+
         xer="_____________________________________________________"
         self.path="/home/ostesayed/Desktop/Scanners/OSTE-Scanner/Targets/"
         self.geometry("600x350")
@@ -38,13 +41,13 @@ class Target_Window(customtkinter.CTkToplevel):
         self.mylist=os.listdir(self.path)
         self.radio_var = tkinter.IntVar(value=0)
         self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text="None", variable=self.radio_var, value=0)
-        self.radio_button_1.pack(pady=5,padx=5)
+        self.radio_button_1.pack(pady=5,padx=25,anchor="w")
         for i in range(len(self.mylist)):
                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text=self.mylist[i], variable=self.radio_var, value=i+1)
-                self.radio_button_1.pack(pady=5,padx=5)
+                self.radio_button_1.pack(pady=5,padx=25,anchor="w")
         print(self.radio_var)     
         self.npmTarget = customtkinter.CTkButton(self, command=self.npmstart ,text="Start Npm Target")
-        self.XampTarget = customtkinter.CTkButton(self, command=self.xampstart ,text="Start Xamp")
+        self.XampTarget = customtkinter.CTkButton(self, command=self.xampstart ,text="Start Xamp",fg_color="green")
         self.npmTarget.pack(padx=(40,5),side="left")
         self.XampTarget.pack(padx=(5,40),side="right")
    
@@ -68,7 +71,7 @@ class Target_Window(customtkinter.CTkToplevel):
         starting= threading.Thread(target=self.start)
         starting.start() 
         
-        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=lambda: os.kill(pid, signal.SIGTERM)) 
+        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=lambda: os.kill(pid, signal.SIGTERM),fg_color="red") 
         self.stop_button.pack()
         print(f"ok with {self.mylist[self.radio_var.get()-1]}")
         
@@ -80,7 +83,6 @@ class Target_Window(customtkinter.CTkToplevel):
             print("no line")
         self.log_textbox.insert(tkinter.END, line.decode())
         self.log_textbox.see(tkinter.END)
-        time.sleep(3)
         self.start()       
 
               
@@ -103,7 +105,7 @@ class Target_Window(customtkinter.CTkToplevel):
         for line in process:
            self.log_textbox.insert(tkinter.END, line)
            
-        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=self.xampstop) 
+        self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=self.xampstop,fg_color="red") 
         self.stop_button.pack()
 
         print("ok")
@@ -131,6 +133,7 @@ class Target_Window(customtkinter.CTkToplevel):
 class loadResult_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("OSTEscanner  -Resault-")
         self.geometry("500x400")
         self.frame_main = customtkinter.CTkFrame(self)
         self.frame_main.pack(pady=10,padx=10,fill ="both",expand=True)
@@ -140,7 +143,7 @@ class loadResult_Window(customtkinter.CTkToplevel):
         self.resultf =MyResultFrame (self.frame_main,height=200)
         self.resultf.pack(padx=10,pady=0,fill="x")
         self.check = customtkinter.CTkButton(self.frame_main, command=self.cchek ,text="Check")
-        self.delete = customtkinter.CTkButton(self.frame_main, command=self.ddelete ,text="Delete")
+        self.delete = customtkinter.CTkButton(self.frame_main, command=self.ddelete ,text="Delete",fg_color="red")
         self.check.pack(padx=(40,5),side="left")
         self.delete.pack(padx=(5,40),side="right")
     def cchek(self):
@@ -155,6 +158,7 @@ class loadResult_Window(customtkinter.CTkToplevel):
 class start_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("OSTEscanner  -Starting Scan-")
         self.geometry("500x350")
         self.frame_main = customtkinter.CTkFrame(self)
         self.frame_main.pack(pady=20,padx=60,fill ="both",expand=True)
@@ -162,6 +166,12 @@ class start_Window(customtkinter.CTkToplevel):
         self.label_main.pack(padx=20, pady=20)
 
 
+        self.slider_1 = customtkinter.CTkSlider(self.frame_main, from_=0, to=1, number_of_steps=16,orientation="vertical")
+        self.slider_1.pack(padx=(20, 10), pady=(10, 10),side="right")
+        self.label_craw=customtkinter.CTkLabel(self.frame_main,text="Crawling Depth:").pack(side="right")
+        
+#        but = customtkinter.CTkButton(self.frame_main,text="val" , command =lambda: print(int(self.slider_1.get()*16)))
+#       but.pack()
         self.target_name=customtkinter.CTkEntry(self.frame_main,placeholder_text="Name of target")
         self.target_name.pack(pady=12,padx=10)
 
@@ -173,7 +183,14 @@ class start_Window(customtkinter.CTkToplevel):
         self.label_result = customtkinter.CTkLabel(self.frame_main, text="")
         self.label_result.pack(padx=20, pady=20)
 
+
+
+
     def start_new_scan(self):
+        crowling_depth= int(self.slider_1.get()*16)
+        if crowling_depth==0:crowling_depth=1
+        if crowling_depth==16:crowling_depth=15
+        print(crowling_depth)
         if self.target_name.get()=="":
             self.label_result.configure(text="Enter the name of target",text_color="red")
 
@@ -184,22 +201,22 @@ class start_Window(customtkinter.CTkToplevel):
             self.label_result.configure(text="Starting Scaning the target",text_color="green")            
             new_scan= OSTEscaner.scan()
             app.log_textbox.insert(tkinter.END, "\n[Starting]", tags="green") 
-            app.log_textbox.insert(tkinter.END, "\t\tCreating Resaults Directory for each scanner", tags=None)
-            new_scan.configuiring_new_scan(self.target_name.get(),self.target_url.get())
+            app.log_textbox.insert(tkinter.END, " Creating Resaults Directory for each scanner", tags=None)
+            new_scan.configuiring_new_scan(self.target_name.get(),self.target_url.get(),crowling_depth)
             new_scan.creat_directory()
             app.log_textbox.insert(tkinter.END, "\n[Location]", tags="green") 
-            app.log_textbox.insert(tkinter.END, "\t\t/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.target_name.get(), tags=None)
+            app.log_textbox.insert(tkinter.END, " /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.target_name.get(), tags=None)
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")      
-            app.log_textbox.insert(tkinter.END, "\t\twapiti scan started", tags=None)
+            app.log_textbox.insert(tkinter.END, " wapiti scan started", tags=None)
             starting_wapiti = threading.Thread(target=new_scan.start_wapiti)
             starting_wapiti.start() 
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")      	
-            app.log_textbox.insert(tkinter.END, "\t\tskipfish scan started", tags=None)
+            app.log_textbox.insert(tkinter.END, " skipfish scan started", tags=None)
             
             starting_skipfish = threading.Thread(target=new_scan.start_skipfish)
             starting_skipfish.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="green")      
-            app.log_textbox.insert(tkinter.END, "\t\tOWASPZAP server started", tags=None)
+            app.log_textbox.insert(tkinter.END, " OWASPZAP server started", tags=None)
             
             starting_zap_server = threading.Thread(target=new_scan.start_zap)
             starting_zap_server.start()
@@ -207,7 +224,7 @@ class start_Window(customtkinter.CTkToplevel):
             starting_zap= threading.Thread(target=new_scan.check_for_zap)
             #starting_zap.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")                  
-            app.log_textbox.insert(tkinter.END, "\t\tNIKTO Scanning started", tags=None)            
+            app.log_textbox.insert(tkinter.END, " NIKTO Scanning started", tags=None)            
             starting_nikto = threading.Thread(target=new_scan.start_nikto)
             starting_nikto.start() 
 #            app.log_textbox.insert(tkinter.END, "\n [INFO] 		Nuclei Scanning started", tags=None)            
@@ -227,13 +244,13 @@ class start_Window(customtkinter.CTkToplevel):
                   time.sleep(5)
                   if zaper=="lunch":
                       app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
-                      app.log_textbox.insert(tkinter.END, "\t\tOWASPZAP Scanning started", tags=None)           
+                      app.log_textbox.insert(tkinter.END, " OWASPZAP Scanning started", tags=None)           
                       a.start()
                       zap_statu="scanning"
                       zaper="yet"
                   if nucleir=="lunch":
                       app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
-                      app.log_textbox.insert(tkinter.END, "\t\tNuclei Scanning started", tags=None)            
+                      app.log_textbox.insert(tkinter.END, " Nuclei Scanning started", tags=None)            
                       c.start()
                       nuclei_statu="scanning"
                       nucleir="yet"
@@ -241,31 +258,31 @@ class start_Window(customtkinter.CTkToplevel):
                   if zap_statu=="scanning":
                           if a.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, "\t\tOWASP ZAP Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " OWASP ZAP Scanning Finished", tags=None)            
                               zap_statu="finished"
                               number_scaner-=1       	
                   if nikto_statu=="scanning":
                           if b.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, "\t\tNIKTO Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " NIKTO Scanning Finished", tags=None)            
                               nikto_statu="finished"
                               number_scaner-=1           
                   if nuclei_statu=="scanning":
                           if c.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, "\t\tNuclei Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " Nuclei Scanning Finished", tags=None)            
                               nuclei_statu="finished"
                               number_scaner-=1 
                   if wapiti_statu=="scanning":
                           if d.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, "\t\tWAPITI Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " WAPITI Scanning Finished", tags=None)            
                               wapiti_statu="finished"
                               number_scaner-=1 
                   if skipfish_statu=="scanning":
                           if e.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")                                      
-                              app.log_textbox.insert(tkinter.END, "\t\tSKIPFISH Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " SKIPFISH Scanning Finished", tags=None)            
                               skipfish_statu="finished"
                               number_scaner-=1  
                   if number_scaner==0 and zaper=="notyet":
@@ -293,24 +310,23 @@ class App(customtkinter.CTk):
         super().__init__()
 
         # configure window
-        self.title("OSTEscanner Web Vulnerability Scanner")
-
+        self.title("Web Vulnerability META-Scanner")		#OSTEscanner
 
         w, h = self.winfo_screenwidth(), self.winfo_screenheight()
         self.geometry("%dx%d+0+0" % (w, h))
  #       self.attributes('-fullscreen',True)
-        
-        #configure the menu:
+#        self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join("images/meta.ico")), size=(20, 20)) 
+#        self.iconbitmap(default="images/meta.ico")        #configure the menu:
         
         self.menubar = tkinter.Menu(self, bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
 
         self.config(menu=self.menubar)
         
         self.file_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-        self.file_menu.add_command(label='New Scan',command=self.open_start_Window)
-        self.file_menu.add_command(label='Load Scan Result',command=self.open_load_Window)
+        self.file_menu.add_command(label='Launch Scan',command=self.open_start_Window)
+        self.file_menu.add_command(label='Retrieve History',command=self.open_load_Window)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label='Check Scanners integrity',command=self.chec_for_scanner)
+        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.destroy)
         self.menubar.add_cascade(label="File", menu=self.file_menu,underline=0)
@@ -337,64 +353,44 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
+        #Start stat (slide bar minized)
+        self.slidd=0
 
         # create sidebar frame with widgets
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=30, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="OSTE Scanner", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="Start New Scan",state="disabled")
-        self.startnewscan_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_load_Window,text="Load old Results")
-        self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.chec_for_scanner_sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.chec_for_scanner,text="check Scanners")
-        self.chec_for_scanner_sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
-        
-        self.wapiti = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
-        self.wapiti.grid(row=5, column=0, padx=20, pady=3)
-        self.zap = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
-        self.zap.grid(row=6, column=0, padx=20, pady=3)
-        self.nuclei = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
-        self.nuclei.grid(row=7, column=0, padx=20, pady=3)
-        self.nikto = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
-        self.nikto.grid(row=8, column=0, padx=20, pady=3)
-        self.skipfish = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
-        self.skipfish.grid(row=9, column=0, padx=20, pady=3)
-        
-        
-        
-        self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=10, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=[ "System","Light", "Dark"],
-                                                                       command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=11, column=0, padx=20, pady=(10, 10))
-       
+        maximize=customtkinter.CTkImage(light_image=Image.open("images/maximize.png"),dark_image=Image.open("images/maximize.png"),size=(20, 20))
+        self.maxi =customtkinter.CTkButton(self.sidebar_frame,text="",image=maximize,width=20,height=20,fg_color='transparent',command=self.maximize)#,command=
+        self.maxi.grid(row=0,column=0,sticky="ne")                  
+
         #loog textbox
-        self.log_textbox = customtkinter.CTkTextbox(self, width=200)
-        self.log_textbox.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.log_textbox.insert(1.0, "\t here is The log of application:\n[note]to keep track of what's happening)", tags=None)
+        self.log_textbox = customtkinter.CTkTextbox(self, width=350)
+        self.log_textbox.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.log_textbox.tag_add("red", 0.0, 0.5)
         self.log_textbox.tag_config("red",foreground="red",underline=1)
         self.log_textbox.tag_add("yellow", 0.0, 0.5)
         self.log_textbox.tag_config("yellow",foreground="yellow")
         self.log_textbox.tag_add("green", 0.0, 0.5)
         self.log_textbox.tag_config("green",foreground="lightgreen")
-        
+        self.log_textbox.tag_add("console", 0.0, 0.5)
+        self.log_textbox.tag_config("console",foreground="red",underline=1) #,font=('Helvetica',36,'bold')
+        self.log_textbox.insert(1.0, "\tConsole:", tags="console")
+        self.log_textbox.configure(font=("Terminal",15,"normal"))
         self.start_Window = None
         self.loadResult_window =None
         self.Target_Window=None
         # create tabview
-        self.results_tabview = customtkinter.CTkTabview(self, width=800,height=300)
-        self.results_tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.results_tabview.add("Our Result")
+        self.results_tabview = customtkinter.CTkTabview(self, width=1450,height=600)
+        self.results_tabview.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.results_tabview.add("Results")
         self.results_tabview.add("Skipfish")
         self.results_tabview.add("wapiti")
         self.results_tabview.add("Nikto")
         self.results_tabview.add("OWASP ZAP")
         self.results_tabview.add("Nuclei")
         #our resault tab view:
-        self.label_1 = customtkinter.CTkLabel(self.results_tabview.tab("Our Result"),text="Result Table:", justify=customtkinter.CENTER)
+        self.label_1 = customtkinter.CTkLabel(self.results_tabview.tab("Results"),text="Result Table:", justify=customtkinter.CENTER)
         self.label_1.pack(pady=0, padx=0)
         
         
@@ -420,42 +416,101 @@ class App(customtkinter.CTk):
         self.createResaults()
         
         self.Results=[None,None,None,None,None]
+    
+    def minimize(self):
+        self.log_textbox.configure(width=350)
+        self.slidd=0    
+        self.sidebar_frame.grid_forget()
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=30, corner_radius=0)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(4, weight=1)
+        maximize=customtkinter.CTkImage(light_image=Image.open("images/maximize.png"),dark_image=Image.open("images/maximize.png"),size=(20, 20))
+        self.maxi =customtkinter.CTkButton(self.sidebar_frame,text="",image=maximize,width=20,height=20,fg_color='transparent',command=self.maximize)#,command=
+        self.maxi.grid(row=0,column=0,sticky="ne")                  
+    def maximize(self):
+        self.log_textbox.configure(width=170)    
+        self.slidd=1
+        self.sidebar_frame.grid_forget()
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=100, corner_radius=0)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(4, weight=1)
+        minimize=customtkinter.CTkImage(light_image=Image.open("images/close.png"),dark_image=Image.open("images/close.png"),size=(20, 20))
+        self.close =customtkinter.CTkButton(self.sidebar_frame,text="",image=minimize,width=20,height=20,fg_color='transparent',command=self.minimize)#,command=
+        self.close.grid(row=0,column=5,sticky="ne")       
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="META-Scanner", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.logo_label.grid(row=0, column=0, padx=0, pady=(20, 10))
+        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="Launch Scan",state="disabled")
+        self.startnewscan_button_1.grid(row=1, column=0, padx=20, pady=10)
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_load_Window,text="Retrieve History")
+        self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
+        self.chec_for_scanner_sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.chec_for_scanner,text="Verify Scanners")
+        self.chec_for_scanner_sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
+
+        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join("images/meta.png")), size=(190, 150))   
+        self.navigation_frame_label = customtkinter.CTkLabel(self.sidebar_frame, text="", image=self.logo_image,
+                                                             compound="left", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.navigation_frame_label.grid(row=5, column=0,columnspan=3, padx=0, pady=20)
         
         
+        
+        self.wapiti = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
+        self.wapiti.grid(row=6, column=0, padx=20, pady=3)
+        self.zap = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
+        self.zap.grid(row=7, column=0, padx=20, pady=3)
+        self.nuclei = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
+        self.nuclei.grid(row=8, column=0, padx=20, pady=3)
+        self.nikto = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
+        self.nikto.grid(row=9, column=0, padx=20, pady=3)
+        self.skipfish = customtkinter.CTkLabel(self.sidebar_frame, text="", font=customtkinter.CTkFont(size=10, weight="bold"))
+        self.skipfish.grid(row=10, column=0, padx=20, pady=3)
+        
+        
+        
+        self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
+        self.appearance_mode_label.grid(row=11, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=[ "System","Light", "Dark"],
+                                                                       command=self.change_appearance_mode_event)
+        self.appearance_mode_optionemenu.grid(row=12, column=0, padx=20, pady=(10, 10))
+
+
+
         
     def open_check(self,ID):  
-        
-        self.CheckVul = customtkinter.CTkFrame(self, width=600)
+        self.results_tabview.configure(height=10)
+        self.CheckVul = customtkinter.CTkFrame(self, width=600,height=800)
         self.CheckVul.grid(row=1,rowspan=2, column=1,columnspan=2, padx=(5, 0), pady=(5, 0), sticky="nsew")
         
-        self.close =customtkinter.CTkButton(self.CheckVul,text="X",width=20,height=20,fg_color='red',command=self.close_check)
-        self.close.pack(pady=0,padx=0,side="right",anchor="ne")          
         self.CheckVul_in = customtkinter.CTkFrame(self.CheckVul)
-        self.CheckVul_in.pack(pady=0,padx=0,fill="both",expand=True)
+        self.CheckVul_in.pack(pady=0,padx=0,side="top",fill="x",expand=True)
+        self.CheckVul_out = customtkinter.CTkFrame(self.CheckVul)
+        self.CheckVul_out.pack(pady=0,padx=0,side="top",fill="x",expand=True)
         
+        closs=customtkinter.CTkImage(light_image=Image.open("images/cancel2.png"),dark_image=Image.open("images/cancel2.png"),size=(20, 20))
+        self.close =customtkinter.CTkButton(self.CheckVul_in,text="",image=closs,width=20,height=20,fg_color='transparent',command=self.close_check)
+        self.close.pack(pady=0,padx=0,side="right",anchor="ne")          
         self.CheckVul_in_description=customtkinter.CTkLabel(self.CheckVul_in,text="Description",width=550)
         self.CheckVul_in_Method_http=customtkinter.CTkLabel(self.CheckVul_in,text="Method \n http Request",width=200)        
         self.CheckVul_in_Vector=customtkinter.CTkLabel(self.CheckVul_in,text="Vector | command",width=250)
         self.CheckVul_in_Vulnerability=customtkinter.CTkLabel(self.CheckVul_in,text="Vulnerability",width=150)                
-        self.CheckVul_in_Vulnerability.grid(row=0,column=0,padx=0)
-        self.CheckVul_in_Method_http.grid(row=0,column=1,padx=0)
-        self.CheckVul_in_Vector.grid(row=0,column=2,padx=0)
-        self.CheckVul_in_description.grid(row=0,column=3,padx=0)
+        self.CheckVul_in_Vulnerability.pack(pady=0,padx=5,side="left",anchor="nw")
+        self.CheckVul_in_Method_http.pack(pady=0,padx=5,side="left",anchor="nw")
+        self.CheckVul_in_Vector.pack(pady=0,padx=5,side="left",anchor="nw")
+        self.CheckVul_in_description.pack(pady=0,padx=5,side="left",anchor="nw")
         xer="_______________________________________________________________________________________________________________________________________________________________________________________________________"
-        self.labelll=customtkinter.CTkLabel(self.CheckVul_in,text=xer,height=2).grid(pady=0,row=1,column=0,columnspan=4)
+#        self.labelll=customtkinter.CTkLabel(self.CheckVul_in,text=xer,height=2).pack(pady=0,padx=0,anchor="center")
         
-        self.name=customtkinter.CTkLabel(self.CheckVul_in,text=ID).grid(pady=(20,20),padx=0,row=2,column=0)     
+        self.name=customtkinter.CTkLabel(self.CheckVul_out,text=ID,width=150).pack(pady=100,padx=5,side="left",anchor="se")     
     
-        self.http=customtkinter.CTkTextbox(self.CheckVul_in,width=200,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0)
+        self.http=customtkinter.CTkTextbox(self.CheckVul_out,width=200,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0)
 #        self.http.insert(tkinter.END, "\ntest")
-        self.http.grid(row=2, column=1,sticky="w",padx=0)
+        self.http.pack(side="left",anchor="se",padx=5)
 
-        self.command=customtkinter.CTkTextbox(self.CheckVul_in,width=250,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0)
-        self.command.grid(row=2, column=2,sticky="w",padx=0)
-        self.desc=customtkinter.CTkTextbox(self.CheckVul_in,width=500,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0,font=("ariel",15))
+        self.command=customtkinter.CTkTextbox(self.CheckVul_out,width=250,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0)
+        self.command.pack(side="left",anchor="se",padx=5)
+        self.desc=customtkinter.CTkTextbox(self.CheckVul_out,width=700,height=280,fg_color="transparent",border_width=1,border_color="white",corner_radius=0,font=("ariel",15))
         self.desc.tag_add("red", 0.0, 0.5)
         self.desc.tag_config("red",foreground="red",underline=1)       
-        self.desc.grid(row=2, column=3,sticky="w",padx=0)
+        self.desc.pack(side="left",anchor="se",padx=5)
         num=0
         
         
@@ -468,50 +523,50 @@ class App(customtkinter.CTk):
                 for i in range(len(self.Results[0]["SQL Injection"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} ||URL:{}\n".format(num,self.Results[0]["SQL Injection"][i]["method"],self.Results[0]["SQL Injection"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["SQL Injection"][i]["parameter"]))                     
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["SQL Injection"][i]["parameter"]))                     
 
                             #Skipfish tyhto fl Sql injection.
                 if self.Results[2]['nikto_vulnerability']['sql_injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['sql_injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['sql_injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['sql_injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )                     
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )                     
                  
                 if self.Results[3]["SQL Injection"][0]+self.Results[3]["SQL Injection - MySQL"][0]+self.Results[3]["SQL Injection - Hypersonic SQL"][0]+self.Results[3]["SQL Injection - Oracle"][0]+self.Results[3]["SQL Injection - PostgreSQL"][0]+self.Results[3]["SQL Injection - SQLite"][0]+self.Results[3]["SQL Injection - MsSQL"][0]  > 0 :
                        for i in range(self.Results[3]["SQL Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection"][1][i] ,self.Results[3]["SQL Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection"][1][i][0] ,self.Results[3]["SQL Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - MySQL"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - MySQL"][1][i] ,self.Results[3]["SQL Injection - MySQL"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - MySQL"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - MySQL"][1][i][0] ,self.Results[3]["SQL Injection - MySQL"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - MySQL"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - Hypersonic SQL"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - Hypersonic SQL"][1][i] ,self.Results[3]["SQL Injection - Hypersonic SQL"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - Hypersonic SQL"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - Hypersonic SQL"][1][i][0] ,self.Results[3]["SQL Injection - Hypersonic SQL"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - Hypersonic SQL"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - Oracle"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - Oracle"][1][i] ,self.Results[3]["SQL Injection - Oracle"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - Oracle"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - Oracle"][1][i][0] ,self.Results[3]["SQL Injection - Oracle"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - Oracle"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - PostgreSQL"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - PostgreSQL"][1][i] ,self.Results[3]["SQL Injection - PostgreSQL"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - PostgreSQL"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - PostgreSQL"][1][i][0] ,self.Results[3]["SQL Injection - PostgreSQL"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - PostgreSQL"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - SQLite"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - SQLite"][1][i] ,self.Results[3]["SQL Injection - SQLite"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - SQLite"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - SQLite"][1][i][0] ,self.Results[3]["SQL Injection - SQLite"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - SQLite"][2][i]) )                     
                        for i in range(self.Results[3]["SQL Injection - MsSQL"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - MsSQL"][1][i] ,self.Results[3]["SQL Injection - MsSQL"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SQL Injection - MsSQL"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SQL Injection - MsSQL"][1][i][0] ,self.Results[3]["SQL Injection - MsSQL"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["SQL Injection - MsSQL"][2][i]) )                     
  
                 for i in self.Results[4]:
                     if "sql" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}\n".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
               
         if ("Blind SQL injection" in ID):     
                 self.desc.insert(tkinter.END, "Blind SQL injection is a technique that exploits a vulnerability occurring in the database of an application. This kind of vulnerability is harder to detect than basic SQL injections because no error message will be displayed on the webpage.\n ")
@@ -521,12 +576,12 @@ class App(customtkinter.CTk):
                 for i in range(len(self.Results[0]["Blind SQL Injection"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["Blind SQL Injection"][i]["method"],self.Results[0]["Blind SQL Injection"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["Blind SQL Injection"][i]["parameter"]))                     
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["Blind SQL Injection"][i]["parameter"]))                     
                 for i in self.Results[4]:
                     if "blind sql" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
         if ("Cross Site Scripting injection" in ID):     
                 self.desc.insert(tkinter.END, "Cross-site scripting (XSS) is a type of computer security vulnerability typically found in web applications which allow code injection by malicious web users into the web pages viewed by other users. Examples of such code include HTML code and client-side scripts.\n ")
@@ -536,172 +591,172 @@ class App(customtkinter.CTk):
                 for i in range(len(self.Results[0]["Cross Site Scripting"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["Cross Site Scripting"][i]["method"],self.Results[0]["Cross Site Scripting"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["Cross Site Scripting"][i]["parameter"]))        
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["Cross Site Scripting"][i]["parameter"]))        
                               
                 if self.Results[2]['nikto_vulnerability']['XSS injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['XSS injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['XSS injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['XSS injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )       
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )       
                            
                                         
                 if self.Results[3]["Cross Site Scripting (DOM Based)"][0]+self.Results[3]["Cross Site Scripting (Reflected)"][0]+self.Results[3]["Cross Site Scripting (Persistent)"][0]+self.Results[3]["Cross Site Scripting (Persistent) - Prime"][0]+self.Results[3]["Cross Site Scripting (Persistent) - Spider"][0]  > 0 :
                        for i in range(self.Results[3]["Cross Site Scripting (DOM Based)"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (DOM Based)"][1][i] ,self.Results[3]["Cross Site Scripting (DOM Based)"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Cross Site Scripting (DOM Based)"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (DOM Based)"][1][i][0] ,self.Results[3]["Cross Site Scripting (DOM Based)"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Cross Site Scripting (DOM Based)"][2][i]) )
                        for i in range(self.Results[3]["Cross Site Scripting (Reflected)"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Reflected)"][1][i] ,self.Results[3]["Cross Site Scripting (Reflected)"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Cross Site Scripting (Reflected)"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Reflected)"][1][i][0] ,self.Results[3]["Cross Site Scripting (Reflected)"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Cross Site Scripting (Reflected)"][2][i]) )
                        for i in range(self.Results[3]["Cross Site Scripting (Persistent)"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent)"][1][i] ,self.Results[3]["Cross Site Scripting (Persistent)"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Cross Site Scripting (Persistent)"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent)"][1][i][0] ,self.Results[3]["Cross Site Scripting (Persistent)"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent)"][2][i]) )
                        for i in range(self.Results[3]["Cross Site Scripting (Persistent) - Prime"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][1][i] ,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][1][i][0] ,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Prime"][2][i]) )
                        for i in range(self.Results[3]["Cross Site Scripting (Persistent) - Spider"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][1][i] ,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][1][i][0] ,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Cross Site Scripting (Persistent) - Spider"][2][i]) )
 
                 for i in self.Results[4]:
                     if "cross"in i.lower() and "site"in i.lower() and "scripting" in i.lower() or "xss" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
                 if self.Results[1]['40101'][1] >0:
                      for i in range(self.Results[1]['40101'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['40101'][2][i][0],self.Results[1]['40101'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )                     
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                     
                 if self.Results[1]['40105'][1] >0:
                      for i in range(self.Results[1]['40105'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['40105'][2][i][0],self.Results[1]['40105'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )
                 if self.Results[1]['40102'][1] >0:
                      for i in range(self.Results[1]['40102'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['40102'][2][i][0],self.Results[1]['40102'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )
 
         if ("Shell injection" in ID):    
-                self.desc.insert(tkinter.END, "Check For it\n ")
+                self.desc.insert(tkinter.END, "Shell injection is a type of web vulnerability that occurs when an attacker is able to inject malicious shell commands into a web application. This can occur through user input fields, system calls, or other points of input that allow the attacker to execute arbitrary shell commands on the server.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Double Check for it")
+                self.desc.insert(tkinter.END,"Validate input: Validate all user input, including form data, URL parameters, and cookies, \nSanitize input: Sanitize all input data to remove any potentially malicious shell commands or special characters.\nUse parameterized queries\nUse a whitelist of allowed commands: Use a whitelist of allowed shell commands to ensure that only trusted commands are executed\nUse restricted permissions: Use restricted permissions to limit the access that web applications have to the underlying operating system")
                 if self.Results[1]['50102'][1] >0:
                      for i in range(self.Results[1]['50102'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['50102'][2][i][0],self.Results[1]['50102'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )                             
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
                 for i in self.Results[4]:
                     if "shell" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
          
         if ("XSLT injection" in ID):         
-                self.desc.insert(tkinter.END, "Check For it\n ")
+                self.desc.insert(tkinter.END, "XSLT web injection is a type of security vulnerability that occurs when an attacker injects malicious code into an XSL stylesheet, which is used to transform XML data into HTML for display on a web page. The injected code can be used to steal sensitive information, manipulate the appearance of the page, or launch further attacks\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Double Check for it")
+                self.desc.insert(tkinter.END,"Input validation: Validate all user input, including XML data and XSL stylesheets, to ensure that they meet expected formats and do not contain any malicious code.\nUse parameterized XSLT stylesheets: Avoid embedding user input directly into XSLT stylesheets. Instead, use parameters to pass user input into the stylesheet.\nUse Content Security Policy (CSP): Implement a content security policy that restricts the use of inline scripts and styles, and only allows trusted sources for external resources.")
                 if self.Results[2]['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )       
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )       
                                         
                 if self.Results[3]["XSLT Injection"][0] > 0 :
                        for i in range(self.Results[3]["XSLT Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["XSLT Injection"][1][i] ,self.Results[3]["XSLT Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["XSLT Injection"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["XSLT Injection"][1][i][0] ,self.Results[3]["XSLT Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["XSLT Injection"][2][i]) )
                             
         if ("XML injection" in ID):         
-                self.desc.insert(tkinter.END, "Check For it\n ")
+                self.desc.insert(tkinter.END, "XML web injection is a type of security vulnerability that occurs when an attacker injects malicious code into an XML file, which is used to store and transfer data between applications. The injected code can be used to steal sensitive information, manipulate the data, or launch further attacks.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Double Check for it")         
+                self.desc.insert(tkinter.END,"Input validation: Validate all user input, including XML data, to ensure that it meets expected formats and does not contain any malicious code.\nUse parameterized XML: Avoid embedding user input directly into XML files. Instead, use parameters to pass user input into the XML file.\nUse XML digital signatures: Implement XML digital signatures to ensure the integrity and authenticity of the XML data. This will prevent attackers from tampering with the XML file.\nUse XML encryption: Implement XML encryption to protect sensitive data in the XML file from being accessed by unauthorized parties.")         
                 if self.Results[1]['50101'][1] >0:
                      for i in range(self.Results[1]['50101'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['50101'][2][i][0],self.Results[1]['50101'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )  
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )  
                                                       
                 if self.Results[2]['nikto_vulnerability']['XML injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['XML injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['XML injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['XML injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )       
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )       
                 if self.Results[3]["SOAP XML Injection"][0] > 0 :
                        for i in range(self.Results[3]["XSLT Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SOAP XML Injection"][1][i] ,self.Results[3]["SOAP XML Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["SOAP XML Injection"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["SOAP XML Injection"][1][i][0] ,self.Results[3]["SOAP XML Injection"][1][i][0]) )
+                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}\n".format(num,self.Results[3]["SOAP XML Injection"][2][i]) )
          
                 for i in self.Results[4]:
                     if "xml"in i.lower() and "external" not in i.lower() and "entity" not in i.lower():                               
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
          
         if ("XML external entities (XXE)" in ID):    
                 self.desc.insert(tkinter.END, "An XML External Entity attack is a type of attack against an application that parses XML input. This attack occurs when XML input containing a reference to an external entity is processed by a weakly configured XML parser. This attack may lead to the disclosure of confidential data, denial of service, server side request forgery, port scanning from the perspective of the machine where the parser is located, and other system impacts.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"The safest way to prevent XXE is always to disable DTDs (External Entities) completely.")         
+                self.desc.insert(tkinter.END,"The safest way to prevent XXE is always to disable DTDs (External Entities) completely.\nDisable External Entities: The simplest solution to prevent XXE attacks is to disable the use of external entities altogether. This can be done by setting the parser's external-general-entities and external-parameter-entities properties to false.")         
 
                 for i in range(len(self.Results[0]["XML External Entity"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["XML External Entity"][i]["method"],self.Results[0]["XML External Entity"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["XML External Entity"][i]["parameter"]))                            
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["XML External Entity"][i]["parameter"]))                            
                 if self.Results[3]["XML External Entity Attack"][0] > 0 :
                        for i in range(self.Results[3]["XSLT Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["XML External Entity Attack"][1][i] ,self.Results[3]["XML External Entity Attack"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["XML External Entity Attack"][3][i]) )
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["XML External Entity Attack"][1][i][0] ,self.Results[3]["XML External Entity Attack"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["XML External Entity Attack"][2][i]) )
                 for i in self.Results[4]:
                     if "xml"in i.lower() and "external"  in i.lower() and "entity" in i.lower():                               
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                               
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                               
                   
         if ("code injection" in ID):    
-                self.desc.insert(tkinter.END, "check for it (check in my Thesis)\n ")
+                self.desc.insert(tkinter.END, "web code injection attack where an attacker can inject and execute arbitrary code on a remote server or application. This can lead to complete compromise of the system and data theft.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"search for it")    
+                self.desc.insert(tkinter.END,"Input validation: Validate all user input, including form data, URL parameters, and cookies,\nUse a web application firewall: Implement a web application firewall (WAF) to block common code injection attacks")    
                      
                 if self.Results[2]['nikto_vulnerability']['remote source injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['remote source injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['remote source injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['remote source injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )                         
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )                         
                              
          
                 if self.Results[3]["Server Side Code Injection"][0]+self.Results[3]["Server Side Code Injection - PHP Code Injection"][0]+self.Results[3]["Server Side Code Injection - ASP Code Injection"][0]+self.Results[3]["Remote Code Execution - CVE-2012-1823"][0] > 0 :
                        for i in range(self.Results[3]["Remote Code Execution - CVE-2012-1823"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Remote Code Execution - CVE-2012-1823"][1][i] ,self.Results[3]["Remote Code Execution - CVE-2012-1823"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Remote Code Execution - CVE-2012-1823"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Remote Code Execution - CVE-2012-1823"][1][i][0] ,self.Results[3]["Remote Code Execution - CVE-2012-1823"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Remote Code Execution - CVE-2012-1823"][2][i]) )                     
                        for i in range(self.Results[3]["Server Side Code Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection"][1][i] ,self.Results[3]["Server Side Code Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Server Side Code Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection"][1][i][0] ,self.Results[3]["Server Side Code Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Server Side Code Injection"][2][i]) )                     
                        for i in range(self.Results[3]["Server Side Code Injection - PHP Code Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection - PHP Code Injection"][1][i] ,self.Results[3]["Server Side Code Injection - PHP Code Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Server Side Code Injection - PHP Code Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection - PHP Code Injection"][1][i][0] ,self.Results[3]["Server Side Code Injection - PHP Code Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Server Side Code Injection - PHP Code Injection"][2][i]) )                     
                        for i in range(self.Results[3]["Server Side Code Injection - ASP Code Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection - ASP Code Injection"][1][i] ,self.Results[3]["Server Side Code Injection - ASP Code Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Server Side Code Injection - ASP Code Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Code Injection - ASP Code Injection"][1][i][0] ,self.Results[3]["Server Side Code Injection - ASP Code Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Server Side Code Injection - ASP Code Injection"][2][i]) )                     
 
                 for i in self.Results[4]:
                     if "code" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
         if ("OS command injection" in ID):    
                 self.desc.insert(tkinter.END, "This attack consists in executing system commands on the server. The attacker tries to inject this commands in the request parameters.\n ")
@@ -711,45 +766,45 @@ class App(customtkinter.CTk):
                 for i in range(len(self.Results[0]["Command execution"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["Command execution"][i]["method"],self.Results[0]["Command execution"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["Command execution"][i]["parameter"]))        
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["Command execution"][i]["parameter"]))        
                 
                           
                 if self.Results[3]["Remote OS Command Injection"][0] > 0 :
                        for i in range(self.Results[3]["Remote OS Command Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Remote OS Command Injection"][1][i] ,self.Results[3]["Remote OS Command Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Remote OS Command Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Remote OS Command Injection"][1][i][0] ,self.Results[3]["Remote OS Command Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Remote OS Command Injection"][2][i]) )                     
                 for i in self.Results[4]:
                     if "command" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
         if ("html injection" in ID):        
-                self.desc.insert(tkinter.END, "check for it\n ")
+                self.desc.insert(tkinter.END, "HTML injection is a type of web vulnerability that occurs when an attacker is able to inject malicious HTML code into a web page. This can be used to perform a variety of attacks, including cross-site scripting (XSS) attacks, phishing attacks, and data theft.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"searchh about it")
+                self.desc.insert(tkinter.END,"Validate input: Validate all user input, including form data, URL parameters, and cookies\n Use input filtering to prevent user input that could be used in an HTML injection attack.\nSanitize input: Sanitize all input data to remove any potentially malicious HTML tags or attributes. \nUse a content security policy (CSP): Use a CSP to restrict the types of content that can be loaded on a web page.\nUse context-aware escaping: Use context-aware escaping to properly encode output data for the context in which it will be displayed")
                 if self.Results[2]['nikto_vulnerability']['html injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['html injection']['number']):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[2]['nikto_vulnerability']['html injection']['method_msg'][i][0] ,self.Results[2]['nikto_vulnerability']['html injection']['method_msg'][i][2]) )
-                           self.command.insert(tkinter.END, "\n{}-)None:".format(num) )       
+                           self.command.insert(tkinter.END, "\n{}-)None:\n".format(num) )       
 
 
                 for i in self.Results[4]:
                     if "html" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
         if ("Template injection" in ID):        
-                self.desc.insert(tkinter.END, "check for it\n ")
+                self.desc.insert(tkinter.END, "Template Injection is a type of web vulnerability that occurs when an attacker is able to inject malicious code into a template file used by a web application, typically in a template engine. This can lead to a variety of attacks, such as data theft, remote code execution, and denial of service.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"searchh about it")
-                if self.Results[3]["Remote OS Command Injection"][0] > 0 :
+                self.desc.insert(tkinter.END,"input validation: Validate all user input, including form data, URL parameters, and cookies,\nUse safe templates: Use templates that have built-in safety mechanisms and do not allow code execution. For example, using Handlebars.js instead of EJS\nUse a secure template engine: Use a template engine that has built-in security features, such as automatic escaping and input validation.\nEnforce strict separation of concerns: Make sure that templates do not contain any business logic or sensitive data, and keep them separate from application code.")
+                if self.Results[3]["Server Side Template Injection"][0] > 0 :
                        for i in range(self.Results[3]["Server Side Template Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Template Injection"][1][i] ,self.Results[3]["Server Side Template Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["Server Side Template Injection"][3][i]))                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["Server Side Template Injection"][1][i][0] ,self.Results[3]["Server Side Template Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["Server Side Template Injection"][2][i]))                     
         if ("CRLF injection" in ID):        
                 self.desc.insert(tkinter.END, "The term CRLF refers to Carriage Return (ASCII 13, \\r) Line Feed (ASCII 10, \\n). A CRLF Injection attack occurs when a user manages to submit a CRLF into an application. This is most commonly done by modifying an HTTP parameter or URL.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
@@ -758,57 +813,57 @@ class App(customtkinter.CTk):
                 for i in range(len(self.Results[0]["CRLF Injection"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} ||URL:{}\n".format(num,self.Results[0]["CRLF Injection"][i]["method"],self.Results[0]["CRLF Injection"][i]["path"] ) )
-                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}".format(num,self.Results[0]["CRLF Injection"][i]["parameter"]))                     
+                     self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["CRLF Injection"][i]["parameter"]))                     
 
                 if self.Results[3]["CRLF Injection"][0] > 0 :
                        for i in range(self.Results[3]["CRLF Injection"][0]):
                            num+=1
-                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["CRLF Injection"][1][i] ,self.Results[3]["CRLF Injection"][2][i]) )
-                           self.command.insert(tkinter.END, "\n{}-)InputVectore:{}".format(num,self.Results[3]["CRLF Injection"][3][i]) )                     
+                           self.http.insert(tkinter.END, "\n{}-)Method:{} |\n| URL:{}\n".format(num,self.Results[3]["CRLF Injection"][1][i][0] ,self.Results[3]["CRLF Injection"][1][i][1]) )
+                           self.command.insert(tkinter.END, "\n{}-){}\n".format(num,self.Results[3]["CRLF Injection"][2][i]) )                     
                 for i in self.Results[4]:
                     if "crlf" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
                 if self.Results[1]['40103'][1] >0:
                      for i in range(self.Results[1]['50102'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['40103'][2][i][0],self.Results[1]['40103'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )                             
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
 
 
 
 
         if ("OGNL injection" in ID):        
-                self.desc.insert(tkinter.END, "checkfor it\n ")
+                self.desc.insert(tkinter.END, "OGNL (Object-Graph Navigation Language) injection is a type of web vulnerability that occurs when an attacker is able to inject malicious code into an application that uses OGNL expressions to evaluate and execute user input\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"search for")
+                self.desc.insert(tkinter.END,"Avoid using OGNL expressions in user input: Avoid using OGNL expressions that are based on user input. Instead, use OGNL expressions that are based on fixed, predefined values.\nUse safe OGNL expressions: Use OGNL expressions that have built-in safety mechanisms and do not allow code execution")
                 if self.Results[1]['10902'][1] >0:
                      for i in range(self.Results[1]['50102'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['10902'][2][i][0],self.Results[1]['10902'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )                             
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
                 for i in self.Results[4]:
                     if "ognl" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
 
         if ("Host Header injection" in ID):        
-                self.desc.insert(tkinter.END, "check thesis\n ")
+                self.desc.insert(tkinter.END, "Host header injection happens more often in Location ad set-cookies in the HTTP header request, when a web application allows an attacker to inject and manipulate its own HTTP header request inside the application server response. and that would allow for other attacks like HTTP response splitting, Fixation session, invalid redirect,and more... \n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"search for it")
+                self.desc.insert(tkinter.END,"Use a whitelist of allowed hostnames: Use a whitelist of allowed hostnames to ensure that only trusted hostnames are accepted.\nUse HTTPS: Use HTTPS to encrypt all web traffic, including the host header.\nSet a strict SameSite policy: Set a strict SameSite policy on cookies to prevent session hijacking attacks")
                 if self.Results[1]['10902'][1] >0:
                      for i in range(self.Results[1]['30901'][1]):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['30901'][2][i][0],self.Results[1]['30901'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None".format(num) )                             
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
                 for i in self.Results[4]:
                     if "host header" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
 
 
 
@@ -822,9 +877,12 @@ class App(customtkinter.CTk):
         self.command.configure(state="disabled")
         self.http.configure(state="disabled")
     def close_check(self):
+        self.results_tabview.configure(height=600)
         self.CheckVul.grid_forget()    
     def createResaults(self):
-        self.my_frame = MyFrame_My_Result(master=self.results_tabview.tab("Our Result"))
+        self.my_frame = MyFrame_My_Result(master=self.results_tabview.tab("Results"))
+        self.my_frame.bind_all("<Button-4>", lambda e: self.my_frame._parent_canvas.yview("scroll", -1, "units"))
+        self.my_frame.bind_all("<Button-5>", lambda e: self.my_frame._parent_canvas.yview("scroll", 1, "units"))
         self.my_frame.pack(fill="both",padx=0,pady=0,expand=True)        
                 
         self.my_frameWapiti = MyFrame_My_wapiti(master=self.results_tabview.tab("wapiti"))
@@ -860,35 +918,23 @@ class App(customtkinter.CTk):
             self.Results[0]=detaille
             if number['Blind SQL Injection'] > 0:
                    self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+number['Blind SQL Injection'])
-                   if "Wapiti" not in self.my_frame.vul_label[1][2].cget("text"):
-                        if self.my_frame.vul_label[1][2].cget("text") =="None": self.my_frame.vul_label[1][2].configure(text="")
-                        self.my_frame.vul_label[1][2].configure(text=self.my_frame.vul_label[1][2].cget("text")+" Wapiti,")
+                   self.my_frame.vul_label[1][5].configure(text=self.my_frame.vul_label[1][5].cget("text")+number['Blind SQL Injection'],text_color="red")
+                        
             if number['SQL Injection'] > 0:
                    self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+number['SQL Injection'])
-                   if "Wapiti" not in self.my_frame.vul_label[0][2].cget("text"):
-                        if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
-                        self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" Wapiti,")
+                   self.my_frame.vul_label[0][5].configure(text=self.my_frame.vul_label[0][5].cget("text")+number['SQL Injection'],text_color="red")
             if number['Cross Site Scripting'] > 0:
                    self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+number['Cross Site Scripting'])
-                   if "Wapiti" not in self.my_frame.vul_label[2][2].cget("text"):
-                        if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
-                        self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" Wapiti,")
+                   self.my_frame.vul_label[2][5].configure(text=self.my_frame.vul_label[2][5].cget("text")+number['Cross Site Scripting'],text_color="red")
             if number['XML External Entity'] > 0:
                    self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+number['XML External Entity'])
-                   if "Wapiti" not in self.my_frame.vul_label[6][2].cget("text"):
-                        if self.my_frame.vul_label[6][2].cget("text") =="None": self.my_frame.vul_label[6][2].configure(text="")
-                        self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+" Wapiti,")                        
+                   self.my_frame.vul_label[6][5].configure(text=self.my_frame.vul_label[6][5].cget("text")+number['XML External Entity'],text_color="red")
             if number['Command execution'] > 0:
                    self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+number['Command execution'])
-                   if "Wapiti" not in self.my_frame.vul_label[7][2].cget("text"):
-                        if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
-                        self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+" Wapiti,")
+                   self.my_frame.vul_label[7][5].configure(text=self.my_frame.vul_label[7][5].cget("text")+number['Command execution'],text_color="red")
             if number['CRLF Injection'] > 0:
                    self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+number['CRLF Injection'])
-                   if "Wapiti" not in self.my_frame.vul_label[11][2].cget("text"):
-                        if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
-                        self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+" Wapiti,")
-            
+                   self.my_frame.vul_label[11][5].configure(text=self.my_frame.vul_label[11][5].cget("text")+number['CRLF Injection'],text_color="red") 
             #TODO: Switch to textbox instead of label
             
             #Print the resault in the wapiti tAB view:4
@@ -932,40 +978,25 @@ class App(customtkinter.CTk):
                  if all_resaults[i][1] >0:
                       if "SQL query or similar syntax in parameters" in all_resaults[i][0] :
                              self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[0][2].cget("text"):
-                                 if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
-                                 self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" SkipFish,")           
+                             self.my_frame.vul_label[0][4].configure(text=self.my_frame.vul_label[0][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "XSS vector" in all_resaults[i][0] :
                              self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[2][2].cget("text"):
-                                 if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
-                                 self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" SkipFish,")           
+                             self.my_frame.vul_label[2][4].configure(text=self.my_frame.vul_label[2][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "Shell injection" in all_resaults[i][0] :
                              self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[3][2].cget("text"):
-                                 if self.my_frame.vul_label[3][2].cget("text") =="None": self.my_frame.vul_label[3][2].configure(text="")
-                                 self.my_frame.vul_label[3][2].configure(text=self.my_frame.vul_label[3][2].cget("text")+" SkipFish,")                   
+                             self.my_frame.vul_label[3][4].configure(text=self.my_frame.vul_label[3][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "XML injection" in all_resaults[i][0] :
                              self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[5][2].cget("text"):
-                                 if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
-                                 self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+" SkipFish,")           
+                             self.my_frame.vul_label[5][4].configure(text=self.my_frame.vul_label[5][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "HTTP response header splitting" in all_resaults[i][0] :
                              self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[11][2].cget("text"):
-                                 if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
-                                 self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+" SkipFish,")           
+                             self.my_frame.vul_label[11][4].configure(text=self.my_frame.vul_label[11][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "OGNL-like parameter behavior" in all_resaults[i][0] :
                              self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[12][2].cget("text"):
-                                 if self.my_frame.vul_label[12][2].cget("text") =="None": self.my_frame.vul_label[12][2].configure(text="")
-                                 self.my_frame.vul_label[12][2].configure(text=self.my_frame.vul_label[12][2].cget("text")+" SkipFish,")           
+                             self.my_frame.vul_label[12][4].configure(text=self.my_frame.vul_label[12][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "HTTP header injection" in all_resaults[i][0] :
                              self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+all_resaults[i][1])
-                             if "SkipFish" not in self.my_frame.vul_label[13][2].cget("text"):
-                                 if self.my_frame.vul_label[13][2].cget("text") =="None": self.my_frame.vul_label[13][2].configure(text="")
-                                 self.my_frame.vul_label[13][2].configure(text=self.my_frame.vul_label[13][2].cget("text")+" SkipFish,")           
-                  
+                             self.my_frame.vul_label[13][4].configure(text=self.my_frame.vul_label[13][4].cget("text")+all_resaults[i][1],text_color="red")     
                   
                   #TODOOO ::::: PRINT RESAULT In SKIP FIsh Tab View like wapiti (bring the requast tags from resaults (modifie ostescanner code ,major work needed aghhh))
             self.my_frameSkipfish.label3.configure(state="normal",command=lambda: self.Open_skipfish_site(name) )
@@ -1012,39 +1043,27 @@ class App(customtkinter.CTk):
             self.Results[2]=Nikto_resaults   
             if Nikto_resaults['nikto_vulnerability']['sql_injection']['number'] >0:
                      self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[0][2].cget("text"):
-                         if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
-                         self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" Nikto,")                       
+                     self.my_frame.vul_label[0][6].configure(text=self.my_frame.vul_label[0][6].cget("text")+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'],text_color="red")
             
             if Nikto_resaults['nikto_vulnerability']['XSS injection']['number'] >0:
                      self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[2][2].cget("text"):
-                         if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
-                         self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" Nikto,")                       
-                       
+                     self.my_frame.vul_label[2][6].configure(text=self.my_frame.vul_label[2][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'],text_color="red")
+                                            
             if Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'] >0:
                      self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[4][2].cget("text"):
-                         if self.my_frame.vul_label[4][2].cget("text") =="None": self.my_frame.vul_label[4][2].configure(text="")
-                         self.my_frame.vul_label[4][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+" Nikto,")                       
+                     self.my_frame.vul_label[4][6].configure(text=self.my_frame.vul_label[4][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['XML injection']['number'] >0:
                      self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XML injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[5][2].cget("text"):
-                         if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
-                         self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+" Nikto,")                       
+                     self.my_frame.vul_label[5][6].configure(text=self.my_frame.vul_label[5][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XML injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['remote source injection']['number'] >0:
                      self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[7][2].cget("text"):
-                         if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
-                         self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+" Nikto,")                       
+                     self.my_frame.vul_label[7][6].configure(text=self.my_frame.vul_label[7][6].cget("text")+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['html injection']['number'] >0:
                      self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['html injection']['number'])
-                     if "Nikto" not in self.my_frame.vul_label[9][2].cget("text"):
-                         if self.my_frame.vul_label[9][2].cget("text") =="None": self.my_frame.vul_label[9][2].configure(text="")
-                         self.my_frame.vul_label[9][2].configure(text=self.my_frame.vul_label[9][2].cget("text")+" Nikto,")                       
+                     self.my_frame.vul_label[9][6].configure(text=self.my_frame.vul_label[9][6].cget("text")+Nikto_resaults['nikto_vulnerability']['html injection']['number'],text_color="red")
 
 
             print_Nikto_Result11 = threading.Thread(target=self.print_Nikto_Result1,args=([Nikto_resaults]))
@@ -1089,51 +1108,46 @@ class App(customtkinter.CTk):
             zap_resaults =new_scaner.owaspzap_get_resaults()   
             self.Results[3]=zap_resaults            
 #            print(zap_resaults)
+#                 self.my_frame.vul_label[13][4].configure(text=self.my_frame.vul_label[13][4].cget("text")+,text_color="red")
+
             if zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0]  > 0 :
                  self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0])
-                 if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")
-                 self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" Owasp Zap,")
+                 
+                 self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0],text_color="red")
 
             if zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0] > 0 :     
                  self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0])
-                 if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")
-                 self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" Owasp Zap,")
+                 self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0],text_color="red")
 
             if zap_resaults["XSLT Injection"][0] > 0:
                   self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+zap_resaults["XSLT Injection"][0])
-                  if self.my_frame.vul_label[4][2].cget("text") =="None": self.my_frame.vul_label[4][2].configure(text="")
-                  self.my_frame.vul_label[4][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+" Owasp Zap,")
-
+                  self.my_frame.vul_label[4][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+zap_resaults["XSLT Injection"][0],text_color="red")
                   
             if zap_resaults["SOAP XML Injection"][0] >0 :
                   self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+zap_resaults["SOAP XML Injection"][0])
-                  if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
-                  self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+" Owasp Zap,")
-                  
+                  self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+zap_resaults["SOAP XML Injection"][0],text_color="red")                  
             if zap_resaults["XML External Entity Attack"][0] >0 :      
                   self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+zap_resaults["XML External Entity Attack"][0])
-                  if self.my_frame.vul_label[6][2].cget("text") =="None": self.my_frame.vul_label[6][2].configure(text="")
-                  self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+" Owasp Zap,")
-                  
+                  self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+zap_resaults["XML External Entity Attack"][0],text_color="red")                  
+                                   
             if zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0] > 0 :
                   self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0])
-                  if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
-                  self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+" Owasp Zap,")
-
+                  self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0],text_color="red")
+                 
+                 
             if zap_resaults["Remote OS Command Injection"][0] > 0 :
                   self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+zap_resaults["Remote OS Command Injection"][0])
-                  if self.my_frame.vul_label[8][2].cget("text") =="None": self.my_frame.vul_label[8][2].configure(text="")
-                  self.my_frame.vul_label[8][2].configure(text=self.my_frame.vul_label[8][2].cget("text")+" Owasp Zap,")
+                  self.my_frame.vul_label[8][2].configure(text=self.my_frame.vul_label[8][2].cget("text")+zap_resaults["Remote OS Command Injection"][0],text_color="red")
+
+
             if zap_resaults["Server Side Template Injection"][0] > 0 :
                   self.my_frame.vul_label[10][1].configure(text_color="red",text=int(self.my_frame.vul_label[10][1].cget("text"))+zap_resaults["Server Side Template Injection"][0] )      
-                  if self.my_frame.vul_label[10][2].cget("text") =="None": self.my_frame.vul_label[10][2].configure(text="")
-                  self.my_frame.vul_label[10][2].configure(text=self.my_frame.vul_label[10][2].cget("text")+" Owasp Zap,")
-                       
+                  self.my_frame.vul_label[10][2].configure(text=self.my_frame.vul_label[10][2].cget("text")+zap_resaults["Server Side Template Injection"][0],text_color="red")
+                                        
             if zap_resaults["CRLF Injection"][0] > 0:
                   self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+zap_resaults["CRLF Injection"][0])
-                  if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
-                  self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+" Owasp Zap,")
-                  
+                  self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+zap_resaults["CRLF Injection"][0],text_color="red")
+                                    
             print_zap_Result1 = threading.Thread(target=self.print_zap_Result1,args=([zap_resaults]))
             print_zap_Result1.start()
             
@@ -1152,10 +1166,19 @@ class App(customtkinter.CTk):
                         self.vul=customtkinter.CTkLabel(self.my_frameZap,text=i,width=150)
                         self.vul.grid(row=nuumeb, column=0)
                         
-                        self.http=customtkinter.CTkLabel(self.my_frameZap,text="{} \n {}".format(zap_resaults[i][1][j][0],zap_resaults[i][1][j][1]),width=150)
-                        self.http.grid(row=nuumeb, column=1)
-                        self.info=customtkinter.CTkLabel(self.my_frameZap,text=zap_resaults[i][2][j],width=150)
+ #                       self.http=customtkinter.CTkLabel(self.my_frameZap,text="{} \n {}".format(zap_resaults[i][1][j][0],zap_resaults[i][1][j][1]),width=150)
+
+#                        self.http.grid(row=nuumeb, column=1)
+                        self.info=customtkinter.CTkTextbox(self.my_frameZap,width=250,height=100,fg_color="transparent")
+                        self.info.insert("0.0", "{} \n {}".format(zap_resaults[i][1][j][0],zap_resaults[i][1][j][1]))
+                        self.info.grid(row=nuumeb, column=1)
+                        self.info.configure(state="disabled")
+#                        self.info=customtkinter.CTkLabel(self.my_frameZap,text=zap_resaults[i][2][j],width=150)
+                        self.info=customtkinter.CTkTextbox(self.my_frameZap,width=250,height=100,fg_color="transparent")
+                        self.info.insert("0.0", zap_resaults[i][2][j])
                         self.info.grid(row=nuumeb, column=2)
+                        self.info.configure(state="disabled")
+
                         self.info=customtkinter.CTkTextbox(self.my_frameZap,width=250,height=100,fg_color="transparent")
                         self.info.insert("0.0", zap_resaults[i][3][j])
                         self.info.grid(row=nuumeb, column=3,sticky="w")
@@ -1173,53 +1196,40 @@ class App(customtkinter.CTk):
             for i in nuclei_resaults:
                 if "sql" in i.lower():
                    self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+nuclei_resaults[i][0])    
-                   if self.my_frame.vul_label[0][2].cget("text") =="None": self.my_frame.vul_label[0][2].configure(text="")        
-                   self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+" Nuclei,")
-
+                   self.my_frame.vul_label[0][7].configure(text=self.my_frame.vul_label[0][7].cget("text")+1,text_color="red")
                 elif "blind sql" in i.lower():
                    self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[1][2].cget("text") =="None": self.my_frame.vul_label[1][2].configure(text="")
-                   self.my_frame.vul_label[1][2].configure(text=self.my_frame.vul_label[1][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[1][7].configure(text=self.my_frame.vul_label[1][7].cget("text")+1,text_color="red")
                 elif "cross"in i.lower() and "site"in i.lower() and "scripting" in i.lower() or "xss" in i.lower():
                    self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[2][2].cget("text") =="None": self.my_frame.vul_label[2][2].configure(text="")                  
-                   self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+" Nuclei,")                
+                   self.my_frame.vul_label[2][7].configure(text=self.my_frame.vul_label[2][7].cget("text")+1,text_color="red")
                 elif "shell" in i.lower():                
                    self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[3][2].cget("text") =="None": self.my_frame.vul_label[3][2].configure(text="")
-                   self.my_frame.vul_label[3][2].configure(text=self.my_frame.vul_label[3][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[3][7].configure(text=self.my_frame.vul_label[3][7].cget("text")+1,text_color="red")
                 elif "xml"in i.lower() and "external"in i.lower() and "entity" in i.lower():                
                    self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[6][2].cget("text") =="None": self.my_frame.vul_label[6][2].configure(text="") 
-                   self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[6][7].configure(text=self.my_frame.vul_label[6][7].cget("text")+1,text_color="red")
                 elif "xml"in i.lower() and "entity" in i.lower():                
                    self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[5][2].cget("text") =="None": self.my_frame.vul_label[5][2].configure(text="")
-                   self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[5][7].configure(text=self.my_frame.vul_label[5][7].cget("text")+1,text_color="red")
                 elif "code" in i.lower():                
                    self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[7][2].cget("text") =="None": self.my_frame.vul_label[7][2].configure(text="")
-                   self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[7][7].configure(text=self.my_frame.vul_label[7][7].cget("text")+1,text_color="red")
                 elif "command" in i.lower():                
                    self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[8][2].cget("text") =="None": self.my_frame.vul_label[8][2].configure(text="")
-                   self.my_frame.vul_label[8][2].configure(text=self.my_frame.vul_label[8][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[8][7].configure(text=self.my_frame.vul_label[8][7].cget("text")+1,text_color="red")
                 elif "html" in i.lower():                
                    self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[9][2].cget("text") =="None": self.my_frame.vul_label[9][2].configure(text="")
-                   self.my_frame.vul_label[9][2].configure(text=self.my_frame.vul_label[9][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[9][7].configure(text=self.my_frame.vul_label[9][7].cget("text")+1,text_color="red")
                 elif "crlf" in i.lower():                
                    self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[11][2].cget("text") =="None": self.my_frame.vul_label[11][2].configure(text="")
-                   self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[11][7].configure(text=self.my_frame.vul_label[11][7].cget("text")+1,text_color="red")
                 elif "ognl" in i.lower():                
                    self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[12][2].cget("text") =="None": self.my_frame.vul_label[12][2].configure(text="")
-                   self.my_frame.vul_label[12][2].configure(text=self.my_frame.vul_label[12][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[12][7].configure(text=self.my_frame.vul_label[12][7].cget("text")+1,text_color="red")
                 elif "host header" in i.lower():                
                    self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+nuclei_resaults[i][0])
-                   if self.my_frame.vul_label[13][2].cget("text") =="None": self.my_frame.vul_label[13][2].configure(text="")
-                   self.my_frame.vul_label[13][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+" Nuclei,")
+                   self.my_frame.vul_label[13][7].configure(text=self.my_frame.vul_label[13][7].cget("text")+1,text_color="red")
 
             print_nuclei_Result1 = threading.Thread(target=self.print_nuclei_Result1,args=([nuclei_resaults]))
             print_nuclei_Result1.start()
@@ -1303,11 +1313,14 @@ class App(customtkinter.CTk):
                 self.file_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.view_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
+                self.target_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
+                
         else:
                 self.menubar.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.file_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.view_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+                self.target_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
 
         
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -1322,10 +1335,10 @@ class App(customtkinter.CTk):
 #            i[1].configure(text=int(0))
 
         self.log_textbox.insert(tkinter.END, "\n[Results]:", tags="yellow")            
-        self.log_textbox.insert(tkinter.END, "\t\tCheck The Results of :", tags=None) 
-        self.log_textbox.insert(tkinter.END, "\n---------------- ", tags="red")            
+        self.log_textbox.insert(tkinter.END, "Check The Results of :", tags=None) 
+        self.log_textbox.insert(tkinter.END, "\n------", tags="red")            
         self.log_textbox.insert(tkinter.END, "{}".format(name), tags=None) 
-        self.log_textbox.insert(tkinter.END, "  ----------------", tags="red")            
+        self.log_textbox.insert(tkinter.END, " ------", tags="red")            
 
         self.destroyResaults()
        
@@ -1410,31 +1423,52 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         # add widgets onto the frame...borderwidth
-        self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=250)
+        self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=200,anchor="w")
 
         self.label.grid(row=0, column=0,padx=3,pady=3)
-        self.label1 = customtkinter.CTkLabel(self,text="Exist",width=50)
+        self.label1 = customtkinter.CTkLabel(self,text="Total",width=50,anchor="w")
         self.label1.grid(row=0, column=1,padx=3,pady=3)
-        self.label2 = customtkinter.CTkLabel(self,text="Scanners",width=350)
-        self.label2.grid(row=0, column=2,padx=3,pady=3)
-        self.label3 = customtkinter.CTkLabel(self,text="Action")
-        self.label3.grid(row=0, column=3,padx=3,pady=3,sticky="e")    
+        
+        self.label2 = customtkinter.CTkLabel(self,text="OWASP",width=50)
+        self.label2.grid(row=0, column=2,padx=0,pady=0)
+        self.label3 = customtkinter.CTkLabel(self,text="Skipfish",width=50)
+        self.label3.grid(row=0, column=3,padx=0,pady=3)
+        self.label4 = customtkinter.CTkLabel(self,text="Wapiti",width=50)
+        self.label4.grid(row=0, column=4,padx=0,pady=3)
+        self.label5 = customtkinter.CTkLabel(self,text="Nikto",width=50)
+        self.label5.grid(row=0, column=5,padx=0,pady=3)
+        self.label6 = customtkinter.CTkLabel(self,text="Nuclei",width=50)
+        self.label6.grid(row=0, column=6,padx=0,pady=3)
+        
+        self.label7 = customtkinter.CTkLabel(self,text="Details")
+        self.label7.grid(row=0, column=7,padx=3,pady=3,sticky="e")    
         self.vul_label=[]
-        xer="_____________________________________________________________________________________________________________________________"
+        info=customtkinter.CTkImage(light_image=Image.open("images/info.png"),dark_image=Image.open("images/info.png"),size=(30, 30))
+
+        xer="______________________________________________________________________________________________________________________________________________________"
         for i in range(14):
             temp=[]
             self.labeltemp=customtkinter.CTkLabel(self,text=xer,fg_color="transparent")
-            self.labeltemp.grid(row=i+1, column=0,columnspan=4,pady=(40,0))
+            self.labeltemp.grid(row=i+1, column=0,columnspan=8,pady=(40,0))
 
-            self.labeltemp=customtkinter.CTkLabel(self,text=" injection:",width=250,fg_color="transparent")
-            self.labeltemp.grid(row=i+1, column=0)
+            self.labeltemp=customtkinter.CTkLabel(self,text=" injection:",width=200,fg_color="transparent",anchor="w")
+            self.labeltemp.grid(row=i+1, column=0,padx=0,pady=3)
             self.labeltemp1=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp1.grid(row=i+1, column=1)
-            self.labeltemp2=customtkinter.CTkLabel(self,text="None",width=120,fg_color="transparent")
-            self.labeltemp2.grid(row=i+1, column=2)
-            self.but=customtkinter.CTkButton(self,text="check",width=80 , height=35)#,state="disabled"  ki tkml raj3ha
-            self.but.grid(row=i+1, column=3,padx=3,pady=(5,30),sticky="e")
-            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but])
+            self.labeltemp1.grid(row=i+1, column=1,padx=0,pady=3)
+            self.labeltemp2=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp2.grid(row=i+1, column=2,padx=0,pady=3)
+            self.labeltemp3=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp3.grid(row=i+1, column=3,padx=0,pady=3)
+            self.labeltemp4=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp4.grid(row=i+1, column=4,padx=0,pady=3)
+            self.labeltemp5=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp5.grid(row=i+1, column=5,padx=0,pady=3)
+            self.labeltemp6=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
+            self.labeltemp6.grid(row=i+1, column=6,padx=0,pady=3)
+            
+            self.but=customtkinter.CTkButton(self,text="",image=info,width=40 , height=40,fg_color="transparent")#,state="disabled"  ki tkml raj3ha
+            self.but.grid(row=i+1, column=7,padx=3,pady=(5,30),sticky="e")
+            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but,self.labeltemp3,self.labeltemp4,self.labeltemp5,self.labeltemp6])
 
         self.vul_label[0][0].configure(text="SQL injection:")
         self.vul_label[0][3].configure(command=lambda:app.open_check("SQL Injection"))
@@ -1471,4 +1505,6 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
                  
 if __name__ == "__main__":
     app = App()
+#    app.iconbitmap("images/meta.ico")        #configure the menu:
+
     app.mainloop()
