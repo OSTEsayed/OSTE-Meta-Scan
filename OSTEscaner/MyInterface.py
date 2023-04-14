@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import filedialog
 import threading
 import webbrowser
 import tkinter.messagebox
@@ -30,31 +31,65 @@ class MyResultFrame(customtkinter.CTkScrollableFrame):
 class Target_Window(customtkinter.CTkToplevel):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
-        self.title("OSTEscanner  -Target-")
-
+        self.title("Web Vulnerability META-Scanner  -servers-")
+        self.directory="no"
         xer="_____________________________________________________"
         self.path="/home/ostesayed/Desktop/Scanners/OSTE-Scanner/Targets/"
-        self.geometry("600x350")
+        self.geometry("400x350")
         self.frame_main = customtkinter.CTkFrame(self)
-        self.frame_main.pack(pady=10,padx=10,fill ="both",expand=True)
-        self.label_main=customtkinter.CTkLabel(self.frame_main,text="Npm Target List:").pack(pady=10,padx=10)
-        self.mylist=os.listdir(self.path)
-        self.radio_var = tkinter.IntVar(value=0)
-        self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text="None", variable=self.radio_var, value=0)
-        self.radio_button_1.pack(pady=5,padx=25,anchor="w")
-        for i in range(len(self.mylist)):
-                self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text=self.mylist[i], variable=self.radio_var, value=i+1)
-                self.radio_button_1.pack(pady=5,padx=25,anchor="w")
-        print(self.radio_var)     
-        self.npmTarget = customtkinter.CTkButton(self, command=self.npmstart ,text="Start Npm Target")
-        self.XampTarget = customtkinter.CTkButton(self, command=self.xampstart ,text="Start Xamp",fg_color="green")
-        self.npmTarget.pack(padx=(40,5),side="left")
-        self.XampTarget.pack(padx=(5,40),side="right")
-   
+        self.frame_main.pack(pady=10,padx=10,fill="both",expand=True)
+
+        self.optionmenu_var = customtkinter.StringVar(value="XAMP server")  # set initial value
+        self.choselabel = customtkinter.CTkLabel(self.frame_main,text="Chose your desired server:").grid(padx=(30,0),pady=10,row=0,column=0)
+        self.chose = customtkinter.CTkOptionMenu(self.frame_main, values=["XAMP server", "NPM server"],command=self.optionmenu_callback,variable=self.optionmenu_var,width=100).grid(padx=(10,30),pady=10,row=0,column=1)
+#        self.npmTarget = customtkinter.CTkButton(self, command=self.npmstart ,text="Start Npm Target")
+#        self.XampTarget = customtkinter.CTkButton(self, command=self.xampstart ,text="Start Xamp",fg_color="green")
+        self.starter =  customtkinter.CTkButton(self, command=self.startchoise ,text="Start",fg_color="green")
+        self.starter.pack()
+#       self.npmTarget.pack(padx=(40,5),side="left")
+#        self.XampTarget.pack(padx=(5,40),side="right")
+    def optionmenu_callback(self,choice):
+#        self.geometry("600x350")
+#        print(self.optionmenu_var.get())
+        if choice=="NPM server":
+         self.label_main=customtkinter.CTkLabel(self.frame_main,text="or from Target List:").grid(row=1,column=1)
+         self.mylist=os.listdir(self.path)
+         self.radio_var = tkinter.IntVar(value=0)
+         self.radio_button_1 = customtkinter.CTkButton(master=self.frame_main,text="chose directory", command=self.chosedirect)
+         self.radio_button_1.grid(row=1,column=0)
+        
+
+         for i in range(len(self.mylist)):
+                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text=self.mylist[i], variable=self.radio_var, value=i+1)
+                 self.radio_button_1.grid(row=i+3,column=0,columnspan=2,pady=(10,0))
+        else:
+         self.frame_main.pack_forget()
+         self.starter.pack_forget()
+         self.frame_main = customtkinter.CTkFrame(self)
+         self.frame_main.pack(pady=10,padx=10,fill="both",expand=True)
+
+         self.optionmenu_var = customtkinter.StringVar(value="XAMP server")  # set initial value
+         self.choselabel = customtkinter.CTkLabel(self.frame_main,text="Chose your desired server:").grid(padx=(30,0),pady=10,row=0,column=0)
+         self.chose = customtkinter.CTkOptionMenu(self.frame_main, values=["XAMP server", "NPM server"],command=self.optionmenu_callback,variable=self.optionmenu_var,width=100).grid(padx=(10,30),pady=10,row=0,column=1)
+         self.starter =  customtkinter.CTkButton(self, command=self.startchoise ,text="Start",fg_color="green")
+         self.starter.pack()
+
+
+    def chosedirect(self):
+        self.directory = filedialog.askdirectory()    
+        self.npmstart()
+    def startchoise(self):
+        if self.optionmenu_var.get()=="XAMP server":
+              self.xampstart()
+        else:
+              self.npmstart()
+#        print('you started')    
     def npmstart(self):
         self.frame_main.pack_forget()
-        self.npmTarget.pack_forget()
-        self.XampTarget.pack_forget()
+#        self.npmTarget.pack_forget()
+#        self.XampTarget.pack_forget()
+        self.starter.pack_forget()
+
         self.log_textbox = customtkinter.CTkTextbox(self, width=200)
         self.log_textbox.pack(padx=10, pady=10,fill ="both",expand=True)
         self.log_textbox.tag_add("red", 0.0, 0.5)
@@ -65,8 +100,11 @@ class Target_Window(customtkinter.CTkToplevel):
         self.log_textbox.tag_add("yellow", 0.0, 0.5)
         self.log_textbox.tag_add("green", 0.0, 0.5)
         self.log_textbox.insert(1.0, "\t Starting Target.... :\n", tags="red")
-
-        self.process = subprocess.Popen("npm start", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True,cwd=f"{self.path}/{self.mylist[self.radio_var.get()-1]}/")       #path li fe cwd mazalt majerbtouch 3les problem:
+        if self.directory!="no":
+           self.process = subprocess.Popen("npm start", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True,cwd=self.directory)       #path li fe cwd mazalt majerbtouch 3les problem:
+        else:
+           self.process = subprocess.Popen("npm start", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True,cwd=f"{self.path}/{self.mylist[self.radio_var.get()-1]}/")       #path li fe cwd mazalt majerbtouch 3les problem:
+        
         pid = int(self.process.pid)
         starting= threading.Thread(target=self.start)
         starting.start() 
@@ -89,8 +127,9 @@ class Target_Window(customtkinter.CTkToplevel):
         
     def xampstart(self):
         self.frame_main.pack_forget()
-        self.npmTarget.pack_forget()
-        self.XampTarget.pack_forget()
+#        self.npmTarget.pack_forget()
+#        self.XampTarget.pack_forget()
+        self.starter.pack_forget()
         self.log_textbox = customtkinter.CTkTextbox(self, width=200)
         self.log_textbox.pack(padx=10, pady=10,fill ="both",expand=True)
 
@@ -98,8 +137,6 @@ class Target_Window(customtkinter.CTkToplevel):
 #        cmd="sudo ls -l"
         password = tkinter.simpledialog.askstring("Password", "Enter your password:(Required)", show='*')
         process = os.popen('echo {} | {} -S {}'.format(password, "sudo", cmd))
-
-# Insert the output into the text widget
         self.log_textbox.insert(tkinter.END, "Command output:\n")
 
         for line in process:
@@ -133,7 +170,7 @@ class Target_Window(customtkinter.CTkToplevel):
 class loadResult_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title("OSTEscanner  -Resault-")
+        self.title("Web Vulnerability META-Scanner  -Resault-")
         self.geometry("500x400")
         self.frame_main = customtkinter.CTkFrame(self)
         self.frame_main.pack(pady=10,padx=10,fill ="both",expand=True)
@@ -158,7 +195,7 @@ class loadResult_Window(customtkinter.CTkToplevel):
 class start_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title("OSTEscanner  -Starting Scan-")
+        self.title("Web Vulnerability META-Scanner  -Starting Scan-")
         self.geometry("500x350")
         self.frame_main = customtkinter.CTkFrame(self)
         self.frame_main.pack(pady=20,padx=60,fill ="both",expand=True)
@@ -326,28 +363,29 @@ class App(customtkinter.CTk):
         self.file_menu.add_command(label='Launch Scan',command=self.open_start_Window)
         self.file_menu.add_command(label='Retrieve History',command=self.open_load_Window)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
+        self.file_menu.add_command(label='About',command=print("about not yet finished"))
+#        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.destroy)
         self.menubar.add_cascade(label="File", menu=self.file_menu,underline=0)
         
         self.target_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-        self.target_menu.add_command(label='lunch target',command=self.open_target_Window)
-        self.menubar.add_cascade(label="Target", menu=self.target_menu,underline=0)
+        self.target_menu.add_command(label='Local host servers',command=self.open_target_Window)
+        self.target_menu.add_separator()
+        self.target_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
+        self.target_menu.add_separator()
+ 
+        self.menubar.add_cascade(label="Others", menu=self.target_menu,underline=0)
 
         
-        self.view_menu=tkinter.Menu(self.menubar,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-        
-        self.modes_menu = tkinter.Menu(self.view_menu, tearoff=0,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+        self.modes_menu = tkinter.Menu(self.target_menu, tearoff=0,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
         self.modes_menu.add_command(label='System ModeThemes',command=lambda:self.change_appearance_mode_event("System"))
         self.modes_menu.add_command(label='light Mode',command=lambda:self.change_appearance_mode_event("Light"))
         self.modes_menu.add_command(label='dark Mode',command=lambda:self.change_appearance_mode_event("Dark"))
         
+        self.target_menu.add_cascade(label='Change Appearance',menu=self.modes_menu)
+        
 
-
-        self.view_menu.add_cascade(label='Change Appearance',menu=self.modes_menu)
-        self.menubar.add_cascade(label="View", menu=self.view_menu,underline=0)
-       
         
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -1311,14 +1349,12 @@ class App(customtkinter.CTk):
         if new_appearance_mode=="Light":
                 self.menubar.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.file_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
-                self.view_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.target_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 
         else:
                 self.menubar.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.file_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-                self.view_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.target_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
 
