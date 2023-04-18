@@ -10,6 +10,8 @@ import os,shutil
 import subprocess
 import signal
 from PIL import Image
+from jinja2 import Environment, FileSystemLoader
+
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
@@ -25,7 +27,7 @@ class MyResultFrame(customtkinter.CTkScrollableFrame):
         for i in range(len(self.mylist)):
                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self,text=self.mylist[i], variable=self.radio_var, value=i)
                 self.radio_button_1.grid(row=int(i/2), column=int(i%2), pady=10, padx=20, sticky="nw")
-        print(self.radio_var)     
+        #print(self.radio_var)     
         
         
 class Target_Window(customtkinter.CTkToplevel):
@@ -61,7 +63,7 @@ class Target_Window(customtkinter.CTkToplevel):
 
          for i in range(len(self.mylist)):
                  self.radio_button_1 = customtkinter.CTkRadioButton(master=self.frame_main,text=self.mylist[i], variable=self.radio_var, value=i+1)
-                 self.radio_button_1.grid(row=i+3,column=0,columnspan=2,pady=(10,0))
+                 self.radio_button_1.grid(row=i+3,column=0,columnspan=2,padx=(20,0),pady=(15,0),sticky="sw")
         else:
          self.frame_main.pack_forget()
          self.starter.pack_forget()
@@ -111,14 +113,14 @@ class Target_Window(customtkinter.CTkToplevel):
         
         self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=lambda: os.kill(pid, signal.SIGTERM),fg_color="red") 
         self.stop_button.pack()
-        print(f"ok with {self.mylist[self.radio_var.get()-1]}")
+        #print(f"ok with {self.mylist[self.radio_var.get()-1]}")
         
     def start(self):
    
         line = self.process.stdout.readline()
         if not line:
             time.sleep(10)
-            print("no line")
+            #print("no line")
         self.log_textbox.insert(tkinter.END, line.decode())
         self.log_textbox.see(tkinter.END)
         self.start()       
@@ -145,7 +147,7 @@ class Target_Window(customtkinter.CTkToplevel):
         self.stop_button = customtkinter.CTkButton(self, text="Stop The Target", command=self.xampstop,fg_color="red") 
         self.stop_button.pack()
 
-        print("ok")
+        #print("ok")
     def xampstop(self):
         cmd = "sudo /opt/lampp/lampp stop"
 #        cmd="sudo ls -l"
@@ -227,13 +229,13 @@ class start_Window(customtkinter.CTkToplevel):
         crowling_depth= int(self.slider_1.get()*16)
         if crowling_depth==0:crowling_depth=1
         if crowling_depth==16:crowling_depth=15
-        print(crowling_depth)
+        #print(crowling_depth)
         if self.target_name.get()=="":
             self.label_result.configure(text="Enter the name of target",text_color="red")
 
         if self.target_url.get()=="":
             self.label_result.configure(text="Enter Valide URL of target",text_color="red")
-            print("Enter Valide name!!")
+            #print("Enter Valide name!!")
         else:										#scaning
             self.label_result.configure(text="Starting Scaning the target",text_color="green")            
             new_scan= OSTEscaner.scan()
@@ -360,8 +362,9 @@ class App(customtkinter.CTk):
         self.config(menu=self.menubar)
         
         self.file_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-        self.file_menu.add_command(label='Launch Scan',command=self.open_start_Window)
-        self.file_menu.add_command(label='Retrieve History',command=self.open_load_Window)
+        self.file_menu.add_command(label='Start Scan',command=self.open_start_Window)
+        self.file_menu.add_command(label='Load Result',command=self.open_load_Window)
+        self.file_menu.add_command(label='Save As HTML',command=self.save_as_html)
         self.file_menu.add_separator()
         self.file_menu.add_command(label='About',command=print("about not yet finished"))
 #        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
@@ -454,6 +457,65 @@ class App(customtkinter.CTk):
         self.createResaults()
         
         self.Results=[None,None,None,None,None]
+
+        self.templateresult={
+	"target_name":"name",        
+        "sql_meta":"null",
+        "blind_meta":"null",
+        "xss_meta":"null",
+        "shell_meta":"null",
+        "xslt_meta":"null",
+        "xml_meta":"null",
+        "xxe_meta":"null",
+        "code_meta":"null",
+        "os_meta":"null",
+        "html_meta":"null",
+        "template_meta":"null",
+        "crlf_meta":"null",
+        "ognl_meta":"null",
+        "host_meta":"null",
+        "sql1":"null",
+        "sql2":"null",
+        "sql3":"null",
+        "sql4":"null",
+        "sql5":"null",
+        "blind3":"null",
+        "blind5":"null",
+        "xss1":"null",
+        "xss2":"null",
+        "xss3":"null",
+        "xss4":"null",
+        "xss5":"null",
+        "shell2":"null",
+        "shell5":"null",
+        "xslt1":"null",
+        "xslt4":"null",
+        "xml1":"null",
+        "xml2":"null",
+        "xml4":"null",
+        "xml5":"null",
+        "xxe1":"null",
+        "xxe3":"null",
+        "xxe5":"null",
+        "code1":"null",
+        "code3":"null",
+        "code4":"null",
+        "code5":"null",
+        "os1":"null",
+        "os3":"null",
+        "os5":"null",
+        "html4":"null",
+        "html5":"null",
+        "template1":"null",
+        "crlf1":"null",
+        "crlf2":"null",
+        "crlf3":"null",
+        "crlf5":"null",
+        "ognl2":"null",
+        "ognl5":"null",
+        "host2":"null",
+        "host5":"null"}
+
     
     def minimize(self):
         self.log_textbox.configure(width=350)
@@ -509,7 +571,6 @@ class App(customtkinter.CTk):
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=[ "System","Light", "Dark"],
                                                                        command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=12, column=0, padx=20, pady=(10, 10))
-
 
 
         
@@ -764,6 +825,8 @@ class App(customtkinter.CTk):
                 self.desc.insert(tkinter.END, "web code injection attack where an attacker can inject and execute arbitrary code on a remote server or application. This can lead to complete compromise of the system and data theft.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
                 self.desc.insert(tkinter.END,"Input validation: Validate all user input, including form data, URL parameters, and cookies,\nUse a web application firewall: Implement a web application firewall (WAF) to block common code injection attacks")    
+
+                     
                      
                 if self.Results[2]['nikto_vulnerability']['remote source injection']['number'] >0:
                       for i in range(self.Results[2]['nikto_vulnerability']['remote source injection']['number']):
@@ -799,13 +862,13 @@ class App(customtkinter.CTk):
         if ("OS command injection" in ID):    
                 self.desc.insert(tkinter.END, "This attack consists in executing system commands on the server. The attacker tries to inject this commands in the request parameters.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Prefer working without user input when using file system calls.")  
+                self.desc.insert(tkinter.END,"Prefer working without user input when using file system calls.")                  
 
                 for i in range(len(self.Results[0]["Command execution"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["Command execution"][i]["method"],self.Results[0]["Command execution"][i]["path"] ) )
                      self.command.insert(tkinter.END, "\n{}-)Parammeter:{}\n".format(num,self.Results[0]["Command execution"][i]["parameter"]))        
-                
+
                           
                 if self.Results[3]["Remote OS Command Injection"][0] > 0 :
                        for i in range(self.Results[3]["Remote OS Command Injection"][0]):
@@ -968,8 +1031,8 @@ class App(customtkinter.CTk):
                    self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+number['XML External Entity'])
                    self.my_frame.vul_label[6][5].configure(text=self.my_frame.vul_label[6][5].cget("text")+number['XML External Entity'],text_color="red")
             if number['Command execution'] > 0:
-                   self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+number['Command execution'])
-                   self.my_frame.vul_label[7][5].configure(text=self.my_frame.vul_label[7][5].cget("text")+number['Command execution'],text_color="red")
+                   self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+number['Command execution'])
+                   self.my_frame.vul_label[8][5].configure(text=self.my_frame.vul_label[8][5].cget("text")+number['Command execution'],text_color="red")
             if number['CRLF Injection'] > 0:
                    self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+number['CRLF Injection'])
                    self.my_frame.vul_label[11][5].configure(text=self.my_frame.vul_label[11][5].cget("text")+number['CRLF Injection'],text_color="red") 
@@ -1308,6 +1371,195 @@ class App(customtkinter.CTk):
                         
                         nuumeb=nuumeb+1
 
+    def print_meta_Result(self):  
+    
+#           self.my_frame.vul_label[0][1].configure(text="haho")
+           #sqlinjection 0 self.my_frame.vul_label[0][1].cget("text") 
+
+           zap,self.templateresult['sql1']=(1,1) if int(self.my_frame.vul_label[0][2].cget("text")) > 0   else (0,0)
+           skip,self.templateresult['sql2']=(1,1) if int(self.my_frame.vul_label[0][4].cget("text")) > 0  else (0,0)
+           wapiti ,self.templateresult['sql3']=(1,1) if int(self.my_frame.vul_label[0][5].cget("text")) > 0  else (0,0)
+           nikto,self.templateresult['sql4']=(1,1) if int(self.my_frame.vul_label[0][6].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['sql5']=(1,1) if int(self.my_frame.vul_label[0][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.55)+(skip*0.3)+(wapiti*0.5)+(nikto*0.25)+(nuclei*0.4) )/2
+           if formule >= 0.2 : 
+                 self.my_frame.vul_label[0][1].configure(text="T",text_color='red')
+                 self.templateresult['sql_meta']="True"
+           else : 
+                 self.my_frame.vul_label[0][1].configure(text="F",text_color='blue')
+                 self.templateresult['sql_meta']="False"
+           #blindsqlinjection 1 self.my_frame.vul_label[0][1].cget("text") 
+           wapiti,self.templateresult['blind3'] =(1,1) if int(self.my_frame.vul_label[1][5].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['blind5']=(1,1) if int(self.my_frame.vul_label[1][7].cget("text")) > 0 else (0,0)
+           formule = ((wapiti*0.65)+(nuclei*0.35) )/1
+           if formule >= 0.35 : 
+               self.my_frame.vul_label[1][1].configure(text="T",text_color='red')
+               self.templateresult['blind_meta']="True"           
+           else : 
+               self.my_frame.vul_label[1][1].configure(text="F",text_color='blue')
+               self.templateresult['blind_meta']="False"
+           #cross site screapt 2 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['xss1']=(1,1) if int(self.my_frame.vul_label[2][2].cget("text")) > 0   else (0,0)
+           skip,self.templateresult['xss2']=(1,1) if int(self.my_frame.vul_label[2][4].cget("text")) > 0  else (0,0)
+           wapiti ,self.templateresult['xss3']=(1,1) if int(self.my_frame.vul_label[2][5].cget("text")) > 0  else (0,0)
+           nikto,self.templateresult['xss4']=(1,1) if int(self.my_frame.vul_label[2][6].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['xss5']=(1,1) if int(self.my_frame.vul_label[2][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.55)+(skip*0.5)+(wapiti*0.3)+(nikto*0.25)+(nuclei*0.4) )/2
+           if formule >= 0.2 : 
+               self.my_frame.vul_label[2][1].configure(text="T",text_color='red')
+               self.templateresult['xss_meta']="True"
+
+           else : 
+               self.my_frame.vul_label[2][1].configure(text="F",text_color='blue')
+               self.templateresult['xss_meta']="False"
+           #shell injection 3 self.my_frame.vul_label[0][1].cget("text") 
+           skip,self.templateresult['shell2']=(1,1) if int(self.my_frame.vul_label[3][4].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['shell5']=(1,1) if int(self.my_frame.vul_label[3][7].cget("text")) > 0 else (0,0)
+           formule = ((skip*0.4)+(nuclei*0.6) )/1
+           if formule >= 0.5: 
+               self.my_frame.vul_label[3][1].configure(text="T",text_color='red')
+               self.templateresult['shell_meta']="True"
+           
+           else : 
+               self.my_frame.vul_label[3][1].configure(text="F",text_color='blue')
+               self.templateresult['shell_meta']="False"
+
+           #XSLT 4 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['xslt1']=(1,1) if int(self.my_frame.vul_label[4][2].cget("text")) > 0   else (0,0)
+           nikto,self.templateresult['xslt4']=(1,1) if int(self.my_frame.vul_label[4][6].cget("text")) > 0  else (0,0)
+           formule = ((zap*0.5)+(nikto*0.5))/1
+           if formule >= 0.5 : 
+               self.my_frame.vul_label[4][1].configure(text="T",text_color='red')
+               self.templateresult['xslt_meta']="True"
+
+           else : 
+               self.my_frame.vul_label[4][1].configure(text="F",text_color='blue')
+               self.templateresult['xslt_meta']="False"
+
+           #xml 5 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['xml1']=(1,1) if int(self.my_frame.vul_label[5][2].cget("text")) > 0   else (0,0)
+           skip,self.templateresult['xml2']=(1,1) if int(self.my_frame.vul_label[5][4].cget("text")) > 0  else (0,0)
+           nikto,self.templateresult['xml4']=(1,1) if int(self.my_frame.vul_label[5][6].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['xml5']=(1,1) if int(self.my_frame.vul_label[5][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.55)+(skip*0.3)+(nikto*0.25)+(nuclei*0.4) )/1.5
+           if formule >= 0.26 : 
+               self.my_frame.vul_label[5][1].configure(text="T",text_color='red')
+               self.templateresult['xml_meta']="True"
+
+           else : 
+               self.my_frame.vul_label[5][1].configure(text="F",text_color='blue')
+               self.templateresult['xml_meta']="False"
+
+           #XXE 6 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['xxe1']=(1,1) if int(self.my_frame.vul_label[6][2].cget("text")) > 0   else (0,0)
+           wapiti,self.templateresult['xxe3'] =(1,1) if int(self.my_frame.vul_label[6][5].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['xxe5']=(1,1) if int(self.my_frame.vul_label[6][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.65)+(wapiti*0.5)+(nuclei*0.25) )/1.5
+           if formule >= 0.33 : 
+                self.my_frame.vul_label[6][1].configure(text="T",text_color='red')
+                self.templateresult['xxe_meta']="True"
+           else : 
+                self.my_frame.vul_label[6][1].configure(text="F",text_color='blue')
+                self.templateresult['xxe_meta']="False"
+
+           #code 7 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['code1']=(1,1) if int(self.my_frame.vul_label[7][2].cget("text")) > 0   else (0,0)
+           nikto,self.templateresult['code4']=(1,1) if int(self.my_frame.vul_label[7][6].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['code5']=(1,1) if int(self.my_frame.vul_label[7][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.55)+(nikto*0.2)+(nuclei*0.25) )/1.5
+           if formule >= 0.3 : 
+               self.my_frame.vul_label[7][1].configure(text="T",text_color='red')
+               self.templateresult['code_meta']="True"
+           else :
+               self.my_frame.vul_label[7][1].configure(text="F",text_color='blue')
+               self.templateresult['code_meta']="False"
+
+           #os comand 8 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['os1']=(1,1) if int(self.my_frame.vul_label[8][2].cget("text")) > 0   else (0,0)
+           wapiti,self.templateresult['os3'] =(1,1) if int(self.my_frame.vul_label[8][5].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['os5']=(1,1) if int(self.my_frame.vul_label[8][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.65)+(wapiti*0.5)+(nuclei*0.25) )/1.5
+           if formule >= 0.33 : 
+               self.my_frame.vul_label[8][1].configure(text="T",text_color='red')
+               self.templateresult['os_meta']="True"
+           else : 
+               self.my_frame.vul_label[8][1].configure(text="F",text_color='blue')
+               self.templateresult['os_meta']="False"
+
+           #html 9 self.my_frame.vul_label[0][1].cget("text") 
+           nikto,self.templateresult['html4']=(1,1) if int(self.my_frame.vul_label[9][6].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['html5']=(1,1) if int(self.my_frame.vul_label[9][7].cget("text")) > 0 else (0,0)
+           formule = ((nikto*0.5)+(nuclei*0.5) )/1
+           if formule >= 0.5 : 
+               self.my_frame.vul_label[9][1].configure(text="T",text_color='red')
+               self.templateresult['html_meta']="True"
+           else : 
+               self.my_frame.vul_label[9][1].configure(text="F",text_color='blue')
+               self.templateresult['html_meta']="False"
+
+           #template 10 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['template1']=(1,1) if int(self.my_frame.vul_label[10][2].cget("text")) > 0   else (0,0)
+           formule =zap
+           if formule == 1 : 
+               self.my_frame.vul_label[10][1].configure(text="T",text_color='red')
+               self.templateresult['template_meta']="True"
+           else : 
+               self.my_frame.vul_label[10][1].configure(text="F",text_color='blue')
+               self.templateresult['template_meta']="False"
+
+           #crlf 11 self.my_frame.vul_label[0][1].cget("text") 
+           zap,self.templateresult['crlf1']=(1,1) if int(self.my_frame.vul_label[11][2].cget("text")) > 0   else (0,0)
+           skip,self.templateresult['crlf2']=(1,1) if int(self.my_frame.vul_label[11][4].cget("text")) > 0  else (0,0)
+           wapiti,self.templateresult['crlf3'] =(1,1) if int(self.my_frame.vul_label[11][5].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['crlf5']=(1,1) if int(self.my_frame.vul_label[11][7].cget("text")) > 0 else (0,0)
+           formule = ((zap*0.55)+(skip*0.25)+(wapiti*0.5)+(nuclei*0.3) )/2
+           if formule >= 0.2 : 
+               self.my_frame.vul_label[11][1].configure(text="T",text_color='red')
+               self.templateresult['crlf_meta']="True"
+           else : 
+               self.my_frame.vul_label[11][1].configure(text="F",text_color='blue')
+               self.templateresult['crlf_meta']="False"
+
+           #OGNL 12 self.my_frame.vul_label[0][1].cget("text") 
+           skip,self.templateresult['ognl2']=(1,1) if int(self.my_frame.vul_label[12][4].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['ognl5']=(1,1) if int(self.my_frame.vul_label[12][7].cget("text")) > 0 else (0,0)
+           formule = ((skip*0.5)+(nuclei*0.5) )/1
+           if formule == 1 : 
+               self.my_frame.vul_label[12][1].configure(text="T",text_color='red')
+               self.templateresult['ognl_meta']="True"
+           else : 
+               self.my_frame.vul_label[12][1].configure(text="F",text_color='blue')
+               self.templateresult['ognl_meta']="False"
+
+           #host head 13 self.my_frame.vul_label[0][1].cget("text") 
+           skip,self.templateresult['host2']=(1,1) if int(self.my_frame.vul_label[13][4].cget("text")) > 0  else (0,0)
+           nuclei,self.templateresult['host5']=(1,1) if int(self.my_frame.vul_label[13][7].cget("text")) > 0 else (0,0)
+           formule = ((skip*0.5)+(nuclei*0.5) )/1
+           if formule ==1 : 
+                self.my_frame.vul_label[13][1].configure(text="T",text_color='red')
+                self.templateresult['host_meta']="True"
+           else : 
+                self.my_frame.vul_label[13][1].configure(text="F",text_color='blue')
+                self.templateresult['host_meta']="False"
+
+
+           #print(self.templateresult)
+#           1
+#           2
+#           3
+#           4
+#           5
+#           6
+#           7
+#           8
+#           9
+#           10
+#           11
+#           12
+#           13
+#           14
+           
+
 
     def chec_for_scanner(self):
             new_checker= OSTEscaner.scan_checker()
@@ -1343,7 +1595,7 @@ class App(customtkinter.CTk):
             
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
-        print("CTkInputDialog:", dialog.get_input())
+        #print("CTkInputDialog:", dialog.get_input())
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         if new_appearance_mode=="Light":
@@ -1365,6 +1617,23 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
+    def save_as_html(self):
+         env = Environment(loader=FileSystemLoader('.'))
+         template = env.get_template('result_template/template.html')
+         output = template.render(self.templateresult)
+         directory = filedialog.askdirectory()   
+         directory_path = os.path.join(directory, self.templateresult['target_name'])
+         os.mkdir(directory_path)
+         
+         with open('{}/{}/{}.html'.format(directory,self.templateresult['target_name'],self.templateresult['target_name']), 'w') as f:
+               f.write(output)
+
+         shutil.copy("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/result_template/meta1.png", '{}/{}/'.format(directory,self.templateresult['target_name']))
+
+         webbrowser.open('{}/{}/{}.html'.format(directory,self.templateresult['target_name'],self.templateresult['target_name']), new=2)
+
+
+
 
     def Load_resaults(self,name):
 #        for i in self.my_frame.vul_label:
@@ -1377,12 +1646,13 @@ class App(customtkinter.CTk):
         self.log_textbox.insert(tkinter.END, " ------", tags="red")            
 
         self.destroyResaults()
-       
+        self.templateresult['target_name']=name      
         self.print_wapiti_Result(name)
         self.print_skipfich_Result(name) 
         self.print_Nikto_Result(name)
         self.print_zap_Result(name)
         self.print_nuclei_Result(name)
+        self.print_meta_Result()
     def Open_skipfish_site(self,name):
         webbrowser.open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}/index.html'.format(name,name), new=2)
         
@@ -1462,7 +1732,7 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
         self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=200,anchor="w")
 
         self.label.grid(row=0, column=0,padx=3,pady=3)
-        self.label1 = customtkinter.CTkLabel(self,text="Total",width=50,anchor="w")
+        self.label1 = customtkinter.CTkLabel(self,text="Meta-Scan",width=50,anchor="w")
         self.label1.grid(row=0, column=1,padx=3,pady=3)
         
         self.label2 = customtkinter.CTkLabel(self,text="OWASP",width=50)
@@ -1535,10 +1805,7 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
         self.vul_label[12][3].configure(command=lambda:app.open_check("OGNL injection"))
         self.vul_label[13][0].configure(text="Host Header injection:")
         self.vul_label[13][3].configure(command=lambda:app.open_check("Host Header injection"))
-
-    def getresault(self,injectiontype):
-         print(injectiontype)
-                 
+        
 if __name__ == "__main__":
     app = App()
 #    app.iconbitmap("images/meta.ico")        #configure the menu:

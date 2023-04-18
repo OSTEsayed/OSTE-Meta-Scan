@@ -214,7 +214,7 @@ class scan():
         self.crawl=crawl
         self.name=name
         self.url=url
-        print(f"name:{self.name},url:{self.url},crawl:{self.crawl}")
+        #print(f"name:{self.name},url:{self.url},crawl:{self.crawl}")
     def starting_all_scanner(self,name,url):
        # global name ,url
         self.name=name
@@ -228,9 +228,9 @@ class scan():
 #        starting_nuclei.start() 
 
     def creat_directory(self):
-        print("[INFO] 		Creating Resaults Directory for each scanner")
+        #print("[INFO] 		Creating Resaults Directory for each scanner")
         
-        print("[location]	/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name)
+        #print("[location]	/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name)
         try:
             os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name)
             os.makedirs("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.name+"/"+"wapiti")
@@ -259,9 +259,9 @@ class scan():
         return wapiti_resaults,printedtypes
     
     def start_wapiti(self):
-        print("[INFO] 		wapiti scan started:")
+        #print("[INFO] 		wapiti scan started:")
         output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {}".format(self.url,self.name,self.name,self.crawl+2), shell=True, capture_output=True)
-        print("[Finished]		wapiti Scan completed. ")    
+        #print("[Finished]		wapiti Scan completed. ")    
 #	"""
 #    def start_wapiti_readReport():
 #        start_wapiti(self.url,self.name)
@@ -273,9 +273,9 @@ class scan():
 #-d max_depth (16), -c max_child (512) -x max_descandent (8192)
 #-k duration h:m:s 
     def start_skipfish(self):
-            print("[INFO] 		skipfish scan started:") #add 
+            #print("[INFO] 		skipfish scan started:") #add 
             output = subprocess.run("skipfish -L -W- -e -v -u -d {} -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.crawl+1,self.name,self.name,self.url), shell=True, capture_output=True)
-            print("[finished]	skipfish scand completed. ")
+            #print("[finished]	skipfish scand completed. ")
 
     def Check_all_folders(self,Dir):
             dir =["{}/{}".format(Dir,name) for name in os.listdir("{}".format(Dir)) if os.path.isdir("{}/{}".format(Dir,name)) and name[0]=="c"]
@@ -303,7 +303,7 @@ class scan():
 
           for i in range(len(self.list_of_dir)):
                self.add_issue(self.list_of_dir[i])	
-          print("____________________________skipfish resaulet :___________________________")
+          #print("____________________________skipfish resaulet :___________________________")
          # for i in self.list_of_skipfish_issue:
           #   if self.list_of_skipfish_issue[i][1] >0:
            #     print(self.list_of_skipfish_issue[i][0]," : : ",self.list_of_skipfish_issue[i][1])
@@ -317,7 +317,7 @@ class scan():
     #starting_skipfish.start() 
 #________________________________________________________Owasp_zap cli ____________
     def start_zap(self):
-             print("[INFO] 		zap server starting:")
+             #print("[INFO] 		zap server starting:")
              output = subprocess.run("zap.sh -daemon -config api.key=mypass123 -port 8090 -host 0.0.0.0", shell=True, capture_output=True)
 
     def check_for_zap(self):
@@ -383,9 +383,9 @@ class scan():
                      scanID = zap.ascan.scan(self.url)
                      while int(zap.ascan.status(scanID)) < 100:
                          # Loop until the scanner has finished
-                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
+                         #print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
                          time.sleep(15)
-                     print('[finished] 		Zap scan completed')  
+                     #print('[finished] 		Zap scan completed')  
                      with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(self.name,self.name), 'w') as convert_file:
                           convert_file.write(json.dumps(zap.core.alerts(baseurl=self.url)))
              
@@ -393,7 +393,7 @@ class scan():
                  zap_vulnerabilities_new=self.zap_vulnerabilities.copy()
                  with open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json'.format(self.name,self.name), 'r') as read_file:
                       myresault=json.load(read_file)              
-                      print("length:",len(myresault))
+                      #print("length:",len(myresault))
                       for i in myresault:
                         #alert(vulnerability:)  method \n url (Method\nURL)  inputVector(inputVector)  description(description) 
                            zap_vulnerabilities_new[i['alert']][0]=zap_vulnerabilities_new[i['alert']][0]+1
@@ -417,11 +417,11 @@ class scan():
 
   
     def start_nikto(self):
-         print("[INFO] 		Nikto scan Started:")
+         #print("[INFO] 		Nikto scan Started:")
          output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json -F json -Tuning 9".format(self.url,self.name,self.name), shell=True, capture_output=True)
          output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json -F json -Tuning 4".format(self.url,self.name,self.name), shell=True, capture_output=True)
 #         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f.json -F json -Tuning f".format(url,name,name), shell=True, capture_output=True)
-         print("[finished] 		Nikto scan  completed")
+         #print("[finished] 		Nikto scan  completed")
     
     def get_nikto_vulnerability(self,path):
         
@@ -478,9 +478,9 @@ class scan():
 
 #______________________________________________________________nuclei _____________________________________________________________________________
     def start_nuclei(self):
-         print("[INFO] 		Nuclei Scan started:")
+         #print("[INFO] 		Nuclei Scan started:")
          output = subprocess.run("nuclei -u {} -tags cve -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json -json -duc -ni ".format(self.url,self.name,self.name), shell=True, capture_output=True)
-         print("[finished] 		Nuclei scan finished")
+         #print("[finished] 		Nuclei scan finished")
     def list_the_Vuln_nuclei(self):
         data = []
         newdater=self.dater.copy()
