@@ -9,8 +9,10 @@ import OSTEscaner
 import os,shutil
 import subprocess
 import signal
+import json
 from PIL import Image
 from jinja2 import Environment, FileSystemLoader
+from matplotlib.pyplot import bar, show,title,ylim
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -365,28 +367,34 @@ class App(customtkinter.CTk):
         self.file_menu.add_command(label='Start Scan',command=self.open_start_Window)
         self.file_menu.add_command(label='Load Result',command=self.open_load_Window)
         self.file_menu.add_command(label='Save As HTML',command=self.save_as_html)
-        self.file_menu.add_separator()
-        self.file_menu.add_command(label='About',command=print("about not yet finished"))
+#        self.file_menu.add_separator()
+#        self.file_menu.add_command(label='About',command=print("about not yet finished"))
 #        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.destroy)
         self.menubar.add_cascade(label="File", menu=self.file_menu,underline=0)
         
-        self.target_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-        self.target_menu.add_command(label='Local host servers',command=self.open_target_Window)
-        self.target_menu.add_separator()
-        self.target_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
-        self.target_menu.add_separator()
- 
-        self.menubar.add_cascade(label="Others", menu=self.target_menu,underline=0)
+#        self.target_menu = tkinter.Menu(self.menubar ,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+#        self.target_menu.add_command(label='Local host servers',command=self.open_target_Window)
+#        self.target_menu.add_separator()
+#        self.target_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
+#        self.target_menu.add_separator()
+#        self.menubar.add_cascade(label="Others", menu=self.target_menu,underline=0)
 
         
-        self.modes_menu = tkinter.Menu(self.target_menu, tearoff=0,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+        self.modes_menu = tkinter.Menu(self.menubar, tearoff=0,bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
         self.modes_menu.add_command(label='System ModeThemes',command=lambda:self.change_appearance_mode_event("System"))
         self.modes_menu.add_command(label='light Mode',command=lambda:self.change_appearance_mode_event("Light"))
         self.modes_menu.add_command(label='dark Mode',command=lambda:self.change_appearance_mode_event("Dark"))
         
-        self.target_menu.add_cascade(label='Change Appearance',menu=self.modes_menu)
+        
+        self.menubar.add_command(label="Local-host servers",command=self.open_target_Window,underline=0)
+        self.menubar.add_command(label="Verify Scanners",command=self.chec_for_scanner,underline=0)
+        self.menubar.add_cascade(label='Appearance',menu=self.modes_menu,underline=0)
+        self.menubar.add_command(label="About",command=print("about not yet finished"),underline=0)
+
+        
+        
         
 
         
@@ -498,7 +506,6 @@ class App(customtkinter.CTk):
         "xxe3":"null",
         "xxe5":"null",
         "code1":"null",
-        "code3":"null",
         "code4":"null",
         "code5":"null",
         "os1":"null",
@@ -515,6 +522,10 @@ class App(customtkinter.CTk):
         "ognl5":"null",
         "host2":"null",
         "host5":"null"}
+        fileObject = open("weights/weights.json", "r")
+        jsonContent = fileObject.read()
+        self.weights = json.loads(jsonContent)
+        fileObject.close()
 
     
     def minimize(self):
@@ -539,11 +550,11 @@ class App(customtkinter.CTk):
         self.close.grid(row=0,column=5,sticky="ne")       
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="META-Scanner", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=0, pady=(20, 10))
-        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="Launch Scan",state="disabled")
+        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="start Scan")
         self.startnewscan_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_load_Window,text="Retrieve History")
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_load_Window,text="Load Result")
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.chec_for_scanner_sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.chec_for_scanner,text="Verify Scanners")
+        self.chec_for_scanner_sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.save_as_html,text="Save As HTML")
         self.chec_for_scanner_sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
 
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join("images/meta.png")), size=(190, 150))   
@@ -1018,23 +1029,23 @@ class App(customtkinter.CTk):
             number,detaille =new_scaner.get_wapiti_resaults()
             self.Results[0]=detaille
             if number['Blind SQL Injection'] > 0:
-                   self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+number['Blind SQL Injection'])
+                   #self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+number['Blind SQL Injection'])
                    self.my_frame.vul_label[1][5].configure(text=self.my_frame.vul_label[1][5].cget("text")+number['Blind SQL Injection'],text_color="red")
                         
             if number['SQL Injection'] > 0:
-                   self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+number['SQL Injection'])
+                   #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+number['SQL Injection'])
                    self.my_frame.vul_label[0][5].configure(text=self.my_frame.vul_label[0][5].cget("text")+number['SQL Injection'],text_color="red")
             if number['Cross Site Scripting'] > 0:
-                   self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+number['Cross Site Scripting'])
+                   #self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+number['Cross Site Scripting'])
                    self.my_frame.vul_label[2][5].configure(text=self.my_frame.vul_label[2][5].cget("text")+number['Cross Site Scripting'],text_color="red")
             if number['XML External Entity'] > 0:
-                   self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+number['XML External Entity'])
+                   #self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+number['XML External Entity'])
                    self.my_frame.vul_label[6][5].configure(text=self.my_frame.vul_label[6][5].cget("text")+number['XML External Entity'],text_color="red")
             if number['Command execution'] > 0:
-                   self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+number['Command execution'])
+                   #self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+number['Command execution'])
                    self.my_frame.vul_label[8][5].configure(text=self.my_frame.vul_label[8][5].cget("text")+number['Command execution'],text_color="red")
             if number['CRLF Injection'] > 0:
-                   self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+number['CRLF Injection'])
+                   #self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+number['CRLF Injection'])
                    self.my_frame.vul_label[11][5].configure(text=self.my_frame.vul_label[11][5].cget("text")+number['CRLF Injection'],text_color="red") 
             #TODO: Switch to textbox instead of label
             
@@ -1078,25 +1089,25 @@ class App(customtkinter.CTk):
             for i in all_resaults:
                  if all_resaults[i][1] >0:
                       if "SQL query or similar syntax in parameters" in all_resaults[i][0] :
-                             self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[0][4].configure(text=self.my_frame.vul_label[0][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "XSS vector" in all_resaults[i][0] :
-                             self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[2][4].configure(text=self.my_frame.vul_label[2][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "Shell injection" in all_resaults[i][0] :
-                             self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[3][4].configure(text=self.my_frame.vul_label[3][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "XML injection" in all_resaults[i][0] :
-                             self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[5][4].configure(text=self.my_frame.vul_label[5][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "HTTP response header splitting" in all_resaults[i][0] :
-                             self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[11][4].configure(text=self.my_frame.vul_label[11][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "OGNL-like parameter behavior" in all_resaults[i][0] :
-                             self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[12][4].configure(text=self.my_frame.vul_label[12][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "HTTP header injection" in all_resaults[i][0] :
-                             self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+all_resaults[i][1])
+                             #self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[13][4].configure(text=self.my_frame.vul_label[13][4].cget("text")+all_resaults[i][1],text_color="red")     
                   
                   #TODOOO ::::: PRINT RESAULT In SKIP FIsh Tab View like wapiti (bring the requast tags from resaults (modifie ostescanner code ,major work needed aghhh))
@@ -1143,27 +1154,27 @@ class App(customtkinter.CTk):
             Nikto_resaults =new_scaner.get_nikto_report() 
             self.Results[2]=Nikto_resaults   
             if Nikto_resaults['nikto_vulnerability']['sql_injection']['number'] >0:
-                     self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'])
+                     #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'])
                      self.my_frame.vul_label[0][6].configure(text=self.my_frame.vul_label[0][6].cget("text")+Nikto_resaults['nikto_vulnerability']['sql_injection']['number'],text_color="red")
             
             if Nikto_resaults['nikto_vulnerability']['XSS injection']['number'] >0:
-                     self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'])
+                     #self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'])
                      self.my_frame.vul_label[2][6].configure(text=self.my_frame.vul_label[2][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XSS injection']['number'],text_color="red")
                                             
             if Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'] >0:
-                     self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
+                     #self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'])
                      self.my_frame.vul_label[4][6].configure(text=self.my_frame.vul_label[4][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XSLT_Extensible Stylesheet Language Transformations injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['XML injection']['number'] >0:
-                     self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XML injection']['number'])
+                     #self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['XML injection']['number'])
                      self.my_frame.vul_label[5][6].configure(text=self.my_frame.vul_label[5][6].cget("text")+Nikto_resaults['nikto_vulnerability']['XML injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['remote source injection']['number'] >0:
-                     self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'])
+                     #self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'])
                      self.my_frame.vul_label[7][6].configure(text=self.my_frame.vul_label[7][6].cget("text")+Nikto_resaults['nikto_vulnerability']['remote source injection']['number'],text_color="red")
 
             if Nikto_resaults['nikto_vulnerability']['html injection']['number'] >0:
-                     self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['html injection']['number'])
+                     #self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+Nikto_resaults['nikto_vulnerability']['html injection']['number'])
                      self.my_frame.vul_label[9][6].configure(text=self.my_frame.vul_label[9][6].cget("text")+Nikto_resaults['nikto_vulnerability']['html injection']['number'],text_color="red")
 
 
@@ -1212,41 +1223,41 @@ class App(customtkinter.CTk):
 #                 self.my_frame.vul_label[13][4].configure(text=self.my_frame.vul_label[13][4].cget("text")+,text_color="red")
 
             if zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0]  > 0 :
-                 self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0])
+                 #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0])
                  
                  self.my_frame.vul_label[0][2].configure(text=self.my_frame.vul_label[0][2].cget("text")+zap_resaults["SQL Injection"][0]+zap_resaults["SQL Injection - MySQL"][0]+zap_resaults["SQL Injection - Hypersonic SQL"][0]+zap_resaults["SQL Injection - Oracle"][0]+zap_resaults["SQL Injection - PostgreSQL"][0]+zap_resaults["SQL Injection - SQLite"][0]+zap_resaults["SQL Injection - MsSQL"][0],text_color="red")
 
             if zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0] > 0 :     
-                 self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0])
+                 #self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0])
                  self.my_frame.vul_label[2][2].configure(text=self.my_frame.vul_label[2][2].cget("text")+zap_resaults["Cross Site Scripting (Reflected)"][0]+zap_resaults["Cross Site Scripting (Persistent)"][0]+zap_resaults["Cross Site Scripting (Persistent) - Prime"][0]+zap_resaults["Cross Site Scripting (Persistent) - Spider"][0]+zap_resaults["Cross Site Scripting (DOM Based)"][0],text_color="red")
 
             if zap_resaults["XSLT Injection"][0] > 0:
-                  self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+zap_resaults["XSLT Injection"][0])
+                  #self.my_frame.vul_label[4][1].configure(text_color="red",text=int(self.my_frame.vul_label[4][1].cget("text"))+zap_resaults["XSLT Injection"][0])
                   self.my_frame.vul_label[4][2].configure(text=self.my_frame.vul_label[4][2].cget("text")+zap_resaults["XSLT Injection"][0],text_color="red")
                   
             if zap_resaults["SOAP XML Injection"][0] >0 :
-                  self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+zap_resaults["SOAP XML Injection"][0])
+                  #self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+zap_resaults["SOAP XML Injection"][0])
                   self.my_frame.vul_label[5][2].configure(text=self.my_frame.vul_label[5][2].cget("text")+zap_resaults["SOAP XML Injection"][0],text_color="red")                  
             if zap_resaults["XML External Entity Attack"][0] >0 :      
-                  self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+zap_resaults["XML External Entity Attack"][0])
+                  #self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+zap_resaults["XML External Entity Attack"][0])
                   self.my_frame.vul_label[6][2].configure(text=self.my_frame.vul_label[6][2].cget("text")+zap_resaults["XML External Entity Attack"][0],text_color="red")                  
                                    
             if zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0] > 0 :
-                  self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0])
+                  #self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0])
                   self.my_frame.vul_label[7][2].configure(text=self.my_frame.vul_label[7][2].cget("text")+zap_resaults["Server Side Code Injection"][0]+zap_resaults["Server Side Code Injection - PHP Code Injection"][0]+zap_resaults["Server Side Code Injection - ASP Code Injection"][0]+zap_resaults["Remote Code Execution - CVE-2012-1823"][0],text_color="red")
                  
                  
             if zap_resaults["Remote OS Command Injection"][0] > 0 :
-                  self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+zap_resaults["Remote OS Command Injection"][0])
+                  #self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+zap_resaults["Remote OS Command Injection"][0])
                   self.my_frame.vul_label[8][2].configure(text=self.my_frame.vul_label[8][2].cget("text")+zap_resaults["Remote OS Command Injection"][0],text_color="red")
 
 
             if zap_resaults["Server Side Template Injection"][0] > 0 :
-                  self.my_frame.vul_label[10][1].configure(text_color="red",text=int(self.my_frame.vul_label[10][1].cget("text"))+zap_resaults["Server Side Template Injection"][0] )      
+                  #self.my_frame.vul_label[10][1].configure(text_color="red",text=int(self.my_frame.vul_label[10][1].cget("text"))+zap_resaults["Server Side Template Injection"][0] )      
                   self.my_frame.vul_label[10][2].configure(text=self.my_frame.vul_label[10][2].cget("text")+zap_resaults["Server Side Template Injection"][0],text_color="red")
                                         
             if zap_resaults["CRLF Injection"][0] > 0:
-                  self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+zap_resaults["CRLF Injection"][0])
+                  #self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+zap_resaults["CRLF Injection"][0])
                   self.my_frame.vul_label[11][2].configure(text=self.my_frame.vul_label[11][2].cget("text")+zap_resaults["CRLF Injection"][0],text_color="red")
                                     
             print_zap_Result1 = threading.Thread(target=self.print_zap_Result1,args=([zap_resaults]))
@@ -1296,40 +1307,40 @@ class App(customtkinter.CTk):
             self.Results[4]=nuclei_resaults            
             for i in nuclei_resaults:
                 if "sql" in i.lower():
-                   self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+nuclei_resaults[i][0])    
+                   #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+nuclei_resaults[i][0])    
                    self.my_frame.vul_label[0][7].configure(text=self.my_frame.vul_label[0][7].cget("text")+1,text_color="red")
                 elif "blind sql" in i.lower():
-                   self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[1][7].configure(text=self.my_frame.vul_label[1][7].cget("text")+1,text_color="red")
                 elif "cross"in i.lower() and "site"in i.lower() and "scripting" in i.lower() or "xss" in i.lower():
-                   self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[2][1].configure(text_color="red",text=int(self.my_frame.vul_label[2][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[2][7].configure(text=self.my_frame.vul_label[2][7].cget("text")+1,text_color="red")
                 elif "shell" in i.lower():                
-                   self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[3][7].configure(text=self.my_frame.vul_label[3][7].cget("text")+1,text_color="red")
                 elif "xml"in i.lower() and "external"in i.lower() and "entity" in i.lower():                
-                   self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[6][1].configure(text_color="red",text=int(self.my_frame.vul_label[6][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[6][7].configure(text=self.my_frame.vul_label[6][7].cget("text")+1,text_color="red")
                 elif "xml"in i.lower() and "entity" in i.lower():                
-                   self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[5][7].configure(text=self.my_frame.vul_label[5][7].cget("text")+1,text_color="red")
                 elif "code" in i.lower():                
-                   self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[7][1].configure(text_color="red",text=int(self.my_frame.vul_label[7][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[7][7].configure(text=self.my_frame.vul_label[7][7].cget("text")+1,text_color="red")
                 elif "command" in i.lower():                
-                   self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[8][1].configure(text_color="red",text=int(self.my_frame.vul_label[8][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[8][7].configure(text=self.my_frame.vul_label[8][7].cget("text")+1,text_color="red")
                 elif "html" in i.lower():                
-                   self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[9][1].configure(text_color="red",text=int(self.my_frame.vul_label[9][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[9][7].configure(text=self.my_frame.vul_label[9][7].cget("text")+1,text_color="red")
                 elif "crlf" in i.lower():                
-                   self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[11][1].configure(text_color="red",text=int(self.my_frame.vul_label[11][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[11][7].configure(text=self.my_frame.vul_label[11][7].cget("text")+1,text_color="red")
                 elif "ognl" in i.lower():                
-                   self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[12][1].configure(text_color="red",text=int(self.my_frame.vul_label[12][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[12][7].configure(text=self.my_frame.vul_label[12][7].cget("text")+1,text_color="red")
                 elif "host header" in i.lower():                
-                   self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+nuclei_resaults[i][0])
+                   #self.my_frame.vul_label[13][1].configure(text_color="red",text=int(self.my_frame.vul_label[13][1].cget("text"))+nuclei_resaults[i][0])
                    self.my_frame.vul_label[13][7].configure(text=self.my_frame.vul_label[13][7].cget("text")+1,text_color="red")
 
             print_nuclei_Result1 = threading.Thread(target=self.print_nuclei_Result1,args=([nuclei_resaults]))
@@ -1375,173 +1386,229 @@ class App(customtkinter.CTk):
     
 #           self.my_frame.vul_label[0][1].configure(text="haho")
            #sqlinjection 0 self.my_frame.vul_label[0][1].cget("text") 
+           fileObject = open("weights/weights.json", "r")
+           jsonContent = fileObject.read()
+           self.weights = json.loads(jsonContent)
+           weights = json.loads(jsonContent)
+           
+           fileObject.close()
+
+
 
            zap,self.templateresult['sql1']=(1,1) if int(self.my_frame.vul_label[0][2].cget("text")) > 0   else (0,0)
            skip,self.templateresult['sql2']=(1,1) if int(self.my_frame.vul_label[0][4].cget("text")) > 0  else (0,0)
            wapiti ,self.templateresult['sql3']=(1,1) if int(self.my_frame.vul_label[0][5].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['sql4']=(1,1) if int(self.my_frame.vul_label[0][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['sql5']=(1,1) if int(self.my_frame.vul_label[0][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.55)+(skip*0.3)+(wapiti*0.5)+(nikto*0.25)+(nuclei*0.4) )/2
+           formule = ((zap*weights["zap1"])+(skip*weights["skip1"])+(wapiti*weights["wapiti1"])+(nikto*weights["nikto1"])+(nuclei*weights["nuclei1"]) )/2
            if formule >= 0.2 : 
-                 self.my_frame.vul_label[0][1].configure(text="T",text_color='red')
-                 self.templateresult['sql_meta']="True"
+                 self.my_frame.vul_label[0][1].configure(text="Positive",text_color='red')
+                 self.templateresult['sql_meta']="Positive"
+                 weights["zap1"]=weights["zap1"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+                 weights["skip1"]=weights["skip1"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+                 weights["wapiti1"]=weights["wapiti1"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+                 weights["nikto1"]=weights["nikto1"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+                 weights["nuclei1"]=weights["nuclei1"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+                 
            else : 
-                 self.my_frame.vul_label[0][1].configure(text="F",text_color='blue')
-                 self.templateresult['sql_meta']="False"
+                 self.my_frame.vul_label[0][1].configure(text="Negative",text_color='blue')
+                 self.templateresult['sql_meta']="Negative"
            #blindsqlinjection 1 self.my_frame.vul_label[0][1].cget("text") 
            wapiti,self.templateresult['blind3'] =(1,1) if int(self.my_frame.vul_label[1][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['blind5']=(1,1) if int(self.my_frame.vul_label[1][7].cget("text")) > 0 else (0,0)
-           formule = ((wapiti*0.65)+(nuclei*0.35) )/1
+           formule = ((wapiti*weights["wapiti2"])+(nuclei*weights["nuclei2"]) )/1
            if formule >= 0.35 : 
-               self.my_frame.vul_label[1][1].configure(text="T",text_color='red')
-               self.templateresult['blind_meta']="True"           
+               self.my_frame.vul_label[1][1].configure(text="Positive",text_color='red')
+               self.templateresult['blind_meta']="Positive"           
+               weights["wapiti2"]=weights["wapiti2"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+               weights["nuclei2"]=weights["nuclei2"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+
            else : 
-               self.my_frame.vul_label[1][1].configure(text="F",text_color='blue')
-               self.templateresult['blind_meta']="False"
+               self.my_frame.vul_label[1][1].configure(text="Negative",text_color='blue')
+               self.templateresult['blind_meta']="Negative"
            #cross site screapt 2 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['xss1']=(1,1) if int(self.my_frame.vul_label[2][2].cget("text")) > 0   else (0,0)
            skip,self.templateresult['xss2']=(1,1) if int(self.my_frame.vul_label[2][4].cget("text")) > 0  else (0,0)
            wapiti ,self.templateresult['xss3']=(1,1) if int(self.my_frame.vul_label[2][5].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['xss4']=(1,1) if int(self.my_frame.vul_label[2][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xss5']=(1,1) if int(self.my_frame.vul_label[2][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.55)+(skip*0.5)+(wapiti*0.3)+(nikto*0.25)+(nuclei*0.4) )/2
+           formule = ((zap*weights["zap3"])+(skip*weights["skip3"])+(wapiti*weights["wapiti3"])+(nikto*weights["nikto3"])+(nuclei*weights["nuclei3"]) )/2
            if formule >= 0.2 : 
-               self.my_frame.vul_label[2][1].configure(text="T",text_color='red')
-               self.templateresult['xss_meta']="True"
+               self.my_frame.vul_label[2][1].configure(text="Positive",text_color='red')
+               self.templateresult['xss_meta']="Positive"
+               weights["zap3"]=weights["zap3"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["skip3"]=weights["skip3"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+               weights["wapiti3"]=weights["wapiti3"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+               weights["nikto3"]=weights["nikto3"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+               weights["nuclei3"]=weights["nuclei3"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
 
            else : 
-               self.my_frame.vul_label[2][1].configure(text="F",text_color='blue')
-               self.templateresult['xss_meta']="False"
+               self.my_frame.vul_label[2][1].configure(text="Negative",text_color='blue')
+               self.templateresult['xss_meta']="Negative"
            #shell injection 3 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['shell2']=(1,1) if int(self.my_frame.vul_label[3][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['shell5']=(1,1) if int(self.my_frame.vul_label[3][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*0.4)+(nuclei*0.6) )/1
+           formule = ((skip*weights["skip4"])+(nuclei*weights["nuclei4"]) )/1
            if formule >= 0.5: 
-               self.my_frame.vul_label[3][1].configure(text="T",text_color='red')
-               self.templateresult['shell_meta']="True"
+               self.my_frame.vul_label[3][1].configure(text="Positive",text_color='red')
+               self.templateresult['shell_meta']="Positive"
+               weights["skip4"]=weights["skip4"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+               weights["nuclei4"]=weights["nuclei4"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+
+
            
            else : 
-               self.my_frame.vul_label[3][1].configure(text="F",text_color='blue')
-               self.templateresult['shell_meta']="False"
+               self.my_frame.vul_label[3][1].configure(text="Negative",text_color='blue')
+               self.templateresult['shell_meta']="Negative"
 
            #XSLT 4 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['xslt1']=(1,1) if int(self.my_frame.vul_label[4][2].cget("text")) > 0   else (0,0)
            nikto,self.templateresult['xslt4']=(1,1) if int(self.my_frame.vul_label[4][6].cget("text")) > 0  else (0,0)
-           formule = ((zap*0.5)+(nikto*0.5))/1
+           formule = ((zap*weights["zap5"])+(nikto*weights["nikto5"]))/1
            if formule >= 0.5 : 
-               self.my_frame.vul_label[4][1].configure(text="T",text_color='red')
-               self.templateresult['xslt_meta']="True"
+               self.my_frame.vul_label[4][1].configure(text="Positive",text_color='red')
+               self.templateresult['xslt_meta']="Positive"
+               weights["zap5"]=weights["zap5"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["nikto5"]=weights["nikto5"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
 
            else : 
-               self.my_frame.vul_label[4][1].configure(text="F",text_color='blue')
-               self.templateresult['xslt_meta']="False"
+               self.my_frame.vul_label[4][1].configure(text="Negative",text_color='blue')
+               self.templateresult['xslt_meta']="Negative"
 
            #xml 5 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['xml1']=(1,1) if int(self.my_frame.vul_label[5][2].cget("text")) > 0   else (0,0)
            skip,self.templateresult['xml2']=(1,1) if int(self.my_frame.vul_label[5][4].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['xml4']=(1,1) if int(self.my_frame.vul_label[5][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xml5']=(1,1) if int(self.my_frame.vul_label[5][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.55)+(skip*0.3)+(nikto*0.25)+(nuclei*0.4) )/1.5
+           formule = ((zap*weights["zap6"])+(skip*weights["skip6"])+(nikto*weights["nikto6"])+(nuclei*weights["nuclei6"]) )/1.5
            if formule >= 0.26 : 
-               self.my_frame.vul_label[5][1].configure(text="T",text_color='red')
-               self.templateresult['xml_meta']="True"
+               self.my_frame.vul_label[5][1].configure(text="Positive",text_color='red')
+               self.templateresult['xml_meta']="Positive"
+               weights["zap6"]=weights["zap6"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["skip6"]=weights["skip6"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+               weights["nikto6"]=weights["nikto6"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+               weights["nuclei6"]=weights["nuclei6"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
 
            else : 
-               self.my_frame.vul_label[5][1].configure(text="F",text_color='blue')
-               self.templateresult['xml_meta']="False"
+               self.my_frame.vul_label[5][1].configure(text="Negative",text_color='blue')
+               self.templateresult['xml_meta']="Negative"
 
            #XXE 6 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['xxe1']=(1,1) if int(self.my_frame.vul_label[6][2].cget("text")) > 0   else (0,0)
            wapiti,self.templateresult['xxe3'] =(1,1) if int(self.my_frame.vul_label[6][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xxe5']=(1,1) if int(self.my_frame.vul_label[6][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.65)+(wapiti*0.5)+(nuclei*0.25) )/1.5
+           formule = ((zap*weights["zap7"])+(wapiti*weights["wapiti7"])+(nuclei*weights["nuclei7"]) )/1.5
            if formule >= 0.33 : 
-                self.my_frame.vul_label[6][1].configure(text="T",text_color='red')
+                self.my_frame.vul_label[6][1].configure(text="Positive",text_color='red')
                 self.templateresult['xxe_meta']="True"
+                weights["zap7"]=weights["zap7"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+                weights["wapiti7"]=weights["wapiti7"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+                weights["nuclei7"]=weights["nuclei7"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else : 
-                self.my_frame.vul_label[6][1].configure(text="F",text_color='blue')
-                self.templateresult['xxe_meta']="False"
+                self.my_frame.vul_label[6][1].configure(text="Negative",text_color='blue')
+                self.templateresult['xxe_meta']="Negative"
 
            #code 7 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['code1']=(1,1) if int(self.my_frame.vul_label[7][2].cget("text")) > 0   else (0,0)
            nikto,self.templateresult['code4']=(1,1) if int(self.my_frame.vul_label[7][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['code5']=(1,1) if int(self.my_frame.vul_label[7][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.55)+(nikto*0.2)+(nuclei*0.25) )/1.5
+           formule = ((zap*weights["zap8"])+(nikto*weights["nikto8"])+(nuclei*weights["nuclei8"]) )/1.5
            if formule >= 0.3 : 
-               self.my_frame.vul_label[7][1].configure(text="T",text_color='red')
-               self.templateresult['code_meta']="True"
+               self.my_frame.vul_label[7][1].configure(text="Positive",text_color='red')
+               self.templateresult['code_meta']="Positive"
+               weights["zap8"]=weights["zap8"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["nikto8"]=weights["nikto8"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+               weights["nuclei8"]=weights["nuclei8"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else :
-               self.my_frame.vul_label[7][1].configure(text="F",text_color='blue')
-               self.templateresult['code_meta']="False"
+               self.my_frame.vul_label[7][1].configure(text="Negative",text_color='blue')
+               self.templateresult['code_meta']="Negative"
 
            #os comand 8 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['os1']=(1,1) if int(self.my_frame.vul_label[8][2].cget("text")) > 0   else (0,0)
            wapiti,self.templateresult['os3'] =(1,1) if int(self.my_frame.vul_label[8][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['os5']=(1,1) if int(self.my_frame.vul_label[8][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.65)+(wapiti*0.5)+(nuclei*0.25) )/1.5
+           formule = ((zap*weights["zap9"])+(wapiti*weights["wapiti9"])+(nuclei*weights["nuclei9"]) )/1.5
            if formule >= 0.33 : 
-               self.my_frame.vul_label[8][1].configure(text="T",text_color='red')
-               self.templateresult['os_meta']="True"
+               self.my_frame.vul_label[8][1].configure(text="Positive",text_color='red')
+               self.templateresult['os_meta']="Positive"
+               weights["zap9"]=weights["zap9"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["wapiti9"]=weights["wapiti9"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+               weights["nuclei9"]=weights["nuclei9"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else : 
-               self.my_frame.vul_label[8][1].configure(text="F",text_color='blue')
-               self.templateresult['os_meta']="False"
+               self.my_frame.vul_label[8][1].configure(text="Negative",text_color='blue')
+               self.templateresult['os_meta']="Negative"
 
            #html 9 self.my_frame.vul_label[0][1].cget("text") 
            nikto,self.templateresult['html4']=(1,1) if int(self.my_frame.vul_label[9][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['html5']=(1,1) if int(self.my_frame.vul_label[9][7].cget("text")) > 0 else (0,0)
-           formule = ((nikto*0.5)+(nuclei*0.5) )/1
+           formule = ((nikto*weights["nikto10"])+(nuclei*weights["nuclei10"]) )/1
            if formule >= 0.5 : 
-               self.my_frame.vul_label[9][1].configure(text="T",text_color='red')
-               self.templateresult['html_meta']="True"
+               self.my_frame.vul_label[9][1].configure(text="Positive",text_color='red')
+               self.templateresult['html_meta']="Positive"
+               weights["nikto10"]=weights["nikto10"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+               weights["nuclei10"]=weights["nuclei10"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else : 
-               self.my_frame.vul_label[9][1].configure(text="F",text_color='blue')
-               self.templateresult['html_meta']="False"
+               self.my_frame.vul_label[9][1].configure(text="Negative",text_color='blue')
+               self.templateresult['html_meta']="Negative"
 
            #template 10 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['template1']=(1,1) if int(self.my_frame.vul_label[10][2].cget("text")) > 0   else (0,0)
-           formule =zap
+           formule =zap*weights["zap11"]
            if formule == 1 : 
-               self.my_frame.vul_label[10][1].configure(text="T",text_color='red')
-               self.templateresult['template_meta']="True"
+               self.my_frame.vul_label[10][1].configure(text="Positive",text_color='red')
+               self.templateresult['template_meta']="Positive"
+               weights["zap"]=weights["zap"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
            else : 
-               self.my_frame.vul_label[10][1].configure(text="F",text_color='blue')
-               self.templateresult['template_meta']="False"
+               self.my_frame.vul_label[10][1].configure(text="Negative",text_color='blue')
+               self.templateresult['template_meta']="Negative"
 
            #crlf 11 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['crlf1']=(1,1) if int(self.my_frame.vul_label[11][2].cget("text")) > 0   else (0,0)
            skip,self.templateresult['crlf2']=(1,1) if int(self.my_frame.vul_label[11][4].cget("text")) > 0  else (0,0)
            wapiti,self.templateresult['crlf3'] =(1,1) if int(self.my_frame.vul_label[11][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['crlf5']=(1,1) if int(self.my_frame.vul_label[11][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*0.55)+(skip*0.25)+(wapiti*0.5)+(nuclei*0.3) )/2
+           formule = ((zap*weights["zap12"])+(skip*weights["skip12"])+(wapiti*weights["wapiti12"])+(nuclei*weights["nuclei12"]) )/2
            if formule >= 0.2 : 
-               self.my_frame.vul_label[11][1].configure(text="T",text_color='red')
-               self.templateresult['crlf_meta']="True"
+               self.my_frame.vul_label[11][1].configure(text="Positive",text_color='red')
+               self.templateresult['crlf_meta']="Positive"
+               weights["zap12"]=weights["zap12"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               weights["skip12"]=weights["skip12"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+               weights["wapiti12"]=weights["wapiti12"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
+               weights["nuclei12"]=weights["nuclei12"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               
            else : 
-               self.my_frame.vul_label[11][1].configure(text="F",text_color='blue')
-               self.templateresult['crlf_meta']="False"
+               self.my_frame.vul_label[11][1].configure(text="Negative",text_color='blue')
+               self.templateresult['crlf_meta']="Negative"
 
            #OGNL 12 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['ognl2']=(1,1) if int(self.my_frame.vul_label[12][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['ognl5']=(1,1) if int(self.my_frame.vul_label[12][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*0.5)+(nuclei*0.5) )/1
+           formule = ((skip*weights["skip13"])+(nuclei*weights["nuclei13"]) )/1
            if formule == 1 : 
-               self.my_frame.vul_label[12][1].configure(text="T",text_color='red')
-               self.templateresult['ognl_meta']="True"
+               self.my_frame.vul_label[12][1].configure(text="Positive",text_color='red')
+               self.templateresult['ognl_meta']="Positive"
+               weights["skip13"]=weights["skip13"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+               weights["nuclei13"]=weights["nuclei13"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else : 
-               self.my_frame.vul_label[12][1].configure(text="F",text_color='blue')
-               self.templateresult['ognl_meta']="False"
+               self.my_frame.vul_label[12][1].configure(text="Negative",text_color='blue')
+               self.templateresult['ognl_meta']="Negative"
 
            #host head 13 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['host2']=(1,1) if int(self.my_frame.vul_label[13][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['host5']=(1,1) if int(self.my_frame.vul_label[13][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*0.5)+(nuclei*0.5) )/1
+           formule = ((skip*weights["skip14"])+(nuclei*weights["nuclei14"]) )/1
            if formule ==1 : 
-                self.my_frame.vul_label[13][1].configure(text="T",text_color='red')
-                self.templateresult['host_meta']="True"
+                self.my_frame.vul_label[13][1].configure(text="Positive",text_color='red')
+                self.templateresult['host_meta']="Positive"
+                weights["skip14"]=weights["skip14"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
+                weights["nuclei14"]=weights["nuclei14"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
            else : 
-                self.my_frame.vul_label[13][1].configure(text="F",text_color='blue')
-                self.templateresult['host_meta']="False"
-
+                self.my_frame.vul_label[13][1].configure(text="Negative",text_color='blue')
+                self.templateresult['host_meta']="Negative"
+           self.weights = weights
+           fileObject = open("weights/weights.json", "w")
+           fileObject.write(json.dumps(weights))
+           fileObject.close()
 
            #print(self.templateresult)
 #           1
@@ -1602,13 +1669,13 @@ class App(customtkinter.CTk):
                 self.menubar.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.file_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
-                self.target_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
+                #self.target_menu.config(bg='#4d4d4d', fg='white', activebackground='white', activeforeground='#2d2d2d', borderwidth=0, relief='flat', font=('Arial', 12))
                 
         else:
                 self.menubar.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.file_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
                 self.modes_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
-                self.target_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
+                #self.target_menu.config(bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
 
         
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -1655,7 +1722,15 @@ class App(customtkinter.CTk):
         self.print_meta_Result()
     def Open_skipfish_site(self,name):
         webbrowser.open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}/index.html'.format(name,name), new=2)
-        
+    def show_graph(self,name,x1,x2,x3,x4,x5):    
+        x = ["ZAP", "SkipFish", "Wapiti", "Nikto","Nuclei"]
+        y = [x1, x2, x3,x4, x5]
+        colors = ['red', 'green', 'blue', 'orange', 'purple']
+        bar(x,y,color=colors)
+        ylim(0, 1)
+        title("Scanner Weights for {}".format(name))
+        show()
+
         
         
 class MyFrame_My_wapiti(customtkinter.CTkScrollableFrame):
@@ -1729,28 +1804,29 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         # add widgets onto the frame...borderwidth
-        self.label = customtkinter.CTkLabel(self,text="Vulnerability ",width=200,anchor="w")
+        self.label = customtkinter.CTkLabel(self,text="CWE-code:Vulnerability",width=200,anchor="w")
 
         self.label.grid(row=0, column=0,padx=3,pady=3)
-        self.label1 = customtkinter.CTkLabel(self,text="Meta-Scan",width=50,anchor="w")
-        self.label1.grid(row=0, column=1,padx=3,pady=3)
+        self.label1 = customtkinter.CTkLabel(self,text="Meta-Scan",width=50,anchor="w",text_color=("green","LightGreen"))
+        self.label1.grid(row=0, column=6,padx=3,pady=3)
         
         self.label2 = customtkinter.CTkLabel(self,text="OWASP",width=50)
-        self.label2.grid(row=0, column=2,padx=0,pady=0)
+        self.label2.grid(row=0, column=1,padx=0,pady=0)
         self.label3 = customtkinter.CTkLabel(self,text="Skipfish",width=50)
-        self.label3.grid(row=0, column=3,padx=0,pady=3)
+        self.label3.grid(row=0, column=2,padx=0,pady=3)
         self.label4 = customtkinter.CTkLabel(self,text="Wapiti",width=50)
-        self.label4.grid(row=0, column=4,padx=0,pady=3)
+        self.label4.grid(row=0, column=3,padx=0,pady=3)
         self.label5 = customtkinter.CTkLabel(self,text="Nikto",width=50)
-        self.label5.grid(row=0, column=5,padx=0,pady=3)
+        self.label5.grid(row=0, column=4,padx=0,pady=3)
         self.label6 = customtkinter.CTkLabel(self,text="Nuclei",width=50)
-        self.label6.grid(row=0, column=6,padx=0,pady=3)
+        self.label6.grid(row=0, column=5,padx=0,pady=3)
         
         self.label7 = customtkinter.CTkLabel(self,text="Details")
         self.label7.grid(row=0, column=7,padx=3,pady=3,sticky="e")    
         self.vul_label=[]
         info=customtkinter.CTkImage(light_image=Image.open("images/info.png"),dark_image=Image.open("images/info.png"),size=(30, 30))
-
+        graph=customtkinter.CTkImage(light_image=Image.open("images/bar-graph.png"),dark_image=Image.open("images/bar-graph.png"),size=(30, 30))
+       
         xer="______________________________________________________________________________________________________________________________________________________"
         for i in range(14):
             temp=[]
@@ -1759,52 +1835,84 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
 
             self.labeltemp=customtkinter.CTkLabel(self,text=" injection:",width=200,fg_color="transparent",anchor="w")
             self.labeltemp.grid(row=i+1, column=0,padx=0,pady=3)
-            self.labeltemp1=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp1.grid(row=i+1, column=1,padx=0,pady=3)
+            self.labeltemp1=customtkinter.CTkLabel(self,text="P/N",width=50,fg_color="transparent",text_color=("green","LightGreen"))
+            self.labeltemp1.grid(row=i+1, column=6,padx=0,pady=3)
             self.labeltemp2=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp2.grid(row=i+1, column=2,padx=0,pady=3)
+            self.labeltemp2.grid(row=i+1, column=1,padx=0,pady=3)
             self.labeltemp3=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp3.grid(row=i+1, column=3,padx=0,pady=3)
+            self.labeltemp3.grid(row=i+1, column=2,padx=0,pady=3)
             self.labeltemp4=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp4.grid(row=i+1, column=4,padx=0,pady=3)
+            self.labeltemp4.grid(row=i+1, column=3,padx=0,pady=3)
             self.labeltemp5=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp5.grid(row=i+1, column=5,padx=0,pady=3)
+            self.labeltemp5.grid(row=i+1, column=4,padx=0,pady=3)
             self.labeltemp6=customtkinter.CTkLabel(self,text=int(0),width=50,fg_color="transparent")
-            self.labeltemp6.grid(row=i+1, column=6,padx=0,pady=3)
+            self.labeltemp6.grid(row=i+1, column=5,padx=0,pady=3)
             
-            self.but=customtkinter.CTkButton(self,text="",image=info,width=40 , height=40,fg_color="transparent")#,state="disabled"  ki tkml raj3ha
-            self.but.grid(row=i+1, column=7,padx=3,pady=(5,30),sticky="e")
-            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but,self.labeltemp3,self.labeltemp4,self.labeltemp5,self.labeltemp6])
+            self.new=customtkinter.CTkFrame(self,fg_color="transparent")
+            self.new.grid(row=i+1, column=7,padx=3,pady=(5,30),sticky="e")
+            
+            self.grp=customtkinter.CTkButton(self.new,text="",image=graph,width=40 , height=40,fg_color="transparent")#,state="disabled"  ki tkml raj3ha
+            self.grp.pack(side="left")
+            self.but=customtkinter.CTkButton(self.new,text="",image=info,width=40 , height=40,fg_color="transparent")#,state="disabled"  ki tkml raj3ha
+            self.but.pack(side="left")
 
-        self.vul_label[0][0].configure(text="SQL injection:")
+            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but,self.labeltemp3,self.labeltemp4,self.labeltemp5,self.labeltemp6,self.grp])
+
+        self.vul_label[0][0].configure(text="CWE-89:SQL injection")
         self.vul_label[0][3].configure(command=lambda:app.open_check("SQL Injection"))
+        self.vul_label[0][8].configure(command=lambda:app.show_graph("SQL Injection",app.weights["zap1"],app.weights["skip1"],app.weights["wapiti1"],app.weights["nikto1"],app.weights["nuclei1"]))
         
-        self.vul_label[1][0].configure(text="Blind SQL injection:")
+        self.vul_label[1][0].configure(text="CWE-89:Blind SQL injection")
         self.vul_label[1][3].configure(command=lambda:app.open_check("Blind SQL injection"))
-        self.vul_label[2][0].configure(text="Cross Site Scripting injection:")
+        self.vul_label[1][8].configure(command=lambda:app.show_graph("BlindSQL Injection",0,0,app.weights["wapiti2"],0,app.weights["nuclei2"]))
+        
+        self.vul_label[2][0].configure(text="CWE-79:Cross Site Scripting injection")
         self.vul_label[2][3].configure(command=lambda:app.open_check("Cross Site Scripting injection"))
-        self.vul_label[3][0].configure(text="Shell injection:")
+        self.vul_label[2][8].configure(command=lambda:app.show_graph("Cross Site Scripting Injection",app.weights["zap3"],app.weights["skip3"],app.weights["wapiti3"],app.weights["nikto3"],app.weights["nuclei3"]))
+        
+        self.vul_label[3][0].configure(text="CWE-553:Shell injection")
         self.vul_label[3][3].configure(command=lambda:app.open_check("Shell injection"))
-        self.vul_label[4][0].configure(text="XSLT injection:")
+        self.vul_label[3][8].configure(command=lambda:app.show_graph("Shell Injection",0,app.weights["skip4"],0,0,app.weights["nuclei4"]))
+
+        self.vul_label[4][0].configure(text="CVE-2006-4686:XSLT injection")
         self.vul_label[4][3].configure(command=lambda:app.open_check("XSLT injection"))
-        self.vul_label[5][0].configure(text="XML injection:")
+        self.vul_label[4][8].configure(command=lambda:app.show_graph("XSLT Injection",app.weights["zap5"],0,0,app.weights["nikto5"],0))
+
+        self.vul_label[5][0].configure(text="CWE-91:XML injection")
         self.vul_label[5][3].configure(command=lambda:app.open_check("XML injection"))
-        self.vul_label[6][0].configure(text="XML external entities (XXE):")
+        self.vul_label[5][8].configure(command=lambda:app.show_graph("XML Injection",app.weights["zap6"],app.weights["skip6"],0,app.weights["nikto6"],app.weights["nuclei6"]))
+
+        self.vul_label[6][0].configure(text="CWE-611:XML external entities")
         self.vul_label[6][3].configure(command=lambda:app.open_check("XML external entities (XXE)"))
-        self.vul_label[7][0].configure(text="code injection:")
+        self.vul_label[6][8].configure(command=lambda:app.show_graph("XML external entities (XXE)",app.weights["zap7"],0,app.weights["wapiti7"],0,app.weights["nuclei7"]))
+
+        self.vul_label[7][0].configure(text="CWE-94:code injection")
         self.vul_label[7][3].configure(command=lambda:app.open_check("code injection"))
-        self.vul_label[8][0].configure(text="OS command injection:")
+        self.vul_label[7][8].configure(command=lambda:app.show_graph("code Injection",app.weights["zap8"],0,0,app.weights["nikto8"],app.weights["nuclei8"]))
+
+        self.vul_label[8][0].configure(text="CWE-78:OS command injection")
         self.vul_label[8][3].configure(command=lambda:app.open_check("OS command injection"))
-        self.vul_label[9][0].configure(text="html injection:")
+        self.vul_label[8][8].configure(command=lambda:app.show_graph("os command Injection",app.weights["zap9"],0,app.weights["wapiti9"],0,app.weights["nuclei9"]))
+
+        self.vul_label[9][0].configure(text="CWE-80:html injection")
         self.vul_label[9][3].configure(command=lambda:app.open_check("html injection"))
-        self.vul_label[10][0].configure(text="Template injection:")
+        self.vul_label[9][8].configure(command=lambda:app.show_graph("html Injection",0,0,0,app.weights["nikto10"],app.weights["nuclei10"]))
+
+        self.vul_label[10][0].configure(text="CWE-1336:Template injection")
         self.vul_label[10][3].configure(command=lambda:app.open_check("Template injection"))
-        self.vul_label[11][0].configure(text="CRLF injection:")
+        self.vul_label[10][8].configure(command=lambda:app.show_graph("Template Injection",app.weights["zap11"],0,0,0,0))
+
+        self.vul_label[11][0].configure(text="CWE-93:CRLF injection")
         self.vul_label[11][3].configure(command=lambda:app.open_check("CRLF injection"))
-        self.vul_label[12][0].configure(text="OGNL injection:")
+        self.vul_label[11][8].configure(command=lambda:app.show_graph("CRLF Injection",app.weights["zap12"],app.weights["skip12"],app.weights["wapiti12"],0,app.weights["nuclei12"]))
+
+        self.vul_label[12][0].configure(text="CWE-1003:OGNL injection")
         self.vul_label[12][3].configure(command=lambda:app.open_check("OGNL injection"))
-        self.vul_label[13][0].configure(text="Host Header injection:")
+        self.vul_label[12][8].configure(command=lambda:app.show_graph("OGNL Injection",0,app.weights["skip13"],0,0,app.weights["nuclei13"]))
+
+        self.vul_label[13][0].configure(text="CWE-644:Host Header injection")
         self.vul_label[13][3].configure(command=lambda:app.open_check("Host Header injection"))
+        self.vul_label[13][8].configure(command=lambda:app.show_graph("Host Header Injection",0,app.weights["skip14"],0,0,app.weights["nuclei14"]))
         
 if __name__ == "__main__":
     app = App()

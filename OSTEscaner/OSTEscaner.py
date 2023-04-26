@@ -260,7 +260,7 @@ class scan():
     
     def start_wapiti(self):
         #print("[INFO] 		wapiti scan started:")
-        output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {}".format(self.url,self.name,self.name,self.crawl+2), shell=True, capture_output=True)
+        output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {} --max-attack-time 20".format(self.url,self.name,self.name,self.crawl+1), shell=True, capture_output=True)
         #print("[Finished]		wapiti Scan completed. ")    
 #	"""
 #    def start_wapiti_readReport():
@@ -273,9 +273,9 @@ class scan():
 #-d max_depth (16), -c max_child (512) -x max_descandent (8192)
 #-k duration h:m:s 
     def start_skipfish(self):
-            #print("[INFO] 		skipfish scan started:") #add 
-            output = subprocess.run("skipfish -L -W- -e -v -u -d {} -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.crawl+1,self.name,self.name,self.url), shell=True, capture_output=True)
-            #print("[finished]	skipfish scand completed. ")
+            #print("[INFO] 		skipfish scan started:")-d {} #add 
+            output = subprocess.run("skipfish -L -Y -e -v -u   -I {} -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.url,self.name,self.name,self.url), shell=True, capture_output=True)
+            #self.crawl+1,print("[finished]	skipfish scand completed. ")
 
     def Check_all_folders(self,Dir):
             dir =["{}/{}".format(Dir,name) for name in os.listdir("{}".format(Dir)) if os.path.isdir("{}/{}".format(Dir,name)) and name[0]=="c"]
@@ -352,10 +352,13 @@ class scan():
                      zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
              #raja3 adi
                      zap.spider.set_option_max_depth(self.crawl+1) 
+                     zap.spider.set_option_max_children(self.crawl+1)
+#                     setOptionMaxChildren 
 #                    zap.spider.set_option_max_duration(2)
-
-             
-                     scanID = zap.spider.scan(self.url)
+                     
+                     zap.core.access_url(url=self.url)
+                     time.sleep(2)
+                     scanID = zap.spider.scan(self.url, recurse=False, subtreeonly=True)
 #                     """while int(zap.spider.status(scanID)) < 100:
 #                         # Poll the status until it completes
 #                         print('Spider progress %: {}'.format(zap.spider.status(scanID)))
@@ -383,8 +386,8 @@ class scan():
                      scanID = zap.ascan.scan(self.url)
                      while int(zap.ascan.status(scanID)) < 100:
                          # Loop until the scanner has finished
-                         #print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
-                         time.sleep(15)
+#                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
+                         time.sleep(4)
                      #print('[finished] 		Zap scan completed')  
                      with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(self.name,self.name), 'w') as convert_file:
                           convert_file.write(json.dumps(zap.core.alerts(baseurl=self.url)))
@@ -417,9 +420,9 @@ class scan():
 
   
     def start_nikto(self):
-         #print("[INFO] 		Nikto scan Started:")
-         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json -F json -Tuning 9".format(self.url,self.name,self.name), shell=True, capture_output=True)
-         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json -F json -Tuning 4".format(self.url,self.name,self.name), shell=True, capture_output=True)
+         #print("[INFO] 		Nikto scan Started:") -no404 -nossl -nolookup -nocache "-nolookup  -nossl -no404 -nointeractive
+         output = subprocess.run("nikto -h {} -ask no -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json -F json -Tuning 9 -nossl -nointeractive".format(self.url,self.name,self.name), shell=True, capture_output=True)
+         output = subprocess.run("nikto -h {} -ask no -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json -F json -Tuning 4 -nossl -nointeractive".format(self.url,self.name,self.name), shell=True, capture_output=True)
 #         output = subprocess.run("nikto -h {}  -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_f.json -F json -Tuning f".format(url,name,name), shell=True, capture_output=True)
          #print("[finished] 		Nikto scan  completed")
     
