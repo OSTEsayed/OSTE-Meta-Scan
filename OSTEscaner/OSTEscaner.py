@@ -38,7 +38,6 @@ class scan():
     def __init__(self):
         self.name="OSTE"
         self.url="LOCALHOST"
-        self.crawl=1
         self.wapiti_vulnerabilities= {
     "Backup file": 0,
     "Blind SQL Injection": 0,
@@ -210,8 +209,8 @@ class scan():
                 for i in data : 		#Name(number)         matched-at       (curl-command)   Description
                     self.dater[i['Info']['Name']]=[0,[],[],i['Info']['Description']]
         
-    def configuiring_new_scan(self,name,url=None,crawl=1):
-        self.crawl=crawl
+    def configuiring_new_scan(self,name,setting,url=None):
+        self.setting=setting
         self.name=name
         self.url=url
         #print(f"name:{self.name},url:{self.url},crawl:{self.crawl}")
@@ -259,8 +258,8 @@ class scan():
         return wapiti_resaults,printedtypes
     
     def start_wapiti(self):
-        #print("[INFO] 		wapiti scan started:")
-        output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {} --max-attack-time 20".format(self.url,self.name,self.name,self.crawl+1), shell=True, capture_output=True)
+        #print("[INFO] 		wapiti scan started:") --max-links-per-page --max-links-per-page
+        output = subprocess.run("wapiti --flush-session -u {} -f json -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/wapiti/{}.json -l 2 -d {}  --max-links-per-page {} --max-files-per-dir {} --max-scan-time {} --max-attack-time 40".format(self.url,self.name,self.name,self.setting['wapiti_d'],self.setting['wapiti_lp'],self.setting['wapiti_fd'],self.setting['wapiti_st']), shell=True, capture_output=True)
         #print("[Finished]		wapiti Scan completed. ")    
 #	"""
 #    def start_wapiti_readReport():
@@ -274,7 +273,7 @@ class scan():
 #-k duration h:m:s 
     def start_skipfish(self):
             #print("[INFO] 		skipfish scan started:")-d {} #add 
-            output = subprocess.run("skipfish -L -Y -e -v -u   -I {} -o  /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {} ".format(self.url,self.name,self.name,self.url), shell=True, capture_output=True)
+            output = subprocess.run("skipfish -L -Y -e -v -u -d {} -c {} -x {} -p {} -I {} -o /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{} {}".format(self.setting['skip_d'],self.setting['skip_dc'],self.setting['skip_dx'],self.setting['skip_cp'],self.url,self.name,self.name,self.url), shell=True, capture_output=True)
             #self.crawl+1,print("[finished]	skipfish scand completed. ")
 
     def Check_all_folders(self,Dir):
@@ -351,21 +350,23 @@ class scan():
                      zap.ascan.disable_scanners(ids=[40035]) #Hidden File Finder
                      zap.ascan.disable_scanners(ids=[90026]) #SOAP Action Spoofing
              #raja3 adi
-                     zap.spider.set_option_max_depth(self.crawl+1) 
-                     zap.spider.set_option_max_children(self.crawl+1)
-#                     setOptionMaxChildren 
-#                    zap.spider.set_option_max_duration(2)
-                     
+#                    zap.spider.set_option_max_duration(2)zap.spider.scan(url, recurse=False, subtreeonly=True)
                      zap.core.access_url(url=self.url)
                      time.sleep(2)
-                     scanID = zap.spider.scan(self.url, recurse=False, subtreeonly=True)
+                     zap.spider.set_option_max_depth(self.setting['zap_d']) 
+                     zap.spider.set_option_max_children(self.setting['zap_dc'])
+                     time.sleep(1)
+                     if self.setting['zap_c']==0:
+                          print("ak hna")
+                          scanID = zap.spider.scan(self.url, recurse=False, subtreeonly=True)
+                          while int(zap.spider.status(scanID)) < 100:
+                             print('Spider progress %: {}'.format(zap.spider.status(scanID)))
+                             time.sleep(2)
+                     
 #                     """while int(zap.spider.status(scanID)) < 100:
 #                         # Poll the status until it completes
-#                         print('Spider progress %: {}'.format(zap.spider.status(scanID)))
 #                         time.sleep(1)
 #                     """
-                     while int(zap.spider.status(scanID)) < 100:
-                         time.sleep(2)
                      # Prints the URLs the spider has crawled
                      #print('\n'.join(map(str, zap.spider.results(scanID))))
                      # If required post process the spider results
@@ -384,9 +385,11 @@ class scan():
                      #""""""
                      # TODO : explore the app (Spider, etc) before using the Active Scan API, Refer the explore section
                      scanID = zap.ascan.scan(self.url)
+                     time.sleep(2)
+                     print(zap.ascan.status(scanID))
                      while int(zap.ascan.status(scanID)) < 100:
                          # Loop until the scanner has finished
-#                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
+                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
                          time.sleep(4)
                      #print('[finished] 		Zap scan completed')  
                      with open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(self.name,self.name), 'w') as convert_file:

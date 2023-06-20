@@ -189,12 +189,164 @@ class loadResult_Window(customtkinter.CTkToplevel):
         self.delete.pack(padx=(5,40),side="right")
     def cchek(self):
         app.Load_resaults(self.resultf.mylist[self.resultf.radio_var.get()])
+        app.NAME=self.resultf.mylist[self.resultf.radio_var.get()]
         self.destroy()
     def ddelete(self):
         shutil.rmtree("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}".format(self.resultf.mylist[self.resultf.radio_var.get()]))        
         self.destroy()
         
+class set_setting_Window(customtkinter.CTkToplevel):        
+    def __init__(self, *args, **kwargs):
+    
+        super().__init__(*args, **kwargs)
+        self.title("Web Vulnerability META-Scanner  -Settings-")
+        self.geometry("500x500")
+        self.setting_tabview = customtkinter.CTkTabview(self)
+        self.setting_tabview.pack(pady=20,padx=20,fill ="both",expand=True)
+        self.setting_tabview.add("Meta-scanner")
+        self.setting_tabview.add("OWASP ZAP")
+        self.setting_tabview.add("wapiti")
+        self.setting_tabview.add("Skipfish")
+
+        #Meta- tab view:
+        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Meta-scanner Settings:", justify=customtkinter.CENTER)
+        self.label_1.grid(row=0, column=0 ,columnspan=6,padx=160)
+        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Reset Weights (Initials values)").grid(row=2,column=0,columnspan=3,padx=10,pady=(30,10),sticky='w')
+        self.but1 =customtkinter.CTkButton(self.setting_tabview.tab("Meta-scanner"),text="Reset",command=self.reset).grid(row=2,column=3,columnspan=3,padx=10,pady=(30,10))
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Load Weights").grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky='w')
+        self.but1 =customtkinter.CTkButton(self.setting_tabview.tab("Meta-scanner"),text="Load",command=self.load).grid(row=3,column=3,columnspan=3,padx=10,pady=10)
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="NOTE:check weights/initiale_weights.json for file structure",text_color="red").grid(row=5,column=0,columnspan=6,padx=0,pady=0,sticky='w')
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Save current Weights").grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky='w')
+        self.but1 =customtkinter.CTkButton(self.setting_tabview.tab("Meta-scanner"),text="Save",command=self.save).grid(row=4,column=3,columnspan=3,padx=10,pady=10)
+
+        #Zap tab view:
+        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="OWASP ZAP Settings:", justify=customtkinter.CENTER)
+        self.label_1.grid(row=0, column=0 ,columnspan=6,padx=160)
+        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
+     
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Enable Crawler:", justify=customtkinter.CENTER).grid(row=2,column=0,columnspan=3,padx=10,pady=30,sticky="w")
+        self.check = customtkinter.CTkCheckBox(master=self.setting_tabview.tab("OWASP ZAP"), text="")
+        self.check.grid(row=2,column=3,columnspan=3,padx=10,pady=30)
+        self.check.select()     
+
+
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Crawler MAX Depth:", justify=customtkinter.CENTER).grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.zentry1 = customtkinter.CTkEntry(self.setting_tabview.tab("OWASP ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_d']))
+        self.zentry1.grid(row=3,column=3,columnspan=3,padx=10,pady=10)        
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Crawler MAX Children:", justify=customtkinter.CENTER).grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.zentry2 = customtkinter.CTkEntry(self.setting_tabview.tab("OWASP ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_dc']))
+        self.zentry2.grid(row=4,column=3,columnspan=3,padx=10,pady=10)
         
+        self.but1=customtkinter.CTkButton(self.setting_tabview.tab("OWASP ZAP"),text="Apply",command=self.apply1).grid(row=6,column=0,columnspan=6,padx=10,pady=30)
+        
+        #wapiti tab view:
+        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="wapiti Settings:", justify=customtkinter.CENTER)
+        self.label_1.grid(row=0, column=0 ,columnspan=6,padx=160)
+        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
+     
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="Crawler Max DEPTH:", justify=customtkinter.CENTER).grid(row=2,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.wentry1 = customtkinter.CTkEntry(self.setting_tabview.tab("wapiti"), placeholder_text="{}".format(app.setting['wapiti_d']))
+        self.wentry1.grid(row=2,column=3,columnspan=3,padx=10,pady=10)        
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="Crawler Max link per page:", justify=customtkinter.CENTER).grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.wentry2 = customtkinter.CTkEntry(self.setting_tabview.tab("wapiti"), placeholder_text="{}".format(app.setting['wapiti_lp']))
+        self.wentry2.grid(row=3,column=3,columnspan=3,padx=10,pady=10)
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="Crawler Max file per page:", justify=customtkinter.CENTER).grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.wentry3 = customtkinter.CTkEntry(self.setting_tabview.tab("wapiti"), placeholder_text="{}".format(app.setting['wapiti_fd']))
+        self.wentry3.grid(row=4,column=3,columnspan=3,padx=10,pady=10)        
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="Max scan time:", justify=customtkinter.CENTER).grid(row=5,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.wentry4 = customtkinter.CTkEntry(self.setting_tabview.tab("wapiti"), placeholder_text="{}	(seconds)".format(app.setting['wapiti_st']))
+        self.wentry4.grid(row=5,column=3,columnspan=3,padx=10,pady=10)
+                
+        self.but1=customtkinter.CTkButton(self.setting_tabview.tab("wapiti"),text="Apply",command=self.apply2).grid(row=6,column=0,columnspan=6,padx=10,pady=30)
+
+        #Skipfish tab view:
+        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="Skipfish Settings:", justify=customtkinter.CENTER)
+        self.label_1.grid(row=0, column=0 ,columnspan=6,padx=160)
+        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
+     
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="Crawler Max DEPTH:", justify=customtkinter.CENTER).grid(row=2,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.sentry1 = customtkinter.CTkEntry(self.setting_tabview.tab("Skipfish"), placeholder_text="{}	(max 16)".format(app.setting['skip_d']))
+        self.sentry1.grid(row=2,column=3,columnspan=3,padx=10,pady=10)        
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="Crawler Max children:", justify=customtkinter.CENTER).grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.sentry2 = customtkinter.CTkEntry(self.setting_tabview.tab("Skipfish"), placeholder_text="{}	(max 512)".format(app.setting['skip_dc']))
+        self.sentry2.grid(row=3,column=3,columnspan=3,padx=10,pady=10)
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="Max Descendants index per branch:", justify=customtkinter.CENTER).grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.sentry3 = customtkinter.CTkEntry(self.setting_tabview.tab("Skipfish"), placeholder_text="{}	(max 8192)".format(app.setting['skip_dx']))
+        self.sentry3.grid(row=4,column=3,columnspan=3,padx=10,pady=10)        
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("Skipfish"),text="crawler percentage:", justify=customtkinter.CENTER).grid(row=5,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.sentry4 = customtkinter.CTkEntry(self.setting_tabview.tab("Skipfish"), placeholder_text="{}%".format(app.setting['skip_cp']))
+        self.sentry4.grid(row=5,column=3,columnspan=3,padx=10,pady=10)
+        self.but1=customtkinter.CTkButton(self.setting_tabview.tab("Skipfish"),text="Apply",command=self.apply3).grid(row=6,column=0,columnspan=6,padx=10,pady=30)
+    def reset(self):
+        fileObject = open("weights/initiale_weights.json", "r")
+        jsonContent = fileObject.read()
+        weights = json.loads(jsonContent)
+        fileObject.close() 
+        fileObject = open("weights/weights.json", "w")
+        fileObject.write(json.dumps(weights))
+        fileObject.close()           
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Weights has been restored successfully",text_color=("green","LightGreen"), justify=customtkinter.CENTER).grid(row=6,column=0,columnspan=6,padx=10,pady=(50,0))
+    def save(self):
+        directory = filedialog.askdirectory()   
+        directory_path = os.path.join(directory, "saved_weights/")
+        os.mkdir(directory_path)
+        fileObject = open("weights/weights.json", "r")
+        jsonContent = fileObject.read()
+        weights = json.loads(jsonContent)
+        fileObject.close() 
+        fileObject = open("{}/weights.json".format(directory_path), "w")
+        fileObject.write(json.dumps(weights))
+        fileObject.close()           
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Weights has been Saved successfully in:",text_color=("green","LightGreen"), justify=customtkinter.CENTER).grid(row=6,column=0,columnspan=6,padx=10,pady=(50,0))
+        self.ddd =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="{}/weight.json".format(directory_path),text_color=("green","LightGreen"), justify=customtkinter.CENTER).grid(row=7,column=0,columnspan=6,padx=10,pady=5)
+        self.lift()
+        
+    def load(self):
+        directory = filedialog.askopenfilename()   
+        print(directory)
+        fileObject = open("{}".format(directory), "r")
+        jsonContent = fileObject.read()
+        weights = json.loads(jsonContent)
+        fileObject.close() 
+        fileObject = open("weights/weights.json", "w")
+        fileObject.write(json.dumps(weights))
+        fileObject.close()           
+        self.msg1 =customtkinter.CTkLabel(self.setting_tabview.tab("Meta-scanner"),text="Weights has been Load successfully",text_color=("green","LightGreen"), justify=customtkinter.CENTER).grid(row=6,column=0,columnspan=6,padx=10,pady=(50,0))
+        self.lift()
+
+    def apply1(self):
+        print(app.setting)
+        app.setting['zap_c']=self.check.get()
+        if self.zentry1.get():
+           app.setting['zap_d']=self.zentry1.get()
+        if self.zentry2.get():
+           app.setting['zap_dc']=self.zentry2.get()
+        print(app.setting)
+
+    def apply2(self):
+        print(app.setting)    
+        if self.wentry1.get():
+           app.setting['wapiti_d']=self.wentry1.get()
+        if self.wentry2.get():
+           app.setting['wapiti_lp']=self.wentry2.get()
+        if self.wentry3.get():
+           app.setting['wapiti_fd']=self.wentry3.get()
+        if self.wentry4.get():
+           app.setting['wapiti_st']=self.wentry4.get()
+        print(app.setting)
+
+    def apply3(self):
+        print(app.setting)    
+        if self.sentry1.get():
+           app.setting['skip_d']=self.sentry1.get()
+        if self.sentry2.get():
+           app.setting['skip_dc']=self.sentry2.get()
+        if self.sentry3.get():
+           app.setting['skip_dx']=self.sentry3.get()
+        if self.sentry4.get():
+           app.setting['skip_cp']=self.sentry4.get()
+        print(app.setting)
         
 class start_Window(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -207,9 +359,9 @@ class start_Window(customtkinter.CTkToplevel):
         self.label_main.pack(padx=20, pady=20)
 
 
-        self.slider_1 = customtkinter.CTkSlider(self.frame_main, from_=0, to=1, number_of_steps=16,orientation="vertical")
-        self.slider_1.pack(padx=(20, 10), pady=(10, 10),side="right")
-        self.label_craw=customtkinter.CTkLabel(self.frame_main,text="Crawling Depth:").pack(side="right")
+        #self.slider_1 = customtkinter.CTkSlider(self.frame_main, from_=0, to=1, number_of_steps=16,orientation="vertical")
+        #self.slider_1.pack(padx=(20, 10), pady=(10, 10),side="right")
+        #self.label_craw=customtkinter.CTkLabel(self.frame_main,text="Crawling Depth:").pack(side="right")
         
 #        but = customtkinter.CTkButton(self.frame_main,text="val" , command =lambda: print(int(self.slider_1.get()*16)))
 #       but.pack()
@@ -223,14 +375,25 @@ class start_Window(customtkinter.CTkToplevel):
         
         self.label_result = customtkinter.CTkLabel(self.frame_main, text="")
         self.label_result.pack(padx=20, pady=20)
-
-
-
-
+    def start_scanscan(self,url,name):
+        if "https" in url :
+           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(name,name), "w")
+           f.write("[]")
+           f.close()
+           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json".format(name,name), "w")
+           f.write("")
+           f.close()
+           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json".format(name,name), "w")
+           text={"host":"{}".format(url),"ip":"","port":"","banner":"","vulnerabilities":[]}
+           f.write(json.dumps(text))
+           f.close()
+           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json".format(name,name), "w")
+           f.write(json.dumps(text))
+           f.close()
     def start_new_scan(self):
-        crowling_depth= int(self.slider_1.get()*16)
-        if crowling_depth==0:crowling_depth=1
-        if crowling_depth==16:crowling_depth=15
+#        crowling_depth= int(self.slider_1.get()*16)
+#        if crowling_depth==0:crowling_depth=1
+#        if crowling_depth==16:crowling_depth=15
         #print(crowling_depth)
         if self.target_name.get()=="":
             self.label_result.configure(text="Enter the name of target",text_color="red")
@@ -243,96 +406,101 @@ class start_Window(customtkinter.CTkToplevel):
             new_scan= OSTEscaner.scan()
             app.log_textbox.insert(tkinter.END, "\n[Starting]", tags="green") 
             app.log_textbox.insert(tkinter.END, " Creating Resaults Directory for each scanner", tags=None)
-            new_scan.configuiring_new_scan(self.target_name.get(),self.target_url.get(),crowling_depth)
+            new_scan.configuiring_new_scan(self.target_name.get(),app.setting,self.target_url.get())
             new_scan.creat_directory()
             app.log_textbox.insert(tkinter.END, "\n[Location]", tags="green") 
             app.log_textbox.insert(tkinter.END, " /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.target_name.get(), tags=None)
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")      
-            app.log_textbox.insert(tkinter.END, " wapiti scan started", tags=None)
+            app.log_textbox.insert(tkinter.END, " Wapiti scan started", tags=None)
             starting_wapiti = threading.Thread(target=new_scan.start_wapiti)
+            print("started")
             starting_wapiti.start() 
+            self.start = time.time()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")      	
-            app.log_textbox.insert(tkinter.END, " skipfish scan started", tags=None)
+            app.log_textbox.insert(tkinter.END, " SkipFish scan started", tags=None)
             
             starting_skipfish = threading.Thread(target=new_scan.start_skipfish)
             starting_skipfish.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="green")      
-            app.log_textbox.insert(tkinter.END, " OWASPZAP server started", tags=None)
+            app.log_textbox.insert(tkinter.END, " OWASP ZAP server started", tags=None)
             
             starting_zap_server = threading.Thread(target=new_scan.start_zap)
             starting_zap_server.start()
+            app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
+            app.log_textbox.insert(tkinter.END, " OWASP ZAP scan started", tags=None)    
 #            app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP Scanning started", tags=None)            
             starting_zap= threading.Thread(target=new_scan.check_for_zap)
-            #starting_zap.start()
+            starting_zap.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")                  
-            app.log_textbox.insert(tkinter.END, " NIKTO Scanning started", tags=None)            
+            app.log_textbox.insert(tkinter.END, " Nikto scan started", tags=None)            
             starting_nikto = threading.Thread(target=new_scan.start_nikto)
             starting_nikto.start() 
+            app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
+            app.log_textbox.insert(tkinter.END, " Nuclei scan started", tags=None)     
 #            app.log_textbox.insert(tkinter.END, "\n [INFO] 		Nuclei Scanning started", tags=None)            
             starting_nuclei = threading.Thread(target=new_scan.start_nuclei)
-            #starting_nuclei.start() 
-            CHECKER = threading.Thread(target=self.check_for_finished,args=(starting_zap,starting_nikto,starting_nuclei,starting_wapiti,starting_skipfish,self.target_name.get()))
+            starting_nuclei.start() 
+            CHECKER = threading.Thread(target=self.check_for_finished,args=(starting_zap,starting_nikto,starting_nuclei,starting_wapiti,starting_skipfish,self.target_name.get(),self.target_url.get()))
             CHECKER.start() 
 
 #            new_scan.starting_all_scanner(self.target_name.get(),self.target_url.get())
-    def check_for_finished(self,a,b,c,d,e,name):
-                zap_statu,nikto_statu,nuclei_statu,wapiti_statu,skipfish_statu="notscanning","scanning","notscanning","scanning","scanning"
+    def check_for_finished(self,a,b,c,d,e,name,url):
+                zap_statu,nikto_statu,nuclei_statu,wapiti_statu,skipfish_statu="scanning","scanning","scanning","scanning","scanning"
                 zaper,nucleir="notyet","notyet"
-                number_scaner=3 
-                time.sleep(5)
+                number_scaner=5
+        #        time.sleep(5)
                 self.destroy()
                 while number_scaner>0:
-                  time.sleep(5)
+            #      time.sleep(5)
                   if zaper=="lunch":
                       app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
-                      app.log_textbox.insert(tkinter.END, " OWASPZAP Scanning started", tags=None)           
+                      app.log_textbox.insert(tkinter.END, " OWASPZAP Scan started", tags=None)           
                       a.start()
                       zap_statu="scanning"
                       zaper="yet"
                   if nucleir=="lunch":
                       app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
-                      app.log_textbox.insert(tkinter.END, " Nuclei Scanning started", tags=None)            
+                      app.log_textbox.insert(tkinter.END, " Nuclei Scan started", tags=None)            
                       c.start()
                       nuclei_statu="scanning"
                       nucleir="yet"
                       time.sleep(1)                      
                   if zap_statu=="scanning":
                           if a.is_alive()==False:
-                              app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, " OWASP ZAP Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")            
+                              app.log_textbox.insert(tkinter.END, " OWASP ZAP scan Finished", tags=None)            
                               zap_statu="finished"
                               number_scaner-=1       	
                   if nikto_statu=="scanning":
                           if b.is_alive()==False:
-                              app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, " NIKTO Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")            
+                              app.log_textbox.insert(tkinter.END, " Nikto Scan Finished", tags=None)            
                               nikto_statu="finished"
                               number_scaner-=1           
                   if nuclei_statu=="scanning":
                           if c.is_alive()==False:
-                              app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, " Nuclei Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")            
+                              app.log_textbox.insert(tkinter.END, " Nuclei scan finished", tags=None)            
                               nuclei_statu="finished"
                               number_scaner-=1 
                   if wapiti_statu=="scanning":
                           if d.is_alive()==False:
-                              app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, " WAPITI Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")            
+                              app.log_textbox.insert(tkinter.END, " Wapiti scan finished", tags=None)            
                               wapiti_statu="finished"
                               number_scaner-=1 
                   if skipfish_statu=="scanning":
                           if e.is_alive()==False:
-                              app.log_textbox.insert(tkinter.END, "\n [finished]", tags="red")                                      
-                              app.log_textbox.insert(tkinter.END, " SKIPFISH Scanning Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")                                      
+                              app.log_textbox.insert(tkinter.END, " SkipFish scan Finished", tags=None)            
                               skipfish_statu="finished"
-                              number_scaner-=1  
-                  if number_scaner==0 and zaper=="notyet":
-                     number_scaner=2
-                     zaper="lunch"
-                     nucleir="lunch"
-                  
-                  
+                              number_scaner-=1                    
+                end_time = time.time() - self.start
+                print("\nendtime:")  
+                print(end_time)
+                self.start_scanscan(url,name)
                 app.Load_resaults(name)
+                app.NAME=name
 
 
 
@@ -367,6 +535,8 @@ class App(customtkinter.CTk):
         self.file_menu.add_command(label='Start Scan',command=self.open_start_Window)
         self.file_menu.add_command(label='Load Result',command=self.open_load_Window)
         self.file_menu.add_command(label='Save As HTML',command=self.save_as_html)
+        self.file_menu.add_command(label='Save Consilidation report',command=self.save_con)
+
 #        self.file_menu.add_separator()
 #        self.file_menu.add_command(label='About',command=print("about not yet finished"))
 #        self.file_menu.add_command(label='Verify Scanners',command=self.chec_for_scanner)
@@ -387,12 +557,12 @@ class App(customtkinter.CTk):
         self.modes_menu.add_command(label='light Mode',command=lambda:self.change_appearance_mode_event("Light"))
         self.modes_menu.add_command(label='dark Mode',command=lambda:self.change_appearance_mode_event("Dark"))
         
+        self.menubar.add_command(label="Settings",command=self.set_setting,underline=0)
         
         self.menubar.add_command(label="Local-host servers",command=self.open_target_Window,underline=0)
         self.menubar.add_command(label="Verify Scanners",command=self.chec_for_scanner,underline=0)
         self.menubar.add_cascade(label='Appearance',menu=self.modes_menu,underline=0)
-        self.menubar.add_command(label="About",command=print("about not yet finished"),underline=0)
-
+#        self.menubar.add_command(label="About",command=print("about not yet finished"),underline=0)
         
         
         
@@ -429,6 +599,7 @@ class App(customtkinter.CTk):
         self.start_Window = None
         self.loadResult_window =None
         self.Target_Window=None
+        self.setsetting=None
         # create tabview
         self.results_tabview = customtkinter.CTkTabview(self, width=1450,height=600)
         self.results_tabview.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -509,6 +680,7 @@ class App(customtkinter.CTk):
         "code4":"null",
         "code5":"null",
         "os1":"null",
+        "os2":"null",
         "os3":"null",
         "os5":"null",
         "html4":"null",
@@ -526,7 +698,21 @@ class App(customtkinter.CTk):
         jsonContent = fileObject.read()
         self.weights = json.loads(jsonContent)
         fileObject.close()
-
+        self.setting={
+        "zap_c":"1",		#0 no crawl , 1 crawl
+        "zap_d":"0",		#max crawl depth
+        "zap_dc":"0",		#max crawl children
+        "skip_d":"16",		#-d max_depth     - maximum crawl tree depth (16)
+        "skip_dc":"512",	#-c max_child     - maximum children to index per node (512)
+        "skip_dx":"8192",	#-x max_desc maximum descendants to index per branch (8192)
+        "skip_cp":"100",	#-p  % crawlpercentage 100%
+        "skip_st":"0:5:0",	#-k duration     - stop scanning after the given duration h:m:s			(mazal mara khlaf)
+        "wapiti_d":"16",	#-d DEPTH
+        "wapiti_lp":"2",	#--max-links-per-page MAX
+        "wapiti_fd":"3",	#--max-files-per-dir MAX
+        "wapiti_st":"300",	#--max-scan-time --max-scan-time
+                }
+        self.NAME="None"
     
     def minimize(self):
         self.log_textbox.configure(width=350)
@@ -550,7 +736,7 @@ class App(customtkinter.CTk):
         self.close.grid(row=0,column=5,sticky="ne")       
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="META-Scanner", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=0, pady=(20, 10))
-        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="start Scan")
+        self.startnewscan_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_start_Window,text="Start Scan")
         self.startnewscan_button_1.grid(row=1, column=0, padx=20, pady=10)
         self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.open_load_Window,text="Load Result")
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
@@ -582,7 +768,8 @@ class App(customtkinter.CTk):
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=[ "System","Light", "Dark"],
                                                                        command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=12, column=0, padx=20, pady=(10, 10))
-
+#        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],command=self.change_scaling_event)
+#        self.scaling_optionemenu.grid(row=13, column=0, padx=5, pady=(5, 5))
 
         
     def open_check(self,ID):  
@@ -677,12 +864,6 @@ class App(customtkinter.CTk):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}\n".format(num,self.Results[4][i][1] ) )
                            self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
-              
-        if ("Blind SQL injection" in ID):     
-                self.desc.insert(tkinter.END, "Blind SQL injection is a technique that exploits a vulnerability occurring in the database of an application. This kind of vulnerability is harder to detect than basic SQL injections because no error message will be displayed on the webpage.\n ")
-                self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Same as Sql injection To protect against blind SQL injection, user input must not directly be embedded in SQL statements. Instead, user input must be escaped or filtered or parameterized statements must be used.")
-
                 for i in range(len(self.Results[0]["Blind SQL Injection"])):    #wapiti Result Sqlinjection fl check (Riglo)
                      num+=1
                      self.http.insert(tkinter.END, "\n{}-)Method:{} |\n|URL:{}\n".format(num,self.Results[0]["Blind SQL Injection"][i]["method"],self.Results[0]["Blind SQL Injection"][i]["path"] ) )
@@ -691,7 +872,14 @@ class App(customtkinter.CTk):
                     if "blind sql" in i.lower():                           
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )               
+
+#        if ("Blind SQL injection" in ID):     
+#                self.desc.insert(tkinter.END, "Blind SQL injection is a technique that exploits a vulnerability occurring in the database of an application. This kind of vulnerability is harder to detect than basic SQL injections because no error message will be displayed on the webpage.\n ")
+#                self.desc.insert(tkinter.END,"Solution:\n",tags="red")
+#                self.desc.insert(tkinter.END,"Same as Sql injection To protect against blind SQL injection, user input must not directly be embedded in SQL statements. Instead, user input must be escaped or filtered or parameterized statements must be used.")
+
+                    
 
         if ("Cross Site Scripting injection" in ID):     
                 self.desc.insert(tkinter.END, "Cross-site scripting (XSS) is a type of computer security vulnerability typically found in web applications which allow code injection by malicious web users into the web pages viewed by other users. Examples of such code include HTML code and client-side scripts.\n ")
@@ -754,20 +942,10 @@ class App(customtkinter.CTk):
                            self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['40102'][2][i][0],self.Results[1]['40102'][2][i][1] ) )
                            self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )
 
-        if ("Shell injection" in ID):    
-                self.desc.insert(tkinter.END, "Shell injection is a type of web vulnerability that occurs when an attacker is able to inject malicious shell commands into a web application. This can occur through user input fields, system calls, or other points of input that allow the attacker to execute arbitrary shell commands on the server.\n ")
-                self.desc.insert(tkinter.END,"Solution:\n",tags="red")
-                self.desc.insert(tkinter.END,"Validate input: Validate all user input, including form data, URL parameters, and cookies, \nSanitize input: Sanitize all input data to remove any potentially malicious shell commands or special characters.\nUse parameterized queries\nUse a whitelist of allowed commands: Use a whitelist of allowed shell commands to ensure that only trusted commands are executed\nUse restricted permissions: Use restricted permissions to limit the access that web applications have to the underlying operating system")
-                if self.Results[1]['50102'][1] >0:
-                     for i in range(self.Results[1]['50102'][1]):
-                           num+=1
-                           self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['50102'][2][i][0],self.Results[1]['50102'][2][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
-                for i in self.Results[4]:
-                    if "shell" in i.lower():                           
-                           num+=1
-                           self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
-                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
+#        if ("Shell injection" in ID):    
+#                self.desc.insert(tkinter.END, "Shell injection is a type of web vulnerability that occurs when an attacker is able to inject malicious shell commands into a web application. This can occur through user input fields, system calls, or other points of input that allow the attacker to execute arbitrary shell commands on the server.\n ")
+#                self.desc.insert(tkinter.END,"Solution:\n",tags="red")
+#                self.desc.insert(tkinter.END,"Validate input: Validate all user input, including form data, URL parameters, and cookies, \nSanitize input: Sanitize all input data to remove any potentially malicious shell commands or special characters.\nUse parameterized queries\nUse a whitelist of allowed commands: Use a whitelist of allowed shell commands to ensure that only trusted commands are executed\nUse restricted permissions: Use restricted permissions to limit the access that web applications have to the underlying operating system")
          
         if ("XSLT injection" in ID):         
                 self.desc.insert(tkinter.END, "XSLT web injection is a type of security vulnerability that occurs when an attacker injects malicious code into an XSL stylesheet, which is used to transform XML data into HTML for display on a web page. The injected code can be used to steal sensitive information, manipulate the appearance of the page, or launch further attacks\n ")
@@ -891,6 +1069,19 @@ class App(customtkinter.CTk):
                            num+=1
                            self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
                            self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
+#shell
+                if self.Results[1]['50102'][1] >0:
+                     for i in range(self.Results[1]['50102'][1]):
+                           num+=1
+                           self.http.insert(tkinter.END, "\n{}-Method:{}  || URL:{}".format(num,self.Results[1]['50102'][2][i][0],self.Results[1]['50102'][2][i][1] ) )
+                           self.command.insert(tkinter.END, "\n{}-)None\n".format(num) )                             
+                for i in self.Results[4]:
+                    if "shell" in i.lower():                           
+                           num+=1
+                           self.http.insert(tkinter.END, "\n{}-)URL:{}".format(num,self.Results[4][i][1] ) )
+                           self.command.insert(tkinter.END, "\n{}-)Curl Command:{}\n".format(num,self.Results[4][i][2]) )                     
+
+
         if ("html injection" in ID):        
                 self.desc.insert(tkinter.END, "HTML injection is a type of web vulnerability that occurs when an attacker is able to inject malicious HTML code into a web page. This can be used to perform a variety of attacks, including cross-site scripting (XSS) attacks, phishing attacks, and data theft.\n ")
                 self.desc.insert(tkinter.END,"Solution:\n",tags="red")
@@ -1025,12 +1216,12 @@ class App(customtkinter.CTk):
     def print_wapiti_Result(self,name):
     
             new_scaner=OSTEscaner.scan()
-            new_scaner.configuiring_new_scan(name)
+            new_scaner.configuiring_new_scan(name,self.setting)
             number,detaille =new_scaner.get_wapiti_resaults()
             self.Results[0]=detaille
             if number['Blind SQL Injection'] > 0:
                    #self.my_frame.vul_label[1][1].configure(text_color="red",text=int(self.my_frame.vul_label[1][1].cget("text"))+number['Blind SQL Injection'])
-                   self.my_frame.vul_label[1][5].configure(text=self.my_frame.vul_label[1][5].cget("text")+number['Blind SQL Injection'],text_color="red")
+                   self.my_frame.vul_label[0][5].configure(text=self.my_frame.vul_label[0][5].cget("text")+number['Blind SQL Injection'],text_color="red")
                         
             if number['SQL Injection'] > 0:
                    #self.my_frame.vul_label[0][1].configure(text_color="red",text=int(self.my_frame.vul_label[0][1].cget("text"))+number['SQL Injection'])
@@ -1084,7 +1275,7 @@ class App(customtkinter.CTk):
 
     def print_skipfich_Result(self,name):
             new_scaner=OSTEscaner.scan()
-            new_scaner.configuiring_new_scan(name)
+            new_scaner.configuiring_new_scan(name,self.setting)
             all_resaults =new_scaner.get_skipfish_resaults()   
             for i in all_resaults:
                  if all_resaults[i][1] >0:
@@ -1096,7 +1287,7 @@ class App(customtkinter.CTk):
                              self.my_frame.vul_label[2][4].configure(text=self.my_frame.vul_label[2][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "Shell injection" in all_resaults[i][0] :
                              #self.my_frame.vul_label[3][1].configure(text_color="red",text=int(self.my_frame.vul_label[3][1].cget("text"))+all_resaults[i][1])
-                             self.my_frame.vul_label[3][4].configure(text=self.my_frame.vul_label[3][4].cget("text")+all_resaults[i][1],text_color="red")
+                             self.my_frame.vul_label[8][4].configure(text=self.my_frame.vul_label[8][4].cget("text")+all_resaults[i][1],text_color="red")
                       elif "XML injection" in all_resaults[i][0] :
                              #self.my_frame.vul_label[5][1].configure(text_color="red",text=int(self.my_frame.vul_label[5][1].cget("text"))+all_resaults[i][1])
                              self.my_frame.vul_label[5][4].configure(text=self.my_frame.vul_label[5][4].cget("text")+all_resaults[i][1],text_color="red")
@@ -1150,7 +1341,7 @@ class App(customtkinter.CTk):
                   
     def print_Nikto_Result(self,name):
             new_scaner=OSTEscaner.scan()
-            new_scaner.configuiring_new_scan(name)
+            new_scaner.configuiring_new_scan(name,self.setting)
             Nikto_resaults =new_scaner.get_nikto_report() 
             self.Results[2]=Nikto_resaults   
             if Nikto_resaults['nikto_vulnerability']['sql_injection']['number'] >0:
@@ -1216,7 +1407,7 @@ class App(customtkinter.CTk):
           
     def print_zap_Result(self,name):                   #todo eglebha condition if >0 bh twli hamra (aaaghhhh) Wzid partye ta tzid esm scaner fki ydetecter
             new_scaner=OSTEscaner.scan()
-            new_scaner.configuiring_new_scan(name)
+            new_scaner.configuiring_new_scan(name,self.setting)
             zap_resaults =new_scaner.owaspzap_get_resaults()   
             self.Results[3]=zap_resaults            
 #            print(zap_resaults)
@@ -1302,7 +1493,7 @@ class App(customtkinter.CTk):
            
     def print_nuclei_Result(self,name):                   #todo eglebha condition if >0 bh twli hamra (aaaghhhh) Wzid partye ta tzid esm scaner fki ydetecter
             new_scaner=OSTEscaner.scan()
-            new_scaner.configuiring_new_scan(name)
+            new_scaner.configuiring_new_scan(name,self.setting)
             nuclei_resaults =new_scaner.nuclei_report()   
             self.Results[4]=nuclei_resaults            
             for i in nuclei_resaults:
@@ -1400,15 +1591,15 @@ class App(customtkinter.CTk):
            wapiti ,self.templateresult['sql3']=(1,1) if int(self.my_frame.vul_label[0][5].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['sql4']=(1,1) if int(self.my_frame.vul_label[0][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['sql5']=(1,1) if int(self.my_frame.vul_label[0][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap1"])+(skip*weights["skip1"])+(wapiti*weights["wapiti1"])+(nikto*weights["nikto1"])+(nuclei*weights["nuclei1"]) )/2
-           if formule >= 0.2 : 
+           formule = ((zap*weights["zap1"])+(skip*weights["skip1"])+(wapiti*weights["wapiti1"])+(nikto*weights["nikto1"])+(nuclei*weights["nuclei1"]) )/5
+           if formule >= 1 : 
                  self.my_frame.vul_label[0][1].configure(text="Positive",text_color='red')
                  self.templateresult['sql_meta']="Positive"
-                 weights["zap1"]=weights["zap1"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-                 weights["skip1"]=weights["skip1"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-                 weights["wapiti1"]=weights["wapiti1"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-                 weights["nikto1"]=weights["nikto1"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
-                 weights["nuclei1"]=weights["nuclei1"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+                 #weights["zap1"]=weights["zap1"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+                 #weights["skip1"]=weights["skip1"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+                 #weights["wapiti1"]=weights["wapiti1"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+                 #weights["nikto1"]=weights["nikto1"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
+                 #weights["nuclei1"]=weights["nuclei1"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
                  
            else : 
                  self.my_frame.vul_label[0][1].configure(text="Negative",text_color='blue')
@@ -1416,12 +1607,12 @@ class App(customtkinter.CTk):
            #blindsqlinjection 1 self.my_frame.vul_label[0][1].cget("text") 
            wapiti,self.templateresult['blind3'] =(1,1) if int(self.my_frame.vul_label[1][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['blind5']=(1,1) if int(self.my_frame.vul_label[1][7].cget("text")) > 0 else (0,0)
-           formule = ((wapiti*weights["wapiti2"])+(nuclei*weights["nuclei2"]) )/1
+           formule = ((wapiti*weights["wapiti2"])+(nuclei*weights["nuclei2"]) )/2
            if formule >= 0.35 : 
                self.my_frame.vul_label[1][1].configure(text="Positive",text_color='red')
                self.templateresult['blind_meta']="Positive"           
-               weights["wapiti2"]=weights["wapiti2"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-               weights["nuclei2"]=weights["nuclei2"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["wapiti2"]=weights["wapiti2"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+               #weights["nuclei2"]=weights["nuclei2"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
 
            else : 
                self.my_frame.vul_label[1][1].configure(text="Negative",text_color='blue')
@@ -1432,15 +1623,15 @@ class App(customtkinter.CTk):
            wapiti ,self.templateresult['xss3']=(1,1) if int(self.my_frame.vul_label[2][5].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['xss4']=(1,1) if int(self.my_frame.vul_label[2][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xss5']=(1,1) if int(self.my_frame.vul_label[2][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap3"])+(skip*weights["skip3"])+(wapiti*weights["wapiti3"])+(nikto*weights["nikto3"])+(nuclei*weights["nuclei3"]) )/2
+           formule = ((zap*weights["zap3"])+(skip*weights["skip3"])+(wapiti*weights["wapiti3"])+(nikto*weights["nikto3"])+(nuclei*weights["nuclei3"]) )/5
            if formule >= 0.2 : 
                self.my_frame.vul_label[2][1].configure(text="Positive",text_color='red')
                self.templateresult['xss_meta']="Positive"
-               weights["zap3"]=weights["zap3"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["skip3"]=weights["skip3"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-               weights["wapiti3"]=weights["wapiti3"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-               weights["nikto3"]=weights["nikto3"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
-               weights["nuclei3"]=weights["nuclei3"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["zap3"]=weights["zap3"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["skip3"]=weights["skip3"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+               #weights["wapiti3"]=weights["wapiti3"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+               #weights["nikto3"]=weights["nikto3"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
+               #weights["nuclei3"]=weights["nuclei3"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
 
            else : 
                self.my_frame.vul_label[2][1].configure(text="Negative",text_color='blue')
@@ -1448,12 +1639,12 @@ class App(customtkinter.CTk):
            #shell injection 3 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['shell2']=(1,1) if int(self.my_frame.vul_label[3][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['shell5']=(1,1) if int(self.my_frame.vul_label[3][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*weights["skip4"])+(nuclei*weights["nuclei4"]) )/1
+           formule = ((skip*weights["skip4"])+(nuclei*weights["nuclei4"]) )/2
            if formule >= 0.5: 
                self.my_frame.vul_label[3][1].configure(text="Positive",text_color='red')
                self.templateresult['shell_meta']="Positive"
-               weights["skip4"]=weights["skip4"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-               weights["nuclei4"]=weights["nuclei4"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["skip4"]=weights["skip4"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+               #weights["nuclei4"]=weights["nuclei4"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
 
 
            
@@ -1464,12 +1655,12 @@ class App(customtkinter.CTk):
            #XSLT 4 self.my_frame.vul_label[0][1].cget("text") 
            zap,self.templateresult['xslt1']=(1,1) if int(self.my_frame.vul_label[4][2].cget("text")) > 0   else (0,0)
            nikto,self.templateresult['xslt4']=(1,1) if int(self.my_frame.vul_label[4][6].cget("text")) > 0  else (0,0)
-           formule = ((zap*weights["zap5"])+(nikto*weights["nikto5"]))/1
+           formule = ((zap*weights["zap5"])+(nikto*weights["nikto5"]))/2
            if formule >= 0.5 : 
                self.my_frame.vul_label[4][1].configure(text="Positive",text_color='red')
                self.templateresult['xslt_meta']="Positive"
-               weights["zap5"]=weights["zap5"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["nikto5"]=weights["nikto5"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
+               #weights["zap5"]=weights["zap5"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["nikto5"]=weights["nikto5"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
 
            else : 
                self.my_frame.vul_label[4][1].configure(text="Negative",text_color='blue')
@@ -1480,14 +1671,14 @@ class App(customtkinter.CTk):
            skip,self.templateresult['xml2']=(1,1) if int(self.my_frame.vul_label[5][4].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['xml4']=(1,1) if int(self.my_frame.vul_label[5][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xml5']=(1,1) if int(self.my_frame.vul_label[5][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap6"])+(skip*weights["skip6"])+(nikto*weights["nikto6"])+(nuclei*weights["nuclei6"]) )/1.5
-           if formule >= 0.26 : 
+           formule = ((zap*weights["zap6"])+(skip*weights["skip6"])+(nikto*weights["nikto6"])+(nuclei*weights["nuclei6"]) )/4
+           if formule >= 0.25 : 
                self.my_frame.vul_label[5][1].configure(text="Positive",text_color='red')
                self.templateresult['xml_meta']="Positive"
-               weights["zap6"]=weights["zap6"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["skip6"]=weights["skip6"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-               weights["nikto6"]=weights["nikto6"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
-               weights["nuclei6"]=weights["nuclei6"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["zap6"]=weights["zap6"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["skip6"]=weights["skip6"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+               #weights["nikto6"]=weights["nikto6"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
+               #weights["nuclei6"]=weights["nuclei6"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
 
            else : 
                self.my_frame.vul_label[5][1].configure(text="Negative",text_color='blue')
@@ -1497,13 +1688,13 @@ class App(customtkinter.CTk):
            zap,self.templateresult['xxe1']=(1,1) if int(self.my_frame.vul_label[6][2].cget("text")) > 0   else (0,0)
            wapiti,self.templateresult['xxe3'] =(1,1) if int(self.my_frame.vul_label[6][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['xxe5']=(1,1) if int(self.my_frame.vul_label[6][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap7"])+(wapiti*weights["wapiti7"])+(nuclei*weights["nuclei7"]) )/1.5
-           if formule >= 0.33 : 
+           formule = ((zap*weights["zap7"])+(wapiti*weights["wapiti7"])+(nuclei*weights["nuclei7"]) )/3
+           if formule >= 0.3 : 
                 self.my_frame.vul_label[6][1].configure(text="Positive",text_color='red')
                 self.templateresult['xxe_meta']="True"
-                weights["zap7"]=weights["zap7"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-                weights["wapiti7"]=weights["wapiti7"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-                weights["nuclei7"]=weights["nuclei7"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+                #weights["zap7"]=weights["zap7"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+                #weights["wapiti7"]=weights["wapiti7"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+                #weights["nuclei7"]=weights["nuclei7"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else : 
                 self.my_frame.vul_label[6][1].configure(text="Negative",text_color='blue')
                 self.templateresult['xxe_meta']="Negative"
@@ -1512,13 +1703,13 @@ class App(customtkinter.CTk):
            zap,self.templateresult['code1']=(1,1) if int(self.my_frame.vul_label[7][2].cget("text")) > 0   else (0,0)
            nikto,self.templateresult['code4']=(1,1) if int(self.my_frame.vul_label[7][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['code5']=(1,1) if int(self.my_frame.vul_label[7][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap8"])+(nikto*weights["nikto8"])+(nuclei*weights["nuclei8"]) )/1.5
+           formule = ((zap*weights["zap8"])+(nikto*weights["nikto8"])+(nuclei*weights["nuclei8"]) )/3
            if formule >= 0.3 : 
                self.my_frame.vul_label[7][1].configure(text="Positive",text_color='red')
                self.templateresult['code_meta']="Positive"
-               weights["zap8"]=weights["zap8"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["nikto8"]=weights["nikto8"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
-               weights["nuclei8"]=weights["nuclei8"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["zap8"]=weights["zap8"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["nikto8"]=weights["nikto8"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
+               #weights["nuclei8"]=weights["nuclei8"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else :
                self.my_frame.vul_label[7][1].configure(text="Negative",text_color='blue')
                self.templateresult['code_meta']="Negative"
@@ -1527,13 +1718,15 @@ class App(customtkinter.CTk):
            zap,self.templateresult['os1']=(1,1) if int(self.my_frame.vul_label[8][2].cget("text")) > 0   else (0,0)
            wapiti,self.templateresult['os3'] =(1,1) if int(self.my_frame.vul_label[8][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['os5']=(1,1) if int(self.my_frame.vul_label[8][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap9"])+(wapiti*weights["wapiti9"])+(nuclei*weights["nuclei9"]) )/1.5
-           if formule >= 0.33 : 
+           skip,self.templateresult['os2']=(1,1) if int(self.my_frame.vul_label[8][4].cget("text")) > 0 else (0,0)
+           formule = ((zap*weights["zap9"])+(wapiti*weights["wapiti9"])+(skip*weights["skip9"])+(nuclei*weights["nuclei9"]) )/4
+           if formule >= 0.25 : 
                self.my_frame.vul_label[8][1].configure(text="Positive",text_color='red')
                self.templateresult['os_meta']="Positive"
-               weights["zap9"]=weights["zap9"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["wapiti9"]=weights["wapiti9"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-               weights["nuclei9"]=weights["nuclei9"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["zap9"]=weights["zap9"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["skip9"]=weights["skip9"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["wapiti9"]=weights["wapiti9"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+               #weights["nuclei9"]=weights["nuclei9"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else : 
                self.my_frame.vul_label[8][1].configure(text="Negative",text_color='blue')
                self.templateresult['os_meta']="Negative"
@@ -1541,12 +1734,12 @@ class App(customtkinter.CTk):
            #html 9 self.my_frame.vul_label[0][1].cget("text") 
            nikto,self.templateresult['html4']=(1,1) if int(self.my_frame.vul_label[9][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['html5']=(1,1) if int(self.my_frame.vul_label[9][7].cget("text")) > 0 else (0,0)
-           formule = ((nikto*weights["nikto10"])+(nuclei*weights["nuclei10"]) )/1
+           formule = ((nikto*weights["nikto10"])+(nuclei*weights["nuclei10"]) )/2
            if formule >= 0.5 : 
                self.my_frame.vul_label[9][1].configure(text="Positive",text_color='red')
                self.templateresult['html_meta']="Positive"
-               weights["nikto10"]=weights["nikto10"] + ( (nikto*(0.01)) + ((nikto-1)*(0.002)) )
-               weights["nuclei10"]=weights["nuclei10"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["nikto10"]=weights["nikto10"] + ( (nikto*(0.4)) + ((nikto-1)*(0.1)) )
+               #weights["nuclei10"]=weights["nuclei10"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else : 
                self.my_frame.vul_label[9][1].configure(text="Negative",text_color='blue')
                self.templateresult['html_meta']="Negative"
@@ -1557,7 +1750,7 @@ class App(customtkinter.CTk):
            if formule == 1 : 
                self.my_frame.vul_label[10][1].configure(text="Positive",text_color='red')
                self.templateresult['template_meta']="Positive"
-               weights["zap"]=weights["zap"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
+               #weights["zap"]=weights["zap"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
            else : 
                self.my_frame.vul_label[10][1].configure(text="Negative",text_color='blue')
                self.templateresult['template_meta']="Negative"
@@ -1567,14 +1760,14 @@ class App(customtkinter.CTk):
            skip,self.templateresult['crlf2']=(1,1) if int(self.my_frame.vul_label[11][4].cget("text")) > 0  else (0,0)
            wapiti,self.templateresult['crlf3'] =(1,1) if int(self.my_frame.vul_label[11][5].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['crlf5']=(1,1) if int(self.my_frame.vul_label[11][7].cget("text")) > 0 else (0,0)
-           formule = ((zap*weights["zap12"])+(skip*weights["skip12"])+(wapiti*weights["wapiti12"])+(nuclei*weights["nuclei12"]) )/2
-           if formule >= 0.2 : 
+           formule = ((zap*weights["zap12"])+(skip*weights["skip12"])+(wapiti*weights["wapiti12"])+(nuclei*weights["nuclei12"]) )/4
+           if formule >= 0.25 : 
                self.my_frame.vul_label[11][1].configure(text="Positive",text_color='red')
                self.templateresult['crlf_meta']="Positive"
-               weights["zap12"]=weights["zap12"] + ( (zap*(0.01)) + ((zap-1)*(0.002)) )
-               weights["skip12"]=weights["skip12"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-               weights["wapiti12"]=weights["wapiti12"] + ( (wapiti*(0.01)) + ((wapiti-1)*(0.002)) )
-               weights["nuclei12"]=weights["nuclei12"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["zap12"]=weights["zap12"] + ( (zap*(0.4)) + ((zap-1)*(0.1)) )
+               #weights["skip12"]=weights["skip12"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+               #weights["wapiti12"]=weights["wapiti12"] + ( (wapiti*(0.4)) + ((wapiti-1)*(0.1)) )
+               #weights["nuclei12"]=weights["nuclei12"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
                
            else : 
                self.my_frame.vul_label[11][1].configure(text="Negative",text_color='blue')
@@ -1583,12 +1776,12 @@ class App(customtkinter.CTk):
            #OGNL 12 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['ognl2']=(1,1) if int(self.my_frame.vul_label[12][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['ognl5']=(1,1) if int(self.my_frame.vul_label[12][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*weights["skip13"])+(nuclei*weights["nuclei13"]) )/1
-           if formule == 1 : 
+           formule = ((skip*weights["skip13"])+(nuclei*weights["nuclei13"]) )/2
+           if formule == 0.5 : 
                self.my_frame.vul_label[12][1].configure(text="Positive",text_color='red')
                self.templateresult['ognl_meta']="Positive"
-               weights["skip13"]=weights["skip13"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-               weights["nuclei13"]=weights["nuclei13"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+               #weights["skip13"]=weights["skip13"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+               #weights["nuclei13"]=weights["nuclei13"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else : 
                self.my_frame.vul_label[12][1].configure(text="Negative",text_color='blue')
                self.templateresult['ognl_meta']="Negative"
@@ -1596,12 +1789,12 @@ class App(customtkinter.CTk):
            #host head 13 self.my_frame.vul_label[0][1].cget("text") 
            skip,self.templateresult['host2']=(1,1) if int(self.my_frame.vul_label[13][4].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['host5']=(1,1) if int(self.my_frame.vul_label[13][7].cget("text")) > 0 else (0,0)
-           formule = ((skip*weights["skip14"])+(nuclei*weights["nuclei14"]) )/1
-           if formule ==1 : 
+           formule = ((skip*weights["skip14"])+(nuclei*weights["nuclei14"]) )/2
+           if formule ==0.5 : 
                 self.my_frame.vul_label[13][1].configure(text="Positive",text_color='red')
                 self.templateresult['host_meta']="Positive"
-                weights["skip14"]=weights["skip14"] + ( (skip*(0.01)) + ((skip-1)*(0.002)) )
-                weights["nuclei14"]=weights["nuclei14"] + ( (nuclei*(0.01)) + ((nuclei-1)*(0.002)) )
+                #weights["skip14"]=weights["skip14"] + ( (skip*(0.4)) + ((skip-1)*(0.1)) )
+                #weights["nuclei14"]=weights["nuclei14"] + ( (nuclei*(0.4)) + ((nuclei-1)*(0.1)) )
            else : 
                 self.my_frame.vul_label[13][1].configure(text="Negative",text_color='blue')
                 self.templateresult['host_meta']="Negative"
@@ -1653,7 +1846,12 @@ class App(customtkinter.CTk):
                  self.loadResult_window =loadResult_Window(self)
         else:
              self.loadResult_window.focus()
-                      
+    def set_setting(self):
+        if self.setsetting is None or not self.setsetting.winfo_exists():
+            self.setsetting = set_setting_Window(self)  # create window if its None or destroyed
+        else:
+            self.setsetting.focus()
+                             
     def open_start_Window(self):
         if self.start_Window is None or not self.start_Window.winfo_exists():
             self.start_Window = start_Window(self)  # create window if its None or destroyed
@@ -1663,6 +1861,11 @@ class App(customtkinter.CTk):
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         #print("CTkInputDialog:", dialog.get_input())
+
+#changinge font size:
+#    def change_scaling_event(self, new_scaling: str):
+#        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+#        customtkinter.set_widget_scaling(new_scaling_float)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         if new_appearance_mode=="Light":
@@ -1698,10 +1901,28 @@ class App(customtkinter.CTk):
          shutil.copy("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/result_template/meta1.png", '{}/{}/'.format(directory,self.templateresult['target_name']))
 
          webbrowser.open('{}/{}/{}.html'.format(directory,self.templateresult['target_name'],self.templateresult['target_name']), new=2)
+    def save_con(self):
+         new_scaner=OSTEscaner.scan()
+         new_scaner.configuiring_new_scan(self.NAME,self.setting)
 
-
-
-
+         number,detaille =new_scaner.get_wapiti_resaults()        
+         all_resaults =new_scaner.get_skipfish_resaults()  
+         Nikto_resaults =new_scaner.get_nikto_report() 
+         zap_resaults =new_scaner.owaspzap_get_resaults()  
+         nuclei_resaults =new_scaner.nuclei_report()   
+         consildation={
+         "Wapiti_Vulnerabilities":[number,detaille],
+         "Nikto_Vulnerabilities":Nikto_resaults,
+         "SkipFish_Vulnerabilities":all_resaults,
+         "OWASPZAP_Vulnerabilities":zap_resaults,
+         "Nuclei_Vulnerabilities":nuclei_resaults
+         }
+         directory = filedialog.askdirectory()   
+         directory_path = os.path.join(directory,"consoludation_{}".format(self.NAME))
+         os.mkdir(directory_path)
+         conObject = open("{}/Consolidation_{}.json".format(directory_path,self.NAME), "w")
+         conObject.write(json.dumps(consildation))
+         conObject.close()
     def Load_resaults(self,name):
 #        for i in self.my_frame.vul_label:
 #            i[1].configure(text=int(0))
@@ -1725,9 +1946,10 @@ class App(customtkinter.CTk):
     def show_graph(self,name,x1,x2,x3,x4,x5):    
         x = ["ZAP", "SkipFish", "Wapiti", "Nikto","Nuclei"]
         y = [x1, x2, x3,x4, x5]
+#        print(y)
         colors = ['red', 'green', 'blue', 'orange', 'purple']
         bar(x,y,color=colors)
-        ylim(0, 1)
+        ylim(0, 5)
         title("Scanner Weights for {}".format(name))
         show()
 
@@ -1830,8 +2052,8 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
         xer="______________________________________________________________________________________________________________________________________________________"
         for i in range(14):
             temp=[]
-            self.labeltemp=customtkinter.CTkLabel(self,text=xer,fg_color="transparent")
-            self.labeltemp.grid(row=i+1, column=0,columnspan=8,pady=(40,0))
+            self.labeltemp0=customtkinter.CTkLabel(self,text=xer,fg_color="transparent")
+            self.labeltemp0.grid(row=i+1, column=0,columnspan=8,pady=(40,0))
 
             self.labeltemp=customtkinter.CTkLabel(self,text=" injection:",width=200,fg_color="transparent",anchor="w")
             self.labeltemp.grid(row=i+1, column=0,padx=0,pady=3)
@@ -1856,23 +2078,44 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
             self.but=customtkinter.CTkButton(self.new,text="",image=info,width=40 , height=40,fg_color="transparent")#,state="disabled"  ki tkml raj3ha
             self.but.pack(side="left")
 
-            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but,self.labeltemp3,self.labeltemp4,self.labeltemp5,self.labeltemp6,self.grp])
+            self.vul_label.append([self.labeltemp,self.labeltemp1,self.labeltemp2,self.but,self.labeltemp3,self.labeltemp4,self.labeltemp5,self.labeltemp6,self.grp,self.labeltemp0])
 
         self.vul_label[0][0].configure(text="CWE-89:SQL injection")
         self.vul_label[0][3].configure(command=lambda:app.open_check("SQL Injection"))
         self.vul_label[0][8].configure(command=lambda:app.show_graph("SQL Injection",app.weights["zap1"],app.weights["skip1"],app.weights["wapiti1"],app.weights["nikto1"],app.weights["nuclei1"]))
         
         self.vul_label[1][0].configure(text="CWE-89:Blind SQL injection")
-        self.vul_label[1][3].configure(command=lambda:app.open_check("Blind SQL injection"))
-        self.vul_label[1][8].configure(command=lambda:app.show_graph("BlindSQL Injection",0,0,app.weights["wapiti2"],0,app.weights["nuclei2"]))
+        self.vul_label[1][3].configure(command=lambda:app.open_check("OS command injection"))
+        self.vul_label[1][8].configure(command=lambda:app.show_graph("os command Injection",app.weights["zap9"],app.weights["skip9"],app.weights["wapiti9"],0,app.weights["nuclei9"]))
+        self.vul_label[8][0].grid(row=2, column=0,padx=0,pady=3)
+        self.vul_label[8][1].grid(row=2, column=6,padx=0,pady=3)
+        self.vul_label[8][2].grid(row=2, column=1,padx=0,pady=3)
+        self.vul_label[8][4].grid(row=2, column=2,padx=0,pady=3)
+        self.vul_label[8][5].grid(row=2, column=3,padx=0,pady=3)
+        self.vul_label[8][6].grid(row=2, column=4,padx=0,pady=3)
+        self.vul_label[8][7].grid(row=2, column=5,padx=0,pady=3)
         
+        
+        
+        
+        
+                
         self.vul_label[2][0].configure(text="CWE-79:Cross Site Scripting injection")
         self.vul_label[2][3].configure(command=lambda:app.open_check("Cross Site Scripting injection"))
         self.vul_label[2][8].configure(command=lambda:app.show_graph("Cross Site Scripting Injection",app.weights["zap3"],app.weights["skip3"],app.weights["wapiti3"],app.weights["nikto3"],app.weights["nuclei3"]))
         
-        self.vul_label[3][0].configure(text="CWE-553:Shell injection")
-        self.vul_label[3][3].configure(command=lambda:app.open_check("Shell injection"))
-        self.vul_label[3][8].configure(command=lambda:app.show_graph("Shell Injection",0,app.weights["skip4"],0,0,app.weights["nuclei4"]))
+        self.vul_label[3][0].configure(text="Other Injection Vulnerabilities:",text_color="Red")
+        self.vul_label[3][0].grid(columnspan=20,padx=0,pady=3)
+        self.vul_label[3][1].grid_forget()
+        self.vul_label[3][2].grid_forget()
+        self.vul_label[3][4].grid_forget()
+        self.vul_label[3][5].grid_forget()
+        self.vul_label[3][6].grid_forget()
+        self.vul_label[3][7].grid_forget()        
+#        self.vul_label[3][9].grid_forget()
+
+        self.vul_label[3][3].configure(image=None,width=0,height=0,command=None)
+        self.vul_label[3][8].configure(image=None,width=0,height=0,command=None)
 
         self.vul_label[4][0].configure(text="CVE-2006-4686:XSLT injection")
         self.vul_label[4][3].configure(command=lambda:app.open_check("XSLT injection"))
@@ -1891,8 +2134,19 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
         self.vul_label[7][8].configure(command=lambda:app.show_graph("code Injection",app.weights["zap8"],0,0,app.weights["nikto8"],app.weights["nuclei8"]))
 
         self.vul_label[8][0].configure(text="CWE-78:OS command injection")
-        self.vul_label[8][3].configure(command=lambda:app.open_check("OS command injection"))
-        self.vul_label[8][8].configure(command=lambda:app.show_graph("os command Injection",app.weights["zap9"],0,app.weights["wapiti9"],0,app.weights["nuclei9"]))
+        self.vul_label[8][3].configure(command=lambda:app.open_check("Host Header injection"))
+        self.vul_label[8][8].configure(command=lambda:app.show_graph("Host Header Injection",0,app.weights["skip14"],0,0,app.weights["nuclei14"]))
+        self.vul_label[13][0].configure(text="CWE-644:Host Header injection")
+        self.vul_label[13][0].grid(row=9, column=0,padx=0,pady=3)
+        self.vul_label[13][1].grid(row=9, column=6,padx=0,pady=3)
+        self.vul_label[13][2].grid(row=9, column=1,padx=0,pady=3)
+        self.vul_label[13][4].grid(row=9, column=2,padx=0,pady=3)
+        self.vul_label[13][5].grid(row=9, column=3,padx=0,pady=3)
+        self.vul_label[13][6].grid(row=9, column=4,padx=0,pady=3)
+        self.vul_label[13][7].grid(row=9, column=5,padx=0,pady=3)
+
+
+
 
         self.vul_label[9][0].configure(text="CWE-80:html injection")
         self.vul_label[9][3].configure(command=lambda:app.open_check("html injection"))
@@ -1911,8 +2165,9 @@ class MyFrame_My_Result(customtkinter.CTkScrollableFrame):
         self.vul_label[12][8].configure(command=lambda:app.show_graph("OGNL Injection",0,app.weights["skip13"],0,0,app.weights["nuclei13"]))
 
         self.vul_label[13][0].configure(text="CWE-644:Host Header injection")
-        self.vul_label[13][3].configure(command=lambda:app.open_check("Host Header injection"))
-        self.vul_label[13][8].configure(command=lambda:app.show_graph("Host Header Injection",0,app.weights["skip14"],0,0,app.weights["nuclei14"]))
+        self.vul_label[13][3].configure(image=None,width=0,height=0,command=None)
+        self.vul_label[13][8].configure(image=None,width=0,height=0,command=None)
+        self.vul_label[13][9].grid_forget()
         
 if __name__ == "__main__":
     app = App()
