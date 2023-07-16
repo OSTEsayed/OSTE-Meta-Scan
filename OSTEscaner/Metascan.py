@@ -7,6 +7,7 @@ import customtkinter
 import time
 import OSTEscaner
 import os,shutil
+import sys
 import subprocess
 import signal
 import json
@@ -20,11 +21,11 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 class MyResultFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
         # add widgets onto the frame...
         self.label = customtkinter.CTkLabel(self)
         self.label.grid(row=0, column=0, padx=20)
-        self.mylist=os.listdir("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/")
+        self.mylist=os.listdir("{}/Resaults/".format(script_dir))
         self.radio_var = tkinter.IntVar(value=0)
         for i in range(len(self.mylist)):
                 self.radio_button_1 = customtkinter.CTkRadioButton(master=self,text=self.mylist[i], variable=self.radio_var, value=i)
@@ -37,8 +38,9 @@ class Target_Window(customtkinter.CTkToplevel):
         super().__init__(*args,**kwargs)
         self.title("Web Vulnerability META-Scanner  -servers-")
         self.directory="no"
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
         xer="_____________________________________________________"
-        self.path="/home/ostesayed/Desktop/Scanners/OSTE-Scanner/Targets/"
+        self.path="{}/Targets/".format(script_dir)
         self.geometry("400x350")
         self.frame_main = customtkinter.CTkFrame(self)
         self.frame_main.pack(pady=10,padx=10,fill="both",expand=True)
@@ -192,7 +194,8 @@ class loadResult_Window(customtkinter.CTkToplevel):
         app.NAME=self.resultf.mylist[self.resultf.radio_var.get()]
         self.destroy()
     def ddelete(self):
-        shutil.rmtree("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}".format(self.resultf.mylist[self.resultf.radio_var.get()]))        
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+        shutil.rmtree("{}/Resaults/{}".format(script_dir,self.resultf.mylist[self.resultf.radio_var.get()]))        
         self.destroy()
         
 class set_setting_Window(customtkinter.CTkToplevel):        
@@ -377,17 +380,18 @@ class start_Window(customtkinter.CTkToplevel):
         self.label_result.pack(padx=20, pady=20)
     def start_scanscan(self,url,name):
         if "https" in url :
-           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/owaspzap/{}.json".format(name,name), "w")
+           script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+           f = open("{}/Resaults/{}/owaspzap/{}.json".format(script_dir,name,name), "w")
            f.write("[]")
            f.close()
-           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nuclei/{}.json".format(name,name), "w")
+           f = open("{}/Resaults/{}/nuclei/{}.json".format(script_dir,name,name), "w")
            f.write("")
            f.close()
-           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_9.json".format(name,name), "w")
+           f = open("{}/Resaults/{}/nikto/{}_9.json".format(script_dir,name,name), "w")
            text={"host":"{}".format(url),"ip":"","port":"","banner":"","vulnerabilities":[]}
            f.write(json.dumps(text))
            f.close()
-           f = open("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/nikto/{}_4.json".format(name,name), "w")
+           f = open("{}/Resaults/{}/nikto/{}_4.json".format(script_dir,name,name), "w")
            f.write(json.dumps(text))
            f.close()
     def start_new_scan(self):
@@ -395,6 +399,7 @@ class start_Window(customtkinter.CTkToplevel):
 #        if crowling_depth==0:crowling_depth=1
 #        if crowling_depth==16:crowling_depth=15
         #print(crowling_depth)
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))        
         if self.target_name.get()=="":
             self.label_result.configure(text="Enter the name of target",text_color="red")
 
@@ -409,7 +414,7 @@ class start_Window(customtkinter.CTkToplevel):
             new_scan.configuiring_new_scan(self.target_name.get(),app.setting,self.target_url.get())
             new_scan.creat_directory()
             app.log_textbox.insert(tkinter.END, "\n[Location]", tags="green") 
-            app.log_textbox.insert(tkinter.END, " /home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/"+self.target_name.get(), tags=None)
+            app.log_textbox.insert(tkinter.END, "{}/Resaults/".format(script_dir)+self.target_name.get(), tags=None)
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")      
             app.log_textbox.insert(tkinter.END, " Wapiti scan started", tags=None)
             starting_wapiti = threading.Thread(target=new_scan.start_wapiti)
@@ -1901,8 +1906,8 @@ class App(customtkinter.CTk):
          
          with open('{}/{}/{}.html'.format(directory,self.templateresult['target_name'],self.templateresult['target_name']), 'w') as f:
                f.write(output)
-
-         shutil.copy("/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/result_template/meta1.png", '{}/{}/'.format(directory,self.templateresult['target_name']))
+         script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))   
+         shutil.copy("{}/result_template/meta1.png".format(script_dir), '{}/{}/'.format(directory,self.templateresult['target_name']))
 
          webbrowser.open('{}/{}/{}.html'.format(directory,self.templateresult['target_name'],self.templateresult['target_name']), new=2)
     def save_con(self):
@@ -1946,7 +1951,8 @@ class App(customtkinter.CTk):
         self.print_nuclei_Result(name)
         self.print_meta_Result()
     def Open_skipfish_site(self,name):
-        webbrowser.open('/home/ostesayed/Desktop/Scanners/OSTE-Scanner/OSTEscaner/Resaults/{}/skipfish/{}/index.html'.format(name,name), new=2)
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))   
+        webbrowser.open('{}/Resaults/{}/skipfish/{}/index.html'.format(script_dir,name,name), new=2)
     def show_graph(self,name,x1,x2,x3,x4,x5):    
         x = ["ZAP", "SkipFish", "Wapiti", "Nikto","Nuclei"]
         y = [x1, x2, x3,x4, x5]
