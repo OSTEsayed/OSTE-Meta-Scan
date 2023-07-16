@@ -1591,6 +1591,10 @@ class App(customtkinter.CTk):
            wapiti ,self.templateresult['sql3']=(1,1) if int(self.my_frame.vul_label[0][5].cget("text")) > 0  else (0,0)
            nikto,self.templateresult['sql4']=(1,1) if int(self.my_frame.vul_label[0][6].cget("text")) > 0  else (0,0)
            nuclei,self.templateresult['sql5']=(1,1) if int(self.my_frame.vul_label[0][7].cget("text")) > 0 else (0,0)
+           if wapiti==0:
+               wapiti,self.templateresult['blind3'] =(1,1) if int(self.my_frame.vul_label[1][5].cget("text")) > 0  else (0,0)
+           if nuclei==0:
+               nuclei,self.templateresult['blind5']=(1,1) if int(self.my_frame.vul_label[1][7].cget("text")) > 0 else (0,0)
            formule = ((zap*weights["zap1"])+(skip*weights["skip1"])+(wapiti*weights["wapiti1"])+(nikto*weights["nikto1"])+(nuclei*weights["nuclei1"]) )/5
            if formule >= 1 : 
                  self.my_frame.vul_label[0][1].configure(text="Positive",text_color='red')
