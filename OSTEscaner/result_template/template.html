@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>My Webpage</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+
+		#gr {
+		text-align:center;
+   position: relative;
+   font-size: 15px;
+   color: RED;
+}
+		body {
+			color: black;
+			font-family: 'Open Sans', sans-serif;
+			background: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
+		}
+
+		header {
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			z-index: 100;
+		}
+
+		.container {
+		
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 50px 20px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+
+		#container2 {
+		
+			max-width: 100%;
+			  transition: top 0.5s;
+			width:100%;
+			height:130px;
+			position:fixed;
+			top:0;
+			left:0;
+			background: white;
+			padding: 0px 20px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+		}
+				
+		.logo {
+			font-size: 24px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			color: #444;
+		}
+
+		.nav {
+			display: flex;
+			align-items: center;
+		}
+
+		.nav ul {
+			display: flex;
+			list-style: none;
+			margin-left: 50px;
+		}
+
+		.nav ul li {
+			margin-left: 30px;
+		}
+
+		h1 {
+			font-size: 36px;
+			font-weight: 700;
+			margin-top: 150px;
+			margin-bottom: 30px;
+			color: #444;
+			text-align: center;
+		}
+
+		section {
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			margin-bottom: 50px;
+			padding: 30px;
+			border-radius: 10px;
+			width: 100%;
+		}
+
+		section h2 {
+			font-size: 24px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #444;
+		}
+
+		table {
+		background: linear-gradient(to bottom, #33ccff 0%, #3333cc 100%);
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		table td, table th {
+			border: 1px solid #ddd;
+			padding: 10px;
+			text-align: left;
+		}
+
+		table th {
+			background-color: #33ccff;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.payload {
+			background-color: #f5f5f5;
+			padding: 20px;
+			border-radius: 10px;
+			margin-top: 30px;
+			font-size: 16px;
+			line-height: 1.5;
+			color: white;
+		}
+		img{
+		width:200px;
+		height:100px;
+		}
+		@media (max-width: 768px) {
+			.container {
+				padding: 50px 10px;
+			}
+
+			.logo {
+				font-size: 20px;
+			}
+
+			.nav ul {
+				margin-left: 20px;
+			}
+	}
+	</style>
+
+</head>
+<body>
+	<header>
+		<div  id="container2" id="hhhid">
+			<div class="logo">Web vulnerability Meta-Scanner</div>
+			<nav class="nav">
+								<img  src="meta1.png" alt="User Profile Picture">
+			</nav>
+		</div>
+	</header>
+	<main>
+	<div class="container">
+		<h1>META-Scanner Results for {{target_name}}</h1>
+		<section>
+			<h2>Results</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>CWE-code:Vulnerability</th>
+						<th>Meta scanner</th>
+						<th>OWASP ZAP</th>
+						<th>SkipFish</th>						
+						<th>Wapiti</th>
+						<th>Nikto</th>
+						<th>Nuclei</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>CWE-89: Sql injection</td>
+						<td>{{sql_meta}}</td>
+						<td>{{sql1}}</td>
+						<td>{{sql2}}</td>
+						<td>{{sql3}}</td>
+						<td>{{sql4}}</td>
+						<td>{{sql5}}</td>
+					</tr>
+
+					<tr>
+						<td>CWE-79: Cross site script injection</td>
+						<td>{{xss_meta}}</td>
+						<td>{{xss1}}</td>
+						<td>{{xss2}}</td>
+						<td>{{xss3}}</td>
+						<td>{{xss4}}</td>
+						<td>{{xss5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-78: OS command injection</td>
+						<td>{{os_meta}}</td>
+						<td>{{os1}}</td>
+						<td >{{os2}}</td>
+						<td>{{os3}}</td>
+						<td id="gr">NaN</td>
+						<td>{{os5}}</td>
+					</tr>
+					<tr>
+						<td>CVE-2006-4686: XSLT injection</td>
+						<td>{{xslt_meta}}</td>
+						<td>{{xslt1}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td>{{xslt4}}</td>
+						<td id="gr">NaN</td>
+					</tr>
+					<tr>
+						<td>CWE-91: XML injection</td>
+						<td>{{xml_meta}}</td>
+						<td>{{xml1}}</td>
+						<td>{{xml2}}</td>
+						<td id="gr">NaN</td>
+						<td>{{xml4}}</td>
+						<td>{{xml5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-611: XXE injection</td>
+						<td>{{xxe_meta}}</td>
+						<td>{{xxe1}}</td>
+						<td id="gr">NaN</td>
+						<td>{{xxe3}}</td>
+						<td id="gr">NaN</td>
+						<td>{{xxe5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-94: Code injection</td>
+						<td>{{code_meta}}</td>
+						<td>{{code1}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td>{{code4}}</td>
+						<td>{{code5}}</td>
+					</tr>
+
+					<tr>
+						<td>CWE-80: HTML injection</td>
+						<td>{{html_meta}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td>{{html4}}</td>
+						<td>{{html5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-1336: Template injection</td>
+						<td>{{template_meta}}</td>
+						<td>{{template1}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+					</tr>
+					<tr>
+						<td>CWE-93: CRLF injection</td>
+						<td>{{crlf_meta}}</td>
+						<td>{{crlf1}}</td>
+						<td>{{crlf2}}</td>
+						<td>{{crlf3}}</td>
+						<td id="gr">NaN</td>
+						<td>{{crlf5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-1003: OGNL injection</td>
+						<td>{{ognl_meta}}</td>
+						<td id="gr">NaN</td>
+						<td>{{ognl2}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td>{{ognl5}}</td>
+					</tr>
+					<tr>
+						<td>CWE-644: HOST header injection</td>
+						<td>{{host_meta}}</td>
+						<td id="gr">NaN</td>
+						<td>{{host2}}</td>
+						<td id="gr">NaN</td>
+						<td id="gr">NaN</td>
+						<td>{{host5}}</td>
+					</tr>
+
+
+
+					
+
+					
+					
+				</tbody>
+			</table>
+		</section>
+	</div>
+</main>
+</body>
+	<script>
+	var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+  var currentScrollPos = window.pageYOffset;
+  if (prevScrollpos > currentScrollPos) {
+    document.getElementById("container2").style.top = "0";
+  } else {
+    document.getElementById("container2").style.top = "-150px";
+  }
+  prevScrollpos = currentScrollPos;
+}
+	</script>
+</html>
+		
+<!--		<section>
+			<h2>Result</h2>
+			<h3 class="payload">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut porttitor justo in justo efficitur, at finibus odio maximus. Nullam a tellus tincidunt, bibendum est ac, tempus sapien. Etiam porttitor mi nec arcu gravida vestibulum. Fusce finibus justo sit amet purus dictum, sit amet fringilla sapien imperdiet. Suspendisse egestas libero vitae velit euismod, a vehicula orci ullamcorper. Sed dignissim, massa vel auctor dignissim, tortor urna laoreet orci, non efficitur sapien odio non ipsum. Nulla congue eros sit amet arcu pulvinar, eget tristique turpis pellentesque. Nam gravida tincidunt quam, eu ultrices tellus tincidunt at. Duis euismod velit vel eros ullamcorper, id commodo orci luctus. Praesent vel ante sit amet elit fringilla posuere. Donec sed metus vitae odio semper malesuada.</h3>
+			<h3 class="payload">Vestibulum euismod nunc a porttitor eleifend. Donec aliquam sapien ut massa varius commodo. Nunc non nulla non lacus sodales luctus vel sit amet lorem. Sed ut tristique purus. Nam in leo vitae lacus fermentum hendrerit non non odio. Aenean ullamcorper venenatis orci, vitae bibendum nisl volutpat vel. Praesent vel ante sit amet elit fringilla posuere. Donec sed metus vitae odio semper malesuada.</h3>
+		</section>
