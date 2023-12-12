@@ -1,9 +1,0 @@
-GET /DVWA/vulnerabilities/xss_s/ HTTP/1.1
-Host: localhost
-Accept-Encoding: gzip
-Connection: keep-alive
-User-Agent: Mozilla/5.0 SF/2.10b
-Range: bytes=0-399999
-Referer: http://localhost/
-Cookie: security=-->">'>'"<sfi000020v487186>; PHPSESSID=ubnc4ofaqea3s05b6mt7fsrnnm
-

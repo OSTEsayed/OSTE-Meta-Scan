@@ -1,6 +1,0 @@
-GET http://localhost/ name=http://localhost/ type=serv linked=yes browsers=0 browser_used=FAST dup=0 code=302 len=0 notes=3 sig=0xad61addb
-GET http://localhost/Vulnerable-Web-Application/ name=Vulnerable-Web-Application type=dir linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=1269 notes=0 sig=0x4bae14a5
-GET http://localhost/Vulnerable-Web-Application/XSS/ name=XSS type=dir linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=2057 notes=2 sig=0xd7494a67
-GET http://localhost/Vulnerable-Web-Application/XSS/XSS_level1.php name=XSS_level1.php type=pathinfo linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=622 notes=3 sig=0x6b4c6ba5
-GET http://localhost/Vulnerable-Web-Application/XSS/XSS_level1.php?username=Smith&submit=Submit name=submit type=param linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=640 notes=0 sig=0xffbfffff
-GET http://localhost/Vulnerable-Web-Application/XSS/XSS_level1.php?username=Smith&submit=Submit name=username type=param linked=yes browsers=0 browser_used=FAST dup=0 code=200 len=640 notes=1 sig=0x8038c20

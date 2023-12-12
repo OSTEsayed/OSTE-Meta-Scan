@@ -1,8 +1,0 @@
-HTTP/1.1 200 Partial Content
-Date: Tue, 12 Dec 2023 11:42:45 GMT
-Server: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1
-X-Powered-By: PHP/8.2.0
-Set-Cookie: security=impossible; path=/; HttpOnly
-Set-Cookie: PHPSESSID=1djde12k0t120rf0b6d7q7k6q5; expires=Wed, 13 Dec 2023 11:42:45 GMT; Max-Age=86400; path=/; HttpOnly; SameSite=1
-
-[...truncated...]
