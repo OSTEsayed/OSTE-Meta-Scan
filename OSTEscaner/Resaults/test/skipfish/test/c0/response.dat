@@ -1,0 +1,10 @@
+HTTP/1.1 302 Found
+Date: Tue, 12 Dec 2023 11:42:45 GMT
+Server: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1
+X-Powered-By: PHP/8.2.0
+Location: http://localhost/dashboard/
+Content-Length: 0
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/html; charset=UTF-8
+

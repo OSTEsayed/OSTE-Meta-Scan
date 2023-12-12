@@ -1,0 +1,12 @@
+POST /DVWA/vulnerabilities/xss_s/ HTTP/1.1
+Host: localhost
+Accept-Encoding: gzip
+Connection: keep-alive
+User-Agent: Mozilla/5.0 SF/2.10b
+Range: bytes=0-399999
+Referer: http://localhost/
+Cookie: security=impossible; PHPSESSID=2jbm30tl1u4tquk4nlef2a1qdm
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 120
+
+txtName=Smith&mtxMessage=skipfish&btnSign=9876sfi&btnClear=Clear%20Guestbook&user_token=cb6c41e484650af8018ab47290072c05

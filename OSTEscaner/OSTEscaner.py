@@ -38,6 +38,7 @@ class scan_checker():
     	
 class scan():
     def __init__(self):
+        self.script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))    
         self.name="OSTE"
         self.url="LOCALHOST"
         self.wapiti_vulnerabilities= {
@@ -359,10 +360,9 @@ class scan():
                      zap.spider.set_option_max_children(self.setting['zap_dc'])
                      time.sleep(1)
                      if self.setting['zap_c']==0:
-                          print("ak hna")
                           scanID = zap.spider.scan(self.url, recurse=False, subtreeonly=True)
                           while int(zap.spider.status(scanID)) < 100:
-                             print('Spider progress %: {}'.format(zap.spider.status(scanID)))
+                             #print('Spider progress %: {}'.format(zap.spider.status(scanID)))
                              time.sleep(2)
                      
 #                     """while int(zap.spider.status(scanID)) < 100:
@@ -388,10 +388,10 @@ class scan():
                      # TODO : explore the app (Spider, etc) before using the Active Scan API, Refer the explore section
                      scanID = zap.ascan.scan(self.url)
                      time.sleep(2)
-                     print(zap.ascan.status(scanID))
+                     #print(zap.ascan.status(scanID))
                      while int(zap.ascan.status(scanID)) < 100:
                          # Loop until the scanner has finished
-                         print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
+                         #print('Scan progress %: {}'.format(zap.ascan.status(scanID)))
                          time.sleep(4)
                      #print('[finished] 		Zap scan completed')  
                      with open("{}/Resaults/{}/owaspzap/{}.json".format(self.script_dir ,self.name,self.name), 'w') as convert_file:

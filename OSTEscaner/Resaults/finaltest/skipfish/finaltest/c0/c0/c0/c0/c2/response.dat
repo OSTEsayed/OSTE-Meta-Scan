@@ -1,0 +1,138 @@
+HTTP/1.1 200 Partial Content
+Date: Tue, 12 Dec 2023 11:32:12 GMT
+Server: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1
+X-Powered-By: PHP/8.2.0
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Cache-Control: no-cache, must-revalidate
+Pragma: no-cache
+Content-Range: bytes 0-4959/4960
+Content-Length: 4960
+Keep-Alive: timeout=5, max=82
+Connection: Keep-Alive
+Content-Type: text/html;charset=utf-8
+
+<!DOCTYPE html>
+
+<html lang="en-GB">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: Stored Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA)</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li class=""><a href="../../.">Home</a></li>
+<li class=""><a href="../../instructions.php">Instructions</a></li>
+<li class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li class="selected"><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+<li class=""><a href="../../vulnerabilities/csp/">CSP Bypass</a></li>
+<li class=""><a href="../../vulnerabilities/javascript/">JavaScript</a></li>
+<li class=""><a href="../../vulnerabilities/open_redirect/">Open HTTP Redirect</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../security.php">DVWA Security</a></li>
+<li class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: Stored Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+		<form method="post" name="guestform" ">
+			<table width="550" border="0" cellpadding="2" cellspacing="1">
+				<tr>
+					<td width="100">Name *</td>
+					<td><input name="txtName" type="text" size="30" maxlength="10"></td>
+				</tr>
+				<tr>
+					<td width="100">Message *</td>
+					<td><textarea name="mtxMessage" cols="50" rows="3" maxlength="50"></textarea></td>
+				</tr>
+				<tr>
+					<td width="100">&nbsp;</td>
+					<td>
+						<input name="btnSign" type="submit" value="Sign Guestbook" onclick="return validateGuestbookForm(this.form);" />
+						<input name="btnClear" type="submit" value="Clear Guestbook" onClick="return confirmClearGuestbook();" />
+					</td>
+				</tr>
+			</table>
+			<input type='hidden' name='user_token' value='ae8d2b5e7fec14c655c07ce0ae601603' />
+		</form>
+		
+	</div>
+	<br />
+
+	<div id="guestbook_comments">Name: Smith<br />Message: skipfish<br /></div>
+
+	<br />
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://owasp.org/www-community/attacks/xss" target="_blank">https://owasp.org/www-community/attacks/xss</a></li>
+		<li><a href="https://owasp.org/www-community/xss-filter-evasion-cheatsheet" target="_blank">https://owasp.org/www-community/xss-filter-evasion-cheatsheet</a></li>
+		<li><a href="https://en.wikipedia.org/wiki/Cross-site_scripting" target="_blank">https://en.wikipedia.org/wiki/Cross-site_scripting</a></li>
+		<li><a href="http://www.cgisecurity.com/xss-faq.html" target="_blank">http://www.cgisecurity.com/xss-faq.html</a></li>
+		<li><a href="http://www.scriptalert1.com/" target="_blank">http://www.scriptalert1.com/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" id='help_button' data-help-url='../../vulnerabilities/view_help.php?id=xss_s&security=impossible&locale=en' )"> <input type="button" value="View Source" class="popup_button" id='source_button' data-source-url='../../vulnerabilities/view_source.php?id=xss_s&security=impossible' )"> <div align="left"><em>Username:</em> Unknown<br /><em>Security Level:</em> impossible<br /><em>Locale:</em> en<br /><em>SQLi DB:</em> mysql</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA)</p>
+				<script src='../../dvwa/js/add_event_listeners.js'></script>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>

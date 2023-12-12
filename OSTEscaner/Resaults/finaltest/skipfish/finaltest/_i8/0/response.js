@@ -1,0 +1,1 @@
+var res = {'data':'HTTP/1.1 200 Partial Content\x0aDate: Tue, 12 Dec 2023 11:32:11 GMT\x0aServer: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1\x0aX-Powered-By: PHP/8.2.0\x0aSet-Cookie: security=impossible; path=/; HttpOnly\x0a\x0a[...truncated...]\x0a'}

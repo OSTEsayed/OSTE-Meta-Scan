@@ -1,0 +1,43 @@
+HTTP/1.1 200 Partial Content
+Date: Tue, 12 Dec 2023 11:32:11 GMT
+Server: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1
+Content-Range: bytes 0-4730/4731
+Content-Length: 4731
+Keep-Alive: timeout=5, max=96
+Connection: Keep-Alive
+Content-Type: text/html;charset=ISO-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /DVWA/vulnerabilities</title>
+ </head>
+ <body>
+<h1>Index of /DVWA/vulnerabilities</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="/DVWA/">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="authbypass/">authbypass/</a>            </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="brute/">brute/</a>                 </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="captcha/">captcha/</a>               </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="csp/">csp/</a>                   </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="csrf/">csrf/</a>                  </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="exec/">exec/</a>                  </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="fi/">fi/</a>                    </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="javascript/">javascript/</a>            </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="open_redirect/">open_redirect/</a>         </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="sqli/">sqli/</a>                  </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="sqli_blind/">sqli_blind/</a>            </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="upload/">upload/</a>                </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="view_help.php">view_help.php</a>          </td><td align="right">2023-04-24 08:35  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="view_source.php">view_source.php</a>        </td><td align="right">2023-04-24 08:35  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="view_source_all.php">view_source_all.php</a>    </td><td align="right">2023-04-24 08:35  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="weak_id/">weak_id/</a>               </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="xss_d/">xss_d/</a>                 </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="xss_r/">xss_r/</a>                 </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="xss_s/">xss_s/</a>                 </td><td align="right">2023-04-24 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>
+https:/‘

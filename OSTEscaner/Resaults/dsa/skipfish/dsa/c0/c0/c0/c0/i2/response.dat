@@ -1,0 +1,31 @@
+HTTP/1.1 200 Partial Content
+Date: Tue, 12 Dec 2023 11:51:55 GMT
+Server: Apache/2.4.54 (Unix) OpenSSL/1.1.1s PHP/8.2.0 mod_perl/2.0.12 Perl/v5.34.1
+X-Powered-By: PHP/8.2.0
+Content-Range: bytes 0-621/622
+Content-Length: 622
+Keep-Alive: timeout=5, max=89
+Connection: Keep-Alive
+Content-Type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+<head>
+   <title>XSS 1</title>
+<link rel="shortcut icon" href="../Resources/hmbct.png" />
+</head>
+<body>
+	
+	 <div style="background-color:#c9c9c9;padding:15px;">
+      <button type="button" name="homeButton" onclick="location.href='../homepage.html';">Home Page</button>
+      <button type="button" name="mainButton" onclick="location.href='xssmainpage.html';">Main Page</button>
+    </div>
+<div align="center">
+   <form method="GET" action="" name="form">
+   <p>Your name:<input type="text" name="username"></p>
+   <input type="submit" name="submit" value="Submit">
+</form>
+	</div>
+</body>
+</html>
+V
