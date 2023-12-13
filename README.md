@@ -21,7 +21,7 @@ The main focus of this scanner is on web injection vulnerabilities such as SQL i
 
 We offer two types of reports. The first is a consolidated report in JSON format, which includes important reports from each scanner. It contains details such as the vulnerability, the corresponding URL, the parameter used, the Curl command, the attack vector, a description of the vulnerability, and more.
 
-The second report is an HTML file format that specifically highlights successful injection attacks. Our results and decisions are based on a novel learning algorithm proposed during the ("A Meta-Scan based approach for the detection of injection vulnerabilities in Web applications.", -University May 8, 1945 -Guelma -, Computer Science Department, Presented by: SEYYID TAQY EDINE OUDJANI, Supervised by: DR. ABDELHAKIM HANNOUSSE. 2023). 
+The second report is an HTML file format that specifically highlights successful injection attacks. Our results and decisions are based on a novel learning algorithm proposed during the ("A Meta-Scan based approach for the detection of injection vulnerabilities in Web applications.", -University May 8, 1945 -Guelma -, Computer Science Department, Presented by: SEYYID TAQY EDINE OUDJANI, Supervised by: DR. ABDELHAKIM HANNOUSSE. 2023). [https://dspace.univ-guelma.dz/jspui/handle/123456789/15028].
 
 ## Features
 
