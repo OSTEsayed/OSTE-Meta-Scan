@@ -323,13 +323,9 @@ class scan():
              output = subprocess.run("zap.sh -daemon -config api.key=mypass123 -port 8090 -host 0.0.0.0", shell=True, capture_output=True)
 
     def check_for_zap(self):
-            output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
-            string=str(output1.stdout)    
-            while string[3]=="E":	
-               time.sleep(10)
-               output1= subprocess.run("zap-cli status",shell=True,capture_output=True)
-               string=str(output1.stdout)    
-            else :
+           teeet="li"
+           while teeet=="li":
+               try:
                      apiKey = 'mypass123'
                      zap = ZAPv2(apikey=apiKey, proxies={'http': 'http://127.0.0.1:8090', 'https': 'http://127.0.0.1:8090'})
              #Disabling the passive scanner since we don't need them for now
@@ -344,7 +340,6 @@ class scan():
                      zap.ascan.disable_scanners(ids=[90034])#Cloud Metadata Potentially Exposed
                      zap.ascan.disable_scanners(ids=[30001])#Buffer Overflow
                      zap.ascan.disable_scanners(ids=[30002])# Format String Error
-             
                      zap.ascan.disable_scanners(ids=[40008])#Parameter Tampering
                      zap.ascan.disable_scanners(ids=[40028])#ELMAH Information Leak
                      zap.ascan.disable_scanners(ids=[40029])# Trace.axd Information Leak
@@ -363,8 +358,7 @@ class scan():
                           scanID = zap.spider.scan(self.url, recurse=False, subtreeonly=True)
                           while int(zap.spider.status(scanID)) < 100:
                              #print('Spider progress %: {}'.format(zap.spider.status(scanID)))
-                             time.sleep(2)
-                     
+                             time.sleep(2)                     
 #                     """while int(zap.spider.status(scanID)) < 100:
 #                         # Poll the status until it completes
 #                         time.sleep(1)
@@ -396,6 +390,11 @@ class scan():
                      #print('[finished] 		Zap scan completed')  
                      with open("{}/Resaults/{}/owaspzap/{}.json".format(self.script_dir ,self.name,self.name), 'w') as convert_file:
                           convert_file.write(json.dumps(zap.core.alerts(baseurl=self.url)))
+                     teeet="lih"
+               except Exception as inst:
+                  time.sleep(10)
+                  teeet="li"
+
              
     def owaspzap_get_resaults(self):
                  zap_vulnerabilities_new=self.zap_vulnerabilities.copy()
