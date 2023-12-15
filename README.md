@@ -122,6 +122,6 @@ This project is intended for educational purposes and aims to simplify the overa
 
 ## Contact
 
--  How to reach me email: oudjani.sayed.taki.eddine@gmail.com , sayedesg@gmail.com ;
+-  How to reach me email: sayedesg@gmail.com ;
    linkdin:(https://www.linkedin.com/in/oudjani-seyyid-taqy-eddine-b964a5228)
 
