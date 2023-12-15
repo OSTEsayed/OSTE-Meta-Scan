@@ -93,7 +93,11 @@ Then, you can navigate through the interface of the application.
 
 ## Contributing
 
-We welcome contributions to enhance and improve this project. To contribute, please follow these guidelines:
+We welcome contributions to enhance and improve this project. 
+either by donation :  
+  [![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/oudjanisaye)
+ 
+or by your power of mind .contribute, please follow these guidelines:
 
    1. Fork the repository and create a new branch for your contribution.
    2. Ensure that your code adheres to the project's coding standards.
