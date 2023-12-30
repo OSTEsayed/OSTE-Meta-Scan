@@ -121,7 +121,5 @@ This project is intended for educational purposes and aims to simplify the overa
 ![Main Interface ](ScreenShots/Screenshot_2023-05-31_15-09-04.png)
 
 ## Contact
-
--  How to reach me email: sayedesg@gmail.com ;
    linkdin:(https://www.linkedin.com/in/oudjani-seyyid-taqy-eddine-b964a5228)
 
