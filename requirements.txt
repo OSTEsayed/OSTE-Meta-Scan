@@ -1,0 +1,9 @@
+tk
+customtkinter
+zaproxy
+jinja2
+# PIL
+pillow
+matplotlib
+beautifulsoup4
+pprintpp
