@@ -91,6 +91,24 @@ After cloning the repository to your local machine, you can initiate the applica
 
 Then, you can navigate through the interface of the application.
 
+## Docker
+
+A Docker image is available in OSTEscaner directory. It is based on kali linux and will need a xserver to display the python GUI.
+On linux, you probably already have one runnig, on windows (including WSL) good oss servers are [vcxsrv](https://sourceforge.net/projects/vcxsrv/) or [xming](https://sourceforge.net/projects/xming/).
+  
+first export your display:  
+Linux: `export DISPLAY=:0.0`  
+Windows (wsl): `export DISPLAY="$(grep nameserver /etc/resolv.conf | sed 's/nameserver //'):0"`  
+then build & run the docker image:  
+```
+docker build -t metascan .
+docker run -e DISPLAY=$DISPLAY --network=host metascan
+```
+
+troubleshooting: 
+- xdisplay for docker maybe tricky and you may face the `_tkinter.TclError: couldn't connect to display` error. As it is based on network communication, yo may need to include your local ip address: e.g. `export DISPLAY:192.168.100.5:0.0`, on windows you may look for tutorial on xming and install additional fonts.
+- the apt commands during the build sometimes fails due to kali.org network error (`Failed to fetch http://http.kali.org/`) just retry the build
+
 ## Contributing
 
 We welcome contributions to enhance and improve this project. 
