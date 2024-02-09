@@ -1,3 +1,6 @@
+# Docker image for oste met scanner base on kali linux 
+# the current metascan need an xserver running
+
 FROM kalilinux/kali-rolling
 
 RUN apt update -y 
