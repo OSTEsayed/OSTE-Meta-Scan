@@ -525,13 +525,16 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("Web Vulnerability META-Scanner")		#OSTEscanner
+# Set it as the window icon.
 
         w, h = self.winfo_screenwidth(), self.winfo_screenheight()
         self.geometry("%dx%d+0+0" % (w, h))
- #       self.attributes('-fullscreen',True)
-#        self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join("images/meta.ico")), size=(20, 20)) 
-#        self.iconbitmap(default="images/meta.ico")        #configure the menu:
-        
+#
+#
+#           The ICONbitMAP can't seem to work in customtkinter. whoever fix this is most welcome to pull request to the main repo.
+#        self.after(250, lambda: self.iconbitmap('images/meta.ico'))        Can't
+#
+#
         self.menubar = tkinter.Menu(self, bg='lightblue', fg='#2d2d2d', activebackground='#4d4d4d', activeforeground='white', borderwidth=0, relief='flat', font=('Arial', 12))
 
         self.config(menu=self.menubar)
