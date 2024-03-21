@@ -1,7 +1,7 @@
 
 # OSTE-Meta-Scanner
 ![Project Logo](OSTEscaner/images/meta.png)
-This project aims to simplify the field of Dynamic Application Security Testing. The OSTE meta scanner is a comprehensive web vulnerability scanner that combines multiple DAST scanners, including Nikto Scanner, OWASP ZAP, Nuclei, SkipFish, and Wapiti.
+This project aims to simplify the field of Dynamic Application Security Testing. The OSTE meta scanner is a comprehensive web vulnerability scanner that combines multiple DAST scanners, including Nikto Scanner, ZAP, Nuclei, SkipFish, and Wapiti.
 
 
 ## Table of Contents
@@ -42,14 +42,14 @@ List of Main Vulnerabilities supported:
 2. Other vulnerabilities (refer to the repository of each scanner for a complete list.)
   - Skipfish Vulnerabilities support List.
   - Wapiti Vulnerabilities support List.
-  - OWASP ZAP Active Attack list.
+  - ZAP Active Attack list.
   - Nikto Vulnerabilities support List (Specified: Tunning 9 & 4).
   - Nuclei CVE-Template.
 ## Installation
 
 The installation process requires a specific set of requirements. While this project is primarily supported on Kali Linux, it can also be compatible with other operating systems:
 
-1. OWASP zaproxy:
+1. ZAP:
   - kaliLinux: [ sudo apt install zaproxy ]  
   - Other OSs: [ https://github.com/zaproxy/zaproxy ]
   

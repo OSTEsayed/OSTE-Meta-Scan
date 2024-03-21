@@ -207,7 +207,7 @@ class set_setting_Window(customtkinter.CTkToplevel):
         self.setting_tabview = customtkinter.CTkTabview(self)
         self.setting_tabview.pack(pady=20,padx=20,fill ="both",expand=True)
         self.setting_tabview.add("Meta-scanner")
-        self.setting_tabview.add("OWASP ZAP")
+        self.setting_tabview.add("ZAP")
         self.setting_tabview.add("wapiti")
         self.setting_tabview.add("Skipfish")
 
@@ -224,24 +224,24 @@ class set_setting_Window(customtkinter.CTkToplevel):
         self.but1 =customtkinter.CTkButton(self.setting_tabview.tab("Meta-scanner"),text="Save",command=self.save).grid(row=4,column=3,columnspan=3,padx=10,pady=10)
 
         #Zap tab view:
-        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="OWASP ZAP Settings:", justify=customtkinter.CENTER)
+        self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("ZAP"),text="ZAP Settings:", justify=customtkinter.CENTER)
         self.label_1.grid(row=0, column=0 ,columnspan=6,padx=160)
-        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
+        self.sup1=customtkinter.CTkLabel(self.setting_tabview.tab("ZAP"),text="---------------------------------------------------", justify=customtkinter.CENTER).grid(row=1,column=0,columnspan=6,padx=0,pady=0)
      
-        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Enable Crawler:", justify=customtkinter.CENTER).grid(row=2,column=0,columnspan=3,padx=10,pady=30,sticky="w")
-        self.check = customtkinter.CTkCheckBox(master=self.setting_tabview.tab("OWASP ZAP"), text="")
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("ZAP"),text="Enable Crawler:", justify=customtkinter.CENTER).grid(row=2,column=0,columnspan=3,padx=10,pady=30,sticky="w")
+        self.check = customtkinter.CTkCheckBox(master=self.setting_tabview.tab("ZAP"), text="")
         self.check.grid(row=2,column=3,columnspan=3,padx=10,pady=30)
         self.check.select()     
 
 
-        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Crawler MAX Depth:", justify=customtkinter.CENTER).grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky="w")
-        self.zentry1 = customtkinter.CTkEntry(self.setting_tabview.tab("OWASP ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_d']))
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("ZAP"),text="Crawler MAX Depth:", justify=customtkinter.CENTER).grid(row=3,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.zentry1 = customtkinter.CTkEntry(self.setting_tabview.tab("ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_d']))
         self.zentry1.grid(row=3,column=3,columnspan=3,padx=10,pady=10)        
-        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("OWASP ZAP"),text="Crawler MAX Children:", justify=customtkinter.CENTER).grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky="w")
-        self.zentry2 = customtkinter.CTkEntry(self.setting_tabview.tab("OWASP ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_dc']))
+        self.msg2 =customtkinter.CTkLabel(self.setting_tabview.tab("ZAP"),text="Crawler MAX Children:", justify=customtkinter.CENTER).grid(row=4,column=0,columnspan=3,padx=10,pady=10,sticky="w")
+        self.zentry2 = customtkinter.CTkEntry(self.setting_tabview.tab("ZAP"), placeholder_text="{}	(0 for MAX)".format(app.setting['zap_dc']))
         self.zentry2.grid(row=4,column=3,columnspan=3,padx=10,pady=10)
         
-        self.but1=customtkinter.CTkButton(self.setting_tabview.tab("OWASP ZAP"),text="Apply",command=self.apply1).grid(row=6,column=0,columnspan=6,padx=10,pady=30)
+        self.but1=customtkinter.CTkButton(self.setting_tabview.tab("ZAP"),text="Apply",command=self.apply1).grid(row=6,column=0,columnspan=6,padx=10,pady=30)
         
         #wapiti tab view:
         self.label_1 = customtkinter.CTkLabel(self.setting_tabview.tab("wapiti"),text="wapiti Settings:", justify=customtkinter.CENTER)
@@ -427,12 +427,12 @@ class start_Window(customtkinter.CTkToplevel):
             starting_skipfish = threading.Thread(target=new_scan.start_skipfish)
             starting_skipfish.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="green")      
-            app.log_textbox.insert(tkinter.END, " OWASP ZAP server started", tags=None)
+            app.log_textbox.insert(tkinter.END, " ZAP server started", tags=None)
             
             starting_zap_server = threading.Thread(target=new_scan.start_zap)
             starting_zap_server.start()
             app.log_textbox.insert(tkinter.END, "\n[INFO]", tags="yellow")            
-            app.log_textbox.insert(tkinter.END, " OWASP ZAP scan started", tags=None)    
+            app.log_textbox.insert(tkinter.END, " ZAP scan started", tags=None)    
 #            app.log_textbox.insert(tkinter.END, "\n [INFO] 		OWASPZAP Scanning started", tags=None)            
             starting_zap= threading.Thread(target=new_scan.check_for_zap)
             starting_zap.start()
@@ -473,7 +473,7 @@ class start_Window(customtkinter.CTkToplevel):
                   if zap_statu=="scanning":
                           if a.is_alive()==False:
                               app.log_textbox.insert(tkinter.END, "\n[finished]", tags="red")            
-                              app.log_textbox.insert(tkinter.END, " OWASP ZAP scan Finished", tags=None)            
+                              app.log_textbox.insert(tkinter.END, " ZAP scan Finished", tags=None)            
                               zap_statu="finished"
                               number_scaner-=1       	
                   if nikto_statu=="scanning":
@@ -615,7 +615,7 @@ class App(customtkinter.CTk):
         self.results_tabview.add("Skipfish")
         self.results_tabview.add("wapiti")
         self.results_tabview.add("Nikto")
-        self.results_tabview.add("OWASP ZAP")
+        self.results_tabview.add("ZAP")
         self.results_tabview.add("Nuclei")
         #our resault tab view:
         self.label_1 = customtkinter.CTkLabel(self.results_tabview.tab("Results"),text="Result Table:", justify=customtkinter.CENTER)
@@ -628,7 +628,7 @@ class App(customtkinter.CTk):
         self.label_3.pack(pady=0, padx=0)
         
         #zap Resault Tab View:
-        self.label_4 = customtkinter.CTkLabel(self.results_tabview.tab("OWASP ZAP"),text="Result Table:", justify=customtkinter.CENTER)
+        self.label_4 = customtkinter.CTkLabel(self.results_tabview.tab("ZAP"),text="Result Table:", justify=customtkinter.CENTER)
         self.label_4.pack(pady=0, padx=0)
         #Nikto Reslt Tab View:
         self.label_5 = customtkinter.CTkLabel(self.results_tabview.tab("Nikto"),text="Result Table:", justify=customtkinter.CENTER)
@@ -1199,7 +1199,7 @@ class App(customtkinter.CTk):
         self.my_frameWapiti = MyFrame_My_wapiti(master=self.results_tabview.tab("wapiti"))
         self.my_frameWapiti.pack(fill="both",padx=0,pady=0,expand=True)        
 
-        self.my_frameZap = MyFrame_My_Zap(master=self.results_tabview.tab("OWASP ZAP"))
+        self.my_frameZap = MyFrame_My_Zap(master=self.results_tabview.tab("ZAP"))
         self.my_frameZap.pack(fill="both",padx=0,pady=0,expand=True)        
 
         self.my_frameNikto = MyFrame_My_Nikto(master=self.results_tabview.tab("Nikto"))

@@ -33,7 +33,7 @@ class scan_checker():
           output3 = subprocess.run("skipfish", shell=True, capture_output=True,text=True).stdout.strip("\n")
           if "skipfish web" in output3:
               self.skipfish=True         
-          return [[self.wapiti,"Wapiti {}".format(output[len(output)-5::])],[self.zap,"OWASP ZAP V2.10.0"],[self.nuclei,"Nuclei {}".format(output2[212::])],[self.nikto,"Nikto {}".format(output1[318:323])],[self.skipfish,"skipfish {}".format(output3[43:48])]]
+          return [[self.wapiti,"Wapiti {}".format(output[len(output)-5::])],[self.zap,"ZAP"],[self.nuclei,"Nuclei {}".format(output2[212::])],[self.nikto,"Nikto {}".format(output1[318:323])],[self.skipfish,"skipfish {}".format(output3[43:48])]]
    
     	
 class scan():
