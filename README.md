@@ -1,5 +1,6 @@
 
-# OSTE-Meta-Scanner
+# OSTE-Meta-Scanner 
+This project is now maintained and supported by OSTE and is no longer available as an open-source project. For inquiries, commercial use, or support, please contact OSTE via [LinkedIn](https://www.linkedin.com/company/oste-service/), or official website, or sales team at +213.7.98.38.94.54 via whatsup. 
 ![Project Logo](OSTEscaner/images/meta.png)
 This project aims to simplify the field of Dynamic Application Security Testing. The OSTE meta scanner is a comprehensive web vulnerability scanner that combines multiple DAST scanners, including Nikto Scanner, ZAP, Nuclei, SkipFish, and Wapiti.
 
